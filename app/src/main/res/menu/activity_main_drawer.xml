@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="Main Navigation">
+        <menu>
+            <item
+                android:id="@+id/nav_dashboard"
+                android:icon="@drawable/ic_dashboard_black_24dp"
+                android:title="Dashboard" />
+            <item
+                android:id="@+id/nav_transaksi_penjualan"
+                android:icon="@drawable/ic_dashboard_black_24dp"
+                android:title="Transaksi Penjualan" />
+            <item
+                android:id="@+id/nav_transaksi_pembelian"
+                android:icon="@drawable/ic_dashboard_black_24dp"
+                android:title="Transaksi Pembelian" />
+        </menu>
+    </item>
+
+    <item android:title="Laporan">
+        <menu>
+            <item
+                android:id="@+id/nav_laporan_harian"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Laporan Harian" />
+            <item
+                android:id="@+id/nav_laporan_bulanan"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Laporan Bulanan" />
+            <item
+                android:id="@+id/nav_laporan_tahunan"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Laporan Tahunan" />
+            <item
+                android:id="@+id/nav_laporan_labarugi"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Laporan Laba/Rugi" />
+        </menu>
+    </item>
+
+    <item android:title="Data Master">
+        <menu>
+            <item
+                android:id="@+id/nav_barang"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Data Barang" />
+            <item
+                android:id="@+id/nav_kategori"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Data Kategori" />
+            <item
+                android:id="@+id/nav_user"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Data User" />
+        </menu>
+    </item>
+
+    <item android:title="Pengaturan">
+        <menu>
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Profile" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Logout" />
+        </menu>
+    </item>
+</menu>
