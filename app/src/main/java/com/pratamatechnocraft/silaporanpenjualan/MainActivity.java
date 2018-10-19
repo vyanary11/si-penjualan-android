@@ -39,14 +39,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static TextView namaUser,levelUser;
     public static ImageView fotoUser;
     public Fragment fragment = null;
-    private static String URL_TOKEN = "api/user";
     NavigationView navigationView;
     SessionManager sessionManager;
     HashMap<String, String> user=null;
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private static final String API_URL_LOAD = "api/user?api=profile&kd_user=";
-    private static final String API_URL_EDITDANUBAH = "api/user";
 
     private static final String TAG = MainActivity.class.getSimpleName();
     @Override
@@ -102,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         displaySelectedScreen( item.getItemId() );
+        Toast.makeText(MainActivity.this, item.getItemId(), Toast.LENGTH_SHORT).show();
         return true;
     }
 
@@ -159,12 +158,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             levelUser.setText( "Owner" );
                             navigationView.inflateMenu( R.menu.activity_main_drawer );
                             navigationView.setNavigationItemSelectedListener( MainActivity.this );
-                            navigationView.getMenu().getItem(0).setChecked(true);
+                            navigationView.getMenu().getItem(0).getSubMenu().getItem(0).setChecked(true);
                         }else{
                             levelUser.setText( "Kasir" );
                             navigationView.inflateMenu( R.menu.activity_main_drawer_kasir );
                             navigationView.setNavigationItemSelectedListener( MainActivity.this );
-                            navigationView.getMenu().getItem(0).setChecked(true);
+                            navigationView.getMenu().getItem(0).getSubMenu().getItem(0).setChecked(true);
                         }
                         urlGambar = baseUrl+String.valueOf( userprofile.getString( "foto" )  );
                         Glide.with(MainActivity.this)
@@ -189,5 +188,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         RequestQueue requestQueue = Volley.newRequestQueue( MainActivity.this );
         requestQueue.add( stringRequest );
     }
+
+
 
 }

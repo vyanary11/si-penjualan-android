@@ -5,6 +5,7 @@
 
     <item android:title="Main Navigation">
         <menu>
+            <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_dashboard"
                 android:icon="@drawable/ic_dashboard_black_24dp"
@@ -17,11 +18,13 @@
                 android:id="@+id/nav_transaksi_pembelian"
                 android:icon="@drawable/ic_dashboard_black_24dp"
                 android:title="Transaksi Pembelian" />
+            </group>
         </menu>
     </item>
 
     <item android:title="Laporan">
         <menu>
+            <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_laporan_harian"
                 android:icon="@drawable/ic_menu_share"
@@ -38,11 +41,13 @@
                 android:id="@+id/nav_laporan_labarugi"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Laporan Laba/Rugi" />
+            </group>
         </menu>
     </item>
 
     <item android:title="Data Master">
         <menu>
+            <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_barang"
                 android:icon="@drawable/ic_menu_share"
@@ -55,11 +60,13 @@
                 android:id="@+id/nav_user"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Data User" />
+            </group>
         </menu>
     </item>
 
     <item android:title="Pengaturan">
         <menu>
+            <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_menu_share"
@@ -68,6 +75,7 @@
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Logout" />
+            </group>
         </menu>
     </item>
 </menu>
