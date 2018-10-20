@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,7 +44,7 @@ public class DashboardFragment extends Fragment {
         kliktransaksijual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigationView.getMenu().getItem(1).setChecked(true);
+                navigationView.getMenu().getItem( 0 ).getSubMenu().getItem(1).setChecked(true);
                 TransaksiJualFragment transaksiJualFragment = new TransaksiJualFragment();
 
                 getFragmentManager().beginTransaction()
@@ -70,4 +71,5 @@ public class DashboardFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
     }
+
 }

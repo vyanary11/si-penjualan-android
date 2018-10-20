@@ -19,7 +19,7 @@ public class SessionManager {
     private static final String PREF_NAME = "LOGIN";
     private static final String LOGIN = "IS_LOGIN";
     public static final String KD_USER = "KD_USER";
-    public static final String TOKEN = "TOKEN";
+    public static final String LEVEL_USER = "LEVEL_USER";
 
 
     public SessionManager(Context context) {
@@ -29,10 +29,10 @@ public class SessionManager {
 
     }
 
-    public void createSession(String kd_user, String token){
+    public void createSession(String kd_user, String level_user){
         editor.putBoolean(LOGIN, true);
-        editor.putString( "KD_USER", kd_user );
-        editor.putString( "TOKEN", token);
+        editor.putString( KD_USER, kd_user );
+        editor.putString( String.valueOf( LEVEL_USER ), level_user);
         editor.apply();
     }
 
@@ -51,7 +51,7 @@ public class SessionManager {
     public HashMap<String, String> getUserDetail(){
         HashMap<String, String> user = new HashMap<>(  );
         user.put( KD_USER, sharedPreferences.getString( KD_USER, null ) );
-        user.put( TOKEN, sharedPreferences.getString( TOKEN, null ) );
+        user.put( LEVEL_USER, sharedPreferences.getString( LEVEL_USER, null ) );
         return user;
     }
 

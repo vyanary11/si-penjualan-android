@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
+    <group android:checkableBehavior="single">
+
     <item android:title="Main Navigation">
         <menu>
+            <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_dashboard"
                 android:icon="@drawable/ic_dashboard_black_24dp"
@@ -13,11 +16,13 @@
                 android:id="@+id/nav_transaksi_penjualan"
                 android:icon="@drawable/ic_dashboard_black_24dp"
                 android:title="Transaksi Penjualan" />
+            </group>
         </menu>
     </item>
 
     <item android:title="Laporan">
         <menu>
+            <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_laporan_harian"
                 android:icon="@drawable/ic_menu_share"
@@ -30,11 +35,13 @@
                 android:id="@+id/nav_laporan_tahunan"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Laporan Tahunan" />
+            </group>
         </menu>
     </item>
 
     <item android:title="Pengaturan">
         <menu>
+            <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_menu_share"
@@ -43,6 +50,8 @@
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Logout" />
+            </group>
         </menu>
     </item>
+    </group>
 </menu>

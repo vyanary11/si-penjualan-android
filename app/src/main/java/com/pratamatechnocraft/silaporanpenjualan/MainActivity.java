@@ -70,12 +70,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = (NavigationView) findViewById( R.id.nav_view );
 
+
         View headerView = navigationView.getHeaderView(0);
         namaUser = headerView.findViewById( R.id.textViewNamaUser );
         fotoUser =  headerView.findViewById( R.id.imageViewFotoUser );
         levelUser = headerView.findViewById( R.id.textViewLevelUser );
 
         loadProfile(user.get( sessionManager.KD_USER ));
+
+        if (Integer.parseInt( user.get( sessionManager.LEVEL_USER ) )==0){
+            levelUser.setText( "Owner" );
+            navigationView.inflateMenu( R.menu.activity_main_drawer );
+        }else{
+            levelUser.setText( "Kasir" );
+            navigationView.inflateMenu( R.menu.activity_main_drawer_kasir );
+        }
+
+        navigationView.setNavigationItemSelectedListener( this );
+        navigationView.getMenu().getItem( 0 ).getSubMenu().getItem(0).setChecked(true);
+
 
         namaUser.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -100,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         displaySelectedScreen( item.getItemId() );
-        Toast.makeText(MainActivity.this, item.getItemId(), Toast.LENGTH_SHORT).show();
         return true;
     }
 
@@ -109,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_dashboard) {
             fragment = new DashboardFragment();
-        } else if (itemId == R.id.nav_transaksi_penjualan) {
+        } else if (id == R.id.nav_transaksi_penjualan) {
 
         } else if (id == R.id.nav_transaksi_pembelian) {
 
@@ -154,17 +166,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     try {
                         final JSONObject userprofile = new JSONObject(response);
                         namaUser.setText( userprofile.getString( "nama_depan" )+" "+userprofile.getString( "nama_belakang" ) );
-                        if (userprofile.getInt( "level_user" )==0){
-                            levelUser.setText( "Owner" );
-                            navigationView.inflateMenu( R.menu.activity_main_drawer );
-                            navigationView.setNavigationItemSelectedListener( MainActivity.this );
-                            navigationView.getMenu().getItem(0).getSubMenu().getItem(0).setChecked(true);
-                        }else{
-                            levelUser.setText( "Kasir" );
-                            navigationView.inflateMenu( R.menu.activity_main_drawer_kasir );
-                            navigationView.setNavigationItemSelectedListener( MainActivity.this );
-                            navigationView.getMenu().getItem(0).getSubMenu().getItem(0).setChecked(true);
-                        }
                         urlGambar = baseUrl+String.valueOf( userprofile.getString( "foto" )  );
                         Glide.with(MainActivity.this)
                                 // LOAD URL DARI INTERNET
