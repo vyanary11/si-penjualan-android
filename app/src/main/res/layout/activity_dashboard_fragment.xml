@@ -28,7 +28,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="33dp"
-                android:text="SI Laporan Penjualan"
+                android:text="Aplikasi Penjualan"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:textSize="36sp"
                 android:textStyle="bold" />
