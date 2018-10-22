@@ -38,16 +38,15 @@ import com.pratamatechnocraft.silaporanpenjualan.ZoomFotoProfile;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileFragment extends Fragment {
     SessionManager sessionManager;
-    private TextView txtNamaUserProfile,txtLevelUserProfile,textnama,textnotelp,textalamat;
+    private TextView txtNamaUserProfile,txtNamaDepan,txtNamaBelakang,txtLevelUserProfile,textnama,textnotelp,textalamat;
     private Button btnEdit,btnUbahPass,buttonBatalEdit,buttonSimpanEdit,buttonBatalUbahPass,buttonSimpanUbahPass;
-    private EditText inputNama, inputNoTelp,inputAlamat,inputPasswordLama,inputPasswordBaru,inputPasswordBaruLagi;
-    private TextInputLayout inputLayoutNama, inputLayoutNoTelp,inputLayoutAlamat, inputLayoutPasswordLama,inputLayoutPasswordBaru,inputLayoutPasswordBaruLagi;
+    private EditText inputNamaDepan, inputNamaBelakang, inputNoTelp,inputAlamat,inputPasswordLama,inputPasswordBaru,inputPasswordBaruLagi;
+    private TextInputLayout inputLayoutNamaDepan,inputLayoutNamaBelakang, inputLayoutNoTelp,inputLayoutAlamat, inputLayoutPasswordLama,inputLayoutPasswordBaru,inputLayoutPasswordBaruLagi;
     private ProgressDialog progress;
     public static ImageView profile_image;
     SwipeRefreshLayout refreshProfile;
@@ -68,6 +67,8 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate( R.layout.activity_profile_fragment, container, false);
         txtNamaUserProfile = view.findViewById( R.id.txtNamaUserProfile );
+        txtNamaDepan = view.findViewById( R.id.txtNamaDepan );
+        txtNamaBelakang = view.findViewById( R.id.txtNamaBelakang );
         txtLevelUserProfile = view.findViewById( R.id.txtLevelUserProfile );
         textnama = view.findViewById( R.id.textnama );
         textalamat = view.findViewById( R.id.textalamat );
@@ -123,34 +124,38 @@ public class ProfileFragment extends Fragment {
         buttonSimpanEdit = dialogView.findViewById( R.id.buttonSimpanEdit );
         buttonBatalEdit = dialogView.findViewById( R.id.buttonBatalEdit );
 
-        inputLayoutNama = (TextInputLayout) dialogView.findViewById(R.id.inputLayoutNama);
+        inputLayoutNamaDepan = (TextInputLayout) dialogView.findViewById(R.id.inputLayoutNamaDepan);
+        inputLayoutNamaBelakang = (TextInputLayout) dialogView.findViewById(R.id.inputLayoutNamaBelakang);
         inputLayoutNoTelp = (TextInputLayout) dialogView.findViewById(R.id.inputLayoutNoTelp);
         inputLayoutAlamat = (TextInputLayout) dialogView.findViewById(R.id.inputLayoutAlamat);
-        inputNama = (EditText) dialogView.findViewById(R.id.inputNama);
+        inputNamaDepan = (EditText) dialogView.findViewById(R.id.inputNamaDepan);
+        inputNamaBelakang = (EditText) dialogView.findViewById(R.id.inputNamaBelakang);
         inputNoTelp = (EditText) dialogView.findViewById(R.id.inputNoTelp);
         inputAlamat = (EditText) dialogView.findViewById(R.id.inputAlamat);
 
-        inputNama.addTextChangedListener( new MyTextWatcher( inputNama ) );
+        inputNamaDepan.addTextChangedListener( new MyTextWatcher( inputNamaDepan ) );
+        inputNamaBelakang.addTextChangedListener( new MyTextWatcher( inputNamaBelakang ) );
         inputNoTelp.addTextChangedListener( new MyTextWatcher( inputNoTelp ) );
         inputAlamat.addTextChangedListener( new MyTextWatcher( inputAlamat ) );
 
-        inputNama.setText( textnama.getText().toString().trim() );
+        inputNamaDepan.setText( txtNamaDepan.getText().toString().trim() );
+        inputNamaBelakang.setText( txtNamaBelakang.getText().toString().trim() );
         inputNoTelp.setText( textnotelp.getText().toString().trim() );
         inputAlamat.setText( textalamat.getText().toString().trim() );
 
         buttonSimpanEdit.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!validateNama() ||  !validateNoTelp() || !validateAlamat()) {
+                if (!validateNamaDepan() || !validateNamaBelakang() || !validateNoTelp() || !validateAlamat()) {
                     return;
                 }else{
                     progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
                     progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     progress.setIndeterminate(false);
                     progress.setCanceledOnTouchOutside(false);
-                    MainActivity.namaUser.setText( inputNama.getText().toString() );
                     prosesEditProfile(
-                            inputNama.getText().toString(),
+                            inputNamaDepan.getText().toString(),
+                            inputNamaBelakang.getText().toString(),
                             inputNoTelp.getText().toString(),
                             inputAlamat.getText().toString()
                     );
@@ -266,7 +271,7 @@ public class ProfileFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
-    private void prosesEditProfile(final String nama, final String noTelp, final String alamat){
+    private void prosesEditProfile(final String namaDepan, final String namaBelakang, final String noTelp, final String alamat){
         progress.show();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, baseUrl+API_URL_EDITDANUBAH, new Response.Listener<String>() {
             @Override
@@ -302,8 +307,9 @@ public class ProfileFragment extends Fragment {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("kd_user", user.get( sessionManager.KD_USER ));
-                params.put("nama", nama);
-                params.put("no_hp", noTelp);
+                params.put("nama_depan", namaDepan);
+                params.put("no_telp", noTelp);
+                params.put("nama_belakang", namaBelakang);
                 params.put("alamat", alamat);
                 params.put("api", "editprofile");
                 return params;
@@ -322,9 +328,11 @@ public class ProfileFragment extends Fragment {
                 public void onResponse(String response) {
                     try {
                         final JSONObject userprofile = new JSONObject(response);
-                        txtNamaUserProfile.setText( userprofile.getString( "nama_depan" ) );
-                        textnama.setText( userprofile.getString("nama_depan" ) );
-                        textnotelp.setText( userprofile.getString( "no_hp" ) );
+                        txtNamaUserProfile.setText(  userprofile.getString( "nama_depan" )+" "+userprofile.getString( "nama_depan" ));
+                        textnama.setText( userprofile.getString( "nama_depan" )+" "+userprofile.getString( "nama_depan" ) );
+                        txtNamaDepan.setText( userprofile.getString( "nama_depan" ));
+                        txtNamaBelakang.setText( userprofile.getString( "nama_belakang" ));
+                        textnotelp.setText( userprofile.getString( "no_telp" ) );
                         textalamat.setText(  userprofile.getString( "alamat" )  );
                         urlGambarProfile = baseUrl+String.valueOf( userprofile.getString( "foto" )  );
                         profile_image.setOnClickListener( new View.OnClickListener() {
@@ -365,7 +373,7 @@ public class ProfileFragment extends Fragment {
             new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getContext(), "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
                     refreshProfile.setRefreshing( false );
                 }
             }
@@ -382,13 +390,25 @@ public class ProfileFragment extends Fragment {
         textalamat.setText( "" );
     }
 
-    private boolean validateNama() {
-        if (inputNama.getText().toString().trim().isEmpty()) {
-            inputLayoutNama.setError("Masukkan Nama Lengkap");
-            requestFocus(inputNama);
+    private boolean validateNamaDepan() {
+        if (inputNamaDepan.getText().toString().trim().isEmpty()) {
+            inputLayoutNamaDepan.setError("Masukkan Nama Depan");
+            requestFocus( inputNamaDepan );
             return false;
         } else {
-            inputLayoutNama.setErrorEnabled(false);
+            inputLayoutNamaDepan.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private boolean validateNamaBelakang() {
+        if (inputNamaBelakang.getText().toString().trim().isEmpty()) {
+            inputLayoutNamaBelakang.setError("Masukkan Nama Belakang");
+            requestFocus( inputNamaBelakang );
+            return false;
+        } else {
+            inputLayoutNamaBelakang.setErrorEnabled(false);
         }
 
         return true;
@@ -477,8 +497,11 @@ public class ProfileFragment extends Fragment {
 
         public void afterTextChanged(Editable editable) {
             switch (view.getId()) {
-                case R.id.inputNama:
-                    validateNama();
+                case R.id.inputNamaDepan:
+                    validateNamaDepan();
+                    break;
+                case R.id.inputNamaBelakang:
+                    validateNamaBelakang();
                     break;
                 case R.id.inputNoTelp:
                     validateNoTelp();

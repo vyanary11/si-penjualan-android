@@ -1,7 +1,10 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +22,9 @@ public class KeranjangActivity extends AppCompatActivity {
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_keranjang);
         setSupportActionBar(ToolBarAtas2);
         ToolBarAtas2.setLogoDescription("Keranjang");
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.colorIcons), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         btnSimpanTransaksi = findViewById( R.id.btnSimpanTransaksi );
 

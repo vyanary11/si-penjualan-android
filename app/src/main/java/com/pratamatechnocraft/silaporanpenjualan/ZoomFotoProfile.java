@@ -10,7 +10,6 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -111,8 +110,8 @@ public class ZoomFotoProfile extends AppCompatActivity {
 
                 bottomSheetDialog.show();
                 return true;
-            case R.id.homeAsUp:
-                onBackPressed();
+            case android.R.id.home:
+                super.onBackPressed();
                 return true;
         }
         return false;
@@ -143,7 +142,7 @@ public class ZoomFotoProfile extends AppCompatActivity {
                 MainActivity.fotoUser.setImageBitmap( bitmap );
                 ProfileFragment.profile_image.setImageBitmap( bitmap );
 
-                uploadFoto(i.getStringExtra( "nipUser" ), getStringImage( bitmap ));
+                uploadFoto(i.getStringExtra( "kdUser" ), getStringImage( bitmap ));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -154,7 +153,7 @@ public class ZoomFotoProfile extends AppCompatActivity {
             MainActivity.fotoUser.setImageBitmap( mImageBitmap );
             ProfileFragment.profile_image.setImageBitmap( mImageBitmap );
 
-            uploadFoto(i.getStringExtra( "nipUser" ), getStringImage( mImageBitmap ));
+            uploadFoto(i.getStringExtra( "kdUser" ), getStringImage( mImageBitmap ));
         }
     }
 
@@ -167,7 +166,7 @@ public class ZoomFotoProfile extends AppCompatActivity {
         return encodedImage;
     }
 
-    private void uploadFoto(final String nip, final String picture) {
+    private void uploadFoto(final String kdUser, final String picture) {
         final ProgressDialog progressDialog = new ProgressDialog( this );
         progressDialog.setMessage( "Uploading......" );
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -204,7 +203,7 @@ public class ZoomFotoProfile extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("id", nip);
+                params.put("kd_user", kdUser);
                 params.put("foto", picture);
                 params.put("api", "ubahfoto");
                 return params;
