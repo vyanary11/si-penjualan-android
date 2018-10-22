@@ -24,6 +24,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DashboardFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataBarangFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataKategoriFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataUserFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.ProfileFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.TransaksiFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 
@@ -87,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         navigationView.setNavigationItemSelectedListener( this );
-        navigationView.getMenu().getItem( 0 ).getSubMenu().getItem(0).setChecked(true);
+        navigationView.setCheckedItem( R.id.nav_dashboard );
 
 
         namaUser.setOnClickListener( new View.OnClickListener() {
@@ -122,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_dashboard) {
             fragment = new DashboardFragment();
         } else if (id == R.id.nav_transaksi_penjualan) {
-
+            fragment = new TransaksiFragment();
         } else if (id == R.id.nav_transaksi_pembelian) {
-
+            fragment = new TransaksiFragment();
         } else if (id == R.id.nav_laporan_harian) {
 
         } else if (id == R.id.nav_laporan_bulanan) {
@@ -134,13 +139,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }else if (id == R.id.nav_laporan_labarugi) {
 
         }else if (id == R.id.nav_barang) {
-
+            fragment = new DataBarangFragment();
         }else if (id == R.id.nav_kategori) {
-
+            fragment = new DataKategoriFragment();
         }else if (id == R.id.nav_user) {
-
+            fragment = new DataUserFragment();
         }else if (id == R.id.nav_profile) {
-
+            fragment = new ProfileFragment();
         }else if (id == R.id.nav_logout) {
             sessionManager.logout();
         }

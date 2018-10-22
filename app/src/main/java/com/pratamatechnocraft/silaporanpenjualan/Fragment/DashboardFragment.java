@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -44,16 +43,86 @@ public class DashboardFragment extends Fragment {
         kliktransaksijual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigationView.getMenu().getItem( 0 ).getSubMenu().getItem(1).setChecked(true);
-                TransaksiJualFragment transaksiJualFragment = new TransaksiJualFragment();
+                navigationView.setCheckedItem( R.id.nav_transaksi_penjualan );
+                TransaksiFragment transaksiFragment = new TransaksiFragment();
 
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.screen_area, transaksiJualFragment)
+                        .replace(R.id.screen_area, transaksiFragment )
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
             }
         });
+
+        kliktransaksibeli.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigationView.setCheckedItem( R.id.nav_transaksi_pembelian );
+                TransaksiFragment transaksiFragment = new TransaksiFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, transaksiFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        });
+
+        klikbarang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigationView.setCheckedItem( R.id.nav_barang );
+                DataBarangFragment dataBarangFragment = new DataBarangFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, dataBarangFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        });
+
+        klikuser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigationView.setCheckedItem( R.id.nav_user );
+                DataUserFragment dataUserFragment = new DataUserFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, dataUserFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        });
+
+        klikkategori.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigationView.setCheckedItem( R.id.nav_kategori );
+                DataKategoriFragment dataKategoriFragment = new DataKategoriFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, dataKategoriFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        });
+
+        klikprofile.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigationView.setCheckedItem( R.id.nav_profile );
+                ProfileFragment profileFragment = new ProfileFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, profileFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        } );
 
         return view;
     }
