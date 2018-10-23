@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.DataBarangFragment">
+    tools:context=".Fragment.DataBiayaFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/refreshDataBarang"
+        android:id="@+id/refreshDataBiaya"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycleViewDataBarang"
+            android:id="@+id/recycleViewDataBiaya"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white"
@@ -23,7 +23,7 @@
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
-        android:id="@+id/progressBarDataBarang"
+        android:id="@+id/progressBarDataBiaya"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         android:visibility="visible" />
 
     <LinearLayout
-        android:id="@+id/koneksiDataBarang"
+        android:id="@+id/koneksiDataBiaya"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -59,7 +59,7 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/cobaLagiBarang"
+            android:id="@+id/cobaLagiBiaya"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -68,7 +68,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/noDataBarang"
+        android:id="@+id/noDataBiaya"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -95,7 +95,7 @@
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/fabTambahDataBiaya"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

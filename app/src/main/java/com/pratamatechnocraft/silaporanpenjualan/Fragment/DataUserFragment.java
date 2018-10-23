@@ -52,7 +52,7 @@ public class DataUserFragment extends Fragment {
         noDataUser = view.findViewById( R.id.noDataUser );
         refreshDataUser = (SwipeRefreshLayout) view.findViewById(R.id.refreshDataUser);
         fabTambahDataUser = view.findViewById( R.id.fabTambahDataUser );
-        cobaLagiDataUser = view.findViewById( R.id.cobaLagiMasuk );
+        cobaLagiDataUser = view.findViewById( R.id.cobaLagiUser );
         koneksiDataUser = view.findViewById( R.id.koneksiDataUser );
 
         sessionManager = new SessionManager( getContext() );

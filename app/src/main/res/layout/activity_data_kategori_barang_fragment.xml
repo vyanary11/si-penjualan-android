@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.DataKategoriFragment">
+    tools:context=".Fragment.DataKategoriBarangFragment">
 
     <LinearLayout
         android:layout_marginVertical="@dimen/activity_vertical_margin"
@@ -28,7 +28,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/editTextNamaKategori"
+                android:id="@+id/editTextNamaKategoriBarang"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -37,7 +37,7 @@
                 android:inputType="text" />
 
             <ImageButton
-                android:id="@+id/imageButtonTambahKategori"
+                android:id="@+id/imageButtonTambahKategoriBarang"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -57,12 +57,12 @@
             android:layout_height="match_parent">
 
             <android.support.v4.widget.SwipeRefreshLayout
-                android:id="@+id/refreshDataKategori"
+                android:id="@+id/refreshDataKategoriBarang"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycleViewDataKategori"
+                    android:id="@+id/recycleViewDataKategoriBarang"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@android:color/white"
@@ -73,7 +73,7 @@
             </android.support.v4.widget.SwipeRefreshLayout>
 
             <LinearLayout
-                android:id="@+id/koneksiDataKategori"
+                android:id="@+id/koneksiDataKategoriBarang"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -100,7 +100,7 @@
                     android:textStyle="bold" />
 
                 <Button
-                    android:id="@+id/cobaLagiMasuk"
+                    android:id="@+id/cobaLagiKategoriBarang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -109,7 +109,7 @@
             </LinearLayout>
 
             <ProgressBar
-                android:id="@+id/progressBarDataKategori"
+                android:id="@+id/progressBarDataKategoriBarang"
                 style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                 android:visibility="visible" />
 
             <LinearLayout
-                android:id="@+id/noDataKategori"
+                android:id="@+id/noDataKategoriBarang"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -137,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:gravity="center"
-                    android:text="Surat Masuk Kosong"
+                    android:text="Kategori Barang Kosong"
                     android:textColor="@color/ColorPrimaryText"
                     android:textSize="24sp"
                     android:textStyle="bold" />

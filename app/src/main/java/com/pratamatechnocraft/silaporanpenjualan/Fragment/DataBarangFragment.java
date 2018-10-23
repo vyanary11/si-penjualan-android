@@ -61,7 +61,7 @@ public class DataBarangFragment extends Fragment {
         noDataBarang = view.findViewById( R.id.noDataBarang );
         refreshDataBarang = (SwipeRefreshLayout) view.findViewById(R.id.refreshDataBarang);
         floatingActionButton1 = view.findViewById( R.id.floatingActionButton );
-        cobaLagiDataBarang = view.findViewById( R.id.cobaLagiMasuk );
+        cobaLagiDataBarang = view.findViewById( R.id.cobaLagiBarang );
         koneksiDataBarang = view.findViewById( R.id.koneksiDataBarang );
 
         sessionManager = new SessionManager( getContext() );

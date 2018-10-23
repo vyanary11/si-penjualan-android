@@ -1,6 +1,5 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -23,9 +22,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.BiayaFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DashboardFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataBarangFragment;
-import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataKategoriFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataKategoriBarangFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataUserFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.ProfileFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.TransaksiFragment;
@@ -130,6 +130,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fragment = new TransaksiFragment();
         } else if (id == R.id.nav_transaksi_pembelian) {
             fragment = new TransaksiFragment();
+        } else if (id == R.id.nav_biaya) {
+            fragment = new BiayaFragment();
         } else if (id == R.id.nav_laporan_harian) {
 
         } else if (id == R.id.nav_laporan_bulanan) {
@@ -140,8 +142,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }else if (id == R.id.nav_barang) {
             fragment = new DataBarangFragment();
-        }else if (id == R.id.nav_kategori) {
-            fragment = new DataKategoriFragment();
+        }else if (id == R.id.nav_kategori_barang) {
+            fragment = new DataKategoriBarangFragment();
         }else if (id == R.id.nav_user) {
             fragment = new DataUserFragment();
         }else if (id == R.id.nav_profile) {
