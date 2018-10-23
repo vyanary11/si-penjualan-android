@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class DashboardFragment extends Fragment {
 
-    private CardView kliktransaksijual, kliktransaksibeli, klikbarang, klikkategori, klikuser, kliklapharian, kliklapbulanan, kliklaptahunan, kliklaplabarugi, klikprofile;
+    private CardView kliktransaksijual, kliktransaksibeli, klikbarang, klikkategori, klikuser, kliklapharian, kliklapbulanan, kliklaptahunan, kliklaplabarugi, klikbiaya;
     NavigationView navigationView;
     SessionManager sessionManager;
     @Nullable
@@ -34,7 +34,7 @@ public class DashboardFragment extends Fragment {
         kliklapbulanan = view.findViewById(R.id.cardhomelapbulanan);
         kliklaptahunan = view.findViewById(R.id.cardhomelaptahunan);
         kliklaplabarugi = view.findViewById(R.id.cardhomelaplabarugi);
-        klikprofile = view.findViewById(R.id.cardhomeprofile);
+        klikbiaya = view.findViewById(R.id.cardhomebiaya);
         navigationView = getActivity().findViewById( R.id.nav_view );
 
         sessionManager = new SessionManager( getContext() );
@@ -99,25 +99,25 @@ public class DashboardFragment extends Fragment {
         klikkategori.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigationView.setCheckedItem( R.id.nav_kategori );
-                DataKategoriFragment dataKategoriFragment = new DataKategoriFragment();
+                navigationView.setCheckedItem( R.id.nav_kategori_barang );
+                DataKategoriBarangFragment dataKategoriBarangFragment = new DataKategoriBarangFragment();
 
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.screen_area, dataKategoriFragment )
+                        .replace(R.id.screen_area, dataKategoriBarangFragment )
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
             }
         });
 
-        klikprofile.setOnClickListener( new View.OnClickListener() {
+        klikbiaya.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                navigationView.setCheckedItem( R.id.nav_profile );
-                ProfileFragment profileFragment = new ProfileFragment();
+                navigationView.setCheckedItem( R.id.nav_biaya );
+                BiayaFragment biayaFragment = new BiayaFragment();
 
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.screen_area, profileFragment )
+                        .replace(R.id.screen_area, biayaFragment )
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();

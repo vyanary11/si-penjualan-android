@@ -8,7 +8,7 @@
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardViewDataKategori"
+        android:id="@+id/cardViewDataKategoriBarang"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -35,18 +35,18 @@
                 android:padding="5dp">
 
                 <TextView
-                    android:id="@+id/txtNamaKategori"
+                    android:id="@+id/txtNamaKategoriBarang"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Nama User"
+                    android:text="Kategori Barang"
                     android:textAllCaps="true"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <ImageButton
-                    android:id="@+id/imgBtnDeleteKategori"
+                    android:id="@+id/imgBtnDeleteKategoriBarang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

@@ -25,6 +25,10 @@
                     android:checkable="true"
                     android:icon="@drawable/ic_dashboard_black_24dp"
                     android:title="Transaksi Pembelian" />
+                <item
+                    android:id="@+id/nav_biaya"
+                    android:icon="@drawable/ic_dashboard_black_24dp"
+                    android:title="Biaya" />
             </group>
         </menu>
     </item>
@@ -38,17 +42,17 @@
                     android:id="@+id/nav_laporan_harian"
                     android:checkable="true"
                     android:icon="@drawable/ic_menu_share"
-                    android:title="Laporan Harian" />
+                    android:title="Laporan Penjualan Harian" />
                 <item
                     android:id="@+id/nav_laporan_bulanan"
                     android:checkable="true"
                     android:icon="@drawable/ic_menu_share"
-                    android:title="Laporan Bulanan" />
+                    android:title="Laporan Penjualan Bulanan" />
                 <item
                     android:id="@+id/nav_laporan_tahunan"
                     android:checkable="true"
                     android:icon="@drawable/ic_menu_share"
-                    android:title="Laporan Tahunan" />
+                    android:title="Laporan Penjualan Tahunan" />
                 <item
                     android:id="@+id/nav_laporan_labarugi"
                     android:checkable="true"
@@ -69,10 +73,10 @@
                     android:icon="@drawable/ic_menu_share"
                     android:title="Data Barang" />
                 <item
-                    android:id="@+id/nav_kategori"
+                    android:id="@+id/nav_kategori_barang"
                     android:checkable="true"
                     android:icon="@drawable/ic_menu_share"
-                    android:title="Data Kategori" />
+                    android:title="Data Kategori Barang" />
                 <item
                     android:id="@+id/nav_user"
                     android:checkable="true"

@@ -1,9 +1,9 @@
 package com.pratamatechnocraft.silaporanpenjualan.Model;
 
-public class ListItemDataKategori {
+public class ListItemDataKategoriBarang {
     private String kdKategori, namaKategori;
 
-    public ListItemDataKategori(String kdKategori, String namaKategori) {
+    public ListItemDataKategoriBarang(String kdKategori, String namaKategori) {
         this.kdKategori = kdKategori;
         this.namaKategori = namaKategori;
     }

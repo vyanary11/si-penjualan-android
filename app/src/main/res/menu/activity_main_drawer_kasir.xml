@@ -26,15 +26,15 @@
             <item
                 android:id="@+id/nav_laporan_harian"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Laporan Harian" />
+                android:title="Laporan Penjualan Harian" />
             <item
                 android:id="@+id/nav_laporan_bulanan"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Laporan Bulanan" />
+                android:title="Laporan Penjualan Bulanan" />
             <item
                 android:id="@+id/nav_laporan_tahunan"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Laporan Tahunan" />
+                android:title="Laporan Penjualan Tahunan" />
             </group>
         </menu>
     </item>
