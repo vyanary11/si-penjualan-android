@@ -26,9 +26,9 @@ import android.view.ViewGroup;
 
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewBarangTransaksiPembelian;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewBarangTransaksiPenjualan;
+import com.pratamatechnocraft.silaporanpenjualan.CheckoutActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Drawable.BadgeDrawable;
 
-import com.pratamatechnocraft.silaporanpenjualan.KeranjangActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemBarangTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
@@ -121,10 +121,10 @@ public class TransaksiFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate( R.menu.menu_keranjang, menu );
-        MenuItem itemCart = menu.findItem(R.id.keranjang);
+        inflater.inflate( R.menu.icon_menu_checkout, menu );
+        MenuItem itemCart = menu.findItem(R.id.icon_checkout );
         LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-        setBadgeCount(getContext(), icon, "9");;
+        setBadgeCount(getContext(), icon, "9");
     }
 
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -134,9 +134,9 @@ public class TransaksiFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.keranjang:
+            case R.id.icon_checkout:
                 // do s.th.
-                Intent i = new Intent(getContext(), KeranjangActivity.class );
+                Intent i = new Intent(getContext(), CheckoutActivity.class );
                 startActivity(i);
                 return true;
             default:

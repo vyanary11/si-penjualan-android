@@ -32,8 +32,8 @@
                 android:value=".LoginActivity" />
         </activity>
         <activity
-            android:name=".KeranjangActivity"
-            android:label="Keranjang"
+            android:name=".CheckoutActivity"
+            android:label="Checkout"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
