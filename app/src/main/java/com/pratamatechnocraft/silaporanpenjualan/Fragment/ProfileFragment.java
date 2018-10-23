@@ -328,10 +328,15 @@ public class ProfileFragment extends Fragment {
                 public void onResponse(String response) {
                     try {
                         final JSONObject userprofile = new JSONObject(response);
-                        txtNamaUserProfile.setText(  userprofile.getString( "nama_depan" )+" "+userprofile.getString( "nama_depan" ));
-                        textnama.setText( userprofile.getString( "nama_depan" )+" "+userprofile.getString( "nama_depan" ) );
+                        txtNamaUserProfile.setText(  userprofile.getString( "nama_depan" )+" "+userprofile.getString( "nama_belakang" ));
+                        textnama.setText( userprofile.getString( "nama_depan" )+" "+userprofile.getString( "nama_belakang" ) );
                         txtNamaDepan.setText( userprofile.getString( "nama_depan" ));
                         txtNamaBelakang.setText( userprofile.getString( "nama_belakang" ));
+                        if(Integer.parseInt( userprofile.getString( "level_user" ) )==0){
+                            txtLevelUserProfile.setText("Owner");
+                        }else if(Integer.parseInt( userprofile.getString( "level_user" ) )==1){
+                            txtLevelUserProfile.setText("Kasir");
+                        }
                         textnotelp.setText( userprofile.getString( "no_telp" ) );
                         textalamat.setText(  userprofile.getString( "alamat" )  );
                         urlGambarProfile = baseUrl+String.valueOf( userprofile.getString( "foto" )  );
