@@ -25,15 +25,15 @@
             <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_laporan_harian"
-                android:icon="@drawable/laporanharian"
+                android:icon="@drawable/laporanhariann"
                 android:title="Laporan Penjualan Harian" />
             <item
                 android:id="@+id/nav_laporan_bulanan"
-                android:icon="@drawable/laporanharian"
+                android:icon="@drawable/laporanbulanann"
                 android:title="Laporan Penjualan Bulanan" />
             <item
                 android:id="@+id/nav_laporan_tahunan"
-                android:icon="@drawable/laporanharian"
+                android:icon="@drawable/laporantahunann"
                 android:title="Laporan Penjualan Tahunan" />
             </group>
         </menu>
@@ -44,11 +44,11 @@
             <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_profile"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/userr"
                 android:title="Profile" />
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/logout"
                 android:title="Logout" />
             </group>
         </menu>

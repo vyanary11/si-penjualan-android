@@ -13,7 +13,7 @@
                 <item
                     android:id="@+id/nav_dashboard"
                     android:checkable="true"
-                    android:icon="@drawable/ic_dashboard_black_24dp"
+                    android:icon="@drawable/dashboardd"
                     android:title="Dashboard" />
                 <item
                     android:id="@+id/nav_transaksi_penjualan"
@@ -23,11 +23,11 @@
                 <item
                     android:id="@+id/nav_transaksi_pembelian"
                     android:checkable="true"
-                    android:icon="@drawable/transaksipembelian"
+                    android:icon="@drawable/transaksipembeliann"
                     android:title="Transaksi Pembelian" />
                 <item
                     android:id="@+id/nav_biaya"
-                    android:icon="@drawable/ic_dashboard_black_24dp"
+                    android:icon="@drawable/biaya"
                     android:title="Biaya" />
             </group>
         </menu>
@@ -41,22 +41,22 @@
                 <item
                     android:id="@+id/nav_laporan_harian"
                     android:checkable="true"
-                    android:icon="@drawable/laporanharian"
+                    android:icon="@drawable/laporanhariann"
                     android:title="Laporan Penjualan Harian" />
                 <item
                     android:id="@+id/nav_laporan_bulanan"
                     android:checkable="true"
-                    android:icon="@drawable/laporanharian"
+                    android:icon="@drawable/laporanbulanann"
                     android:title="Laporan Penjualan Bulanan" />
                 <item
                     android:id="@+id/nav_laporan_tahunan"
                     android:checkable="true"
-                    android:icon="@drawable/laporanharian"
+                    android:icon="@drawable/laporantahunann"
                     android:title="Laporan Penjualan Tahunan" />
                 <item
                     android:id="@+id/nav_laporan_labarugi"
                     android:checkable="true"
-                    android:icon="@drawable/ic_menu_share"
+                    android:icon="@drawable/laporanlabarugii"
                     android:title="Laporan Laba/Rugi" />
             </group>
         </menu>
@@ -70,7 +70,7 @@
                 <item
                     android:id="@+id/nav_barang"
                     android:checkable="true"
-                    android:icon="@drawable/databarang"
+                    android:icon="@drawable/databarangg"
                     android:title="Data Barang" />
                 <item
                     android:id="@+id/nav_kategori_barang"
@@ -94,12 +94,12 @@
                 <item
                     android:id="@+id/nav_profile"
                     android:checkable="true"
-                    android:icon="@drawable/ic_menu_share"
+                    android:icon="@drawable/userr"
                     android:title="Profile" />
                 <item
                     android:id="@+id/nav_logout"
                     android:checkable="true"
-                    android:icon="@drawable/ic_menu_share"
+                    android:icon="@drawable/logout"
                     android:title="Logout" />
             </group>
         </menu>
