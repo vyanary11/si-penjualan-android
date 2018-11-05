@@ -44,10 +44,10 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 navigationView.setCheckedItem( R.id.nav_transaksi_penjualan );
-                TransaksiFragment transaksiFragment = new TransaksiFragment();
+                TabLayoutFragment tabLayoutFragment = new TabLayoutFragment(0);
 
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.screen_area, transaksiFragment )
+                        .replace(R.id.screen_area, tabLayoutFragment )
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
@@ -58,10 +58,10 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 navigationView.setCheckedItem( R.id.nav_transaksi_pembelian );
-                TransaksiFragment transaksiFragment = new TransaksiFragment();
+                TabLayoutFragment tabLayoutFragment = new TabLayoutFragment(1);
 
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.screen_area, transaksiFragment )
+                        .replace(R.id.screen_area, tabLayoutFragment )
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
@@ -132,7 +132,7 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
-        getActivity().setTitle("Dashboard");
+        getActivity().setTitle(R.string.app_name);
 
     }
 

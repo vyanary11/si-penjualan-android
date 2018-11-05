@@ -1,36 +1,27 @@
 package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewBarangTransaksiPembelian;
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewBarangTransaksiPenjualan;
-import com.pratamatechnocraft.silaporanpenjualan.CheckoutActivity;
-import com.pratamatechnocraft.silaporanpenjualan.Drawable.BadgeDrawable;
-
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataPiutang;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPembelian;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPenjualan;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataUtang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
-import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemBarangTransaksi;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 
@@ -38,168 +29,180 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class TransaksiFragment extends Fragment {
-    private RecyclerView recycleViewBarangTransaksi;
-    private AdapterRecycleViewBarangTransaksiPenjualan adapterRecycleViewBarangTransaksiPenjualan;
-    private AdapterRecycleViewBarangTransaksiPembelian adapterRecycleViewBarangTransaksiPembelian;
-    private ProgressDialog progress;
 
-    SwipeRefreshLayout refreshMendisposisikan;
+@SuppressLint("ValidFragment")
+public class TransaksiFragment extends Fragment{
 
-    private List<ListItemBarangTransaksi> listItemBarangTransaksis;
+    Integer menuTab,jenisTransaksi;
+    private RecyclerView recyclerViewDataTransaksi;
+    private RecyclerView.Adapter adapterDataTransaksi;
+    LinearLayout noDataTransaksi, koneksiDataTransaksi;
+    SwipeRefreshLayout refreshDataTransaksi;
+    ProgressBar progressBarDataTransaksi;
+    Button cobaLagiDataTransaksi;
+    SessionManager sessionManager;
+    NavigationView navigationView;
+
+    private List<ListItemTransaksi> listItemTransaksis;
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
+    private static final String API_URL = "api/surat_masuk?api=suratmasukall";
 
-    NavigationView navigationView;
-    SessionManager sessionManager;
+    public TransaksiFragment(Integer menuTab, Integer jenisTransaksi) {
+        this.menuTab = menuTab;
+        this.jenisTransaksi = jenisTransaksi;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate( R.layout.activity_transaksi_fragment, container, false);
         navigationView = getActivity().findViewById( R.id.nav_view );
+        noDataTransaksi = view.findViewById( R.id.noDataTransaksi );
+        refreshDataTransaksi = (SwipeRefreshLayout) view.findViewById(R.id.refreshDataTransaksi);
+        cobaLagiDataTransaksi = view.findViewById( R.id.cobaLagiTransaksi );
+        koneksiDataTransaksi = view.findViewById( R.id.koneksiDataTransaksi );
 
         sessionManager = new SessionManager( getContext() );
-        HashMap<String, String> user = sessionManager.getUserDetail();
+        HashMap<String, String> transaksi = sessionManager.getUserDetail();
 
-        recycleViewBarangTransaksi = (RecyclerView) view.findViewById(R.id.recycleViewBarangTransaksi);
-        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 2);
-        recycleViewBarangTransaksi.setLayoutManager(mLayoutManager);
-        recycleViewBarangTransaksi.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(0), true));
-        recycleViewBarangTransaksi.setItemAnimator(new DefaultItemAnimator());
-        recycleViewBarangTransaksi.setHasFixedSize(true);
+        recyclerViewDataTransaksi = (RecyclerView) view.findViewById(R.id.recycleViewDataTransaksi);
+        recyclerViewDataTransaksi.setHasFixedSize(true);
+        recyclerViewDataTransaksi.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        listItemBarangTransaksis = new ArrayList<>();
-        if (navigationView.getMenu().findItem( R.id.nav_transaksi_penjualan ).isChecked()){
-            adapterRecycleViewBarangTransaksiPenjualan = new AdapterRecycleViewBarangTransaksiPenjualan( listItemBarangTransaksis, getContext());
+        listItemTransaksis = new ArrayList<>();
+        if (jenisTransaksi==0){
+            if (menuTab==0){
+                adapterDataTransaksi = new AdapterRecycleViewDataTransaksiPenjualan( listItemTransaksis, getContext());
+            }else {
+                adapterDataTransaksi = new AdapterRecycleViewDataPiutang( listItemTransaksis, getContext());
+            }
         }else{
-            adapterRecycleViewBarangTransaksiPembelian = new AdapterRecycleViewBarangTransaksiPembelian( listItemBarangTransaksis, getContext());
-        }
-
-
-        for (int i=0;i<6;i++){
-            ListItemBarangTransaksi listItemBarangTransaksi = new ListItemBarangTransaksi(
-                    "1",
-                    "Barang "+i,
-                    "1000",
-                    "mcackmskms"
-            );
-
-            listItemBarangTransaksis.add( listItemBarangTransaksi );
-            if (navigationView.getMenu().findItem( R.id.nav_transaksi_penjualan ).isChecked()) {
-                adapterRecycleViewBarangTransaksiPenjualan.notifyDataSetChanged();
-            }else{
-                adapterRecycleViewBarangTransaksiPembelian.notifyDataSetChanged();
+            if (menuTab==0){
+                adapterDataTransaksi = new AdapterRecycleViewDataTransaksiPembelian( listItemTransaksis, getContext());
+            }else {
+                adapterDataTransaksi = new AdapterRecycleViewDataUtang( listItemTransaksis, getContext());
             }
         }
 
-        if (navigationView.getMenu().findItem( R.id.nav_transaksi_penjualan ).isChecked()) {
-            recycleViewBarangTransaksi.setAdapter( adapterRecycleViewBarangTransaksiPenjualan );
-        }else {
-            recycleViewBarangTransaksi.setAdapter( adapterRecycleViewBarangTransaksiPembelian );
-        }
 
+        progressBarDataTransaksi = view.findViewById( R.id.progressBarDataTransaksi );
 
+        loadSuratMasuk();
+
+        refreshDataTransaksi.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                listItemTransaksis.clear();
+                adapterDataTransaksi.notifyDataSetChanged();
+                loadSuratMasuk();
+            }
+        } );
+
+        cobaLagiDataTransaksi.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                koneksiDataTransaksi.setVisibility( View.GONE );
+                progressBarDataTransaksi.setVisibility( View.VISIBLE );
+                loadSuratMasuk();
+            }
+        } );
+
+        recyclerViewDataTransaksi.setAdapter( adapterDataTransaksi );
 
         return view;
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
-        if (navigationView.getMenu().findItem( R.id.nav_transaksi_penjualan ).isChecked()) {
-            getActivity().setTitle("Transaksi Penjualan");
-        }else {
-            getActivity().setTitle("Transaksi Pembelian");
+        if (jenisTransaksi==0){
+            getActivity().setTitle("Trasaksi Penjualan");
+        }else{
+            getActivity().setTitle("Trasaksi Pembelian");
         }
 
-        setHasOptionsMenu(true);
-
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate( R.menu.icon_menu_checkout, menu );
-        MenuItem itemCart = menu.findItem(R.id.icon_checkout );
-        LayerDrawable icon = (LayerDrawable) itemCart.getIcon();
-        setBadgeCount(getContext(), icon, "9");
-    }
-
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.icon_checkout:
-                // do s.th.
-                Intent i = new Intent(getContext(), CheckoutActivity.class );
-                startActivity(i);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+    private void loadSuratMasuk(){
 
 
-    public static void setBadgeCount(Context context, LayerDrawable icon, String count) {
+        ListItemTransaksi listItemDataTransaksi = new ListItemTransaksi(
+                "#2928",
+                "Rp. 15.000",
+                "22 Oktober 2018"
+        );
 
-        BadgeDrawable badge;
+        listItemTransaksis.add( listItemDataTransaksi );
+        adapterDataTransaksi.notifyDataSetChanged();
 
-        // Reuse drawable if possible
-        Drawable reuse = icon.findDrawableByLayerId(R.id.ic_group_count);
-        if (reuse != null && reuse instanceof BadgeDrawable) {
-            badge = (BadgeDrawable) reuse;
-        } else {
-            badge = new BadgeDrawable(context);
-        }
+        ListItemTransaksi listItemDataTransaksi1 = new ListItemTransaksi(
+                "#2928",
+                "Rp. 900.000",
+                "22 Oktober 2018"
+        );
 
-        badge.setCount(count);
-        icon.mutate();
-        icon.setDrawableByLayerId(R.id.ic_group_count, badge);
-    }
+        listItemTransaksis.add( listItemDataTransaksi1 );
+        adapterDataTransaksi.notifyDataSetChanged();
 
-    private class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+        refreshDataTransaksi.setRefreshing( false );
+        progressBarDataTransaksi.setVisibility( View.GONE );
+        koneksiDataTransaksi.setVisibility( View.GONE);
 
-        private int spanCount;
-        private int spacing;
-        private boolean includeEdge;
+        /*StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
+            new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        if (jsonObject.getInt( "jml_data" )==0){
+                            noDataTransaksi.setVisibility( View.VISIBLE );
+                        }else{
+                            noDataTransaksi.setVisibility( View.GONE );
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            for (int i = 0; i<data.length(); i++){
+                                JSONObject suratmasukobject = data.getJSONObject( i );
 
-        private GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
-            this.spanCount = spanCount;
-            this.spacing = spacing;
-            this.includeEdge = includeEdge;
-        }
+                                ListItemDataTransaksi listItemDataTransaksi = new ListItemDataTransaksi(
+                                        suratmasukobject.getString( "id_surat_masuk"),
+                                        suratmasukobject.getString( "asal_surat" ),
+                                        suratmasukobject.getString( "perihal" ),
+                                        suratmasukobject.getString( "tgl_arsip")
+                                );
 
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition( view ); // item position
-            int column = position % spanCount; // item column
-
-            if (includeEdge) {
-                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
-                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
-
-                if (position < spanCount) { // top edge
-                    outRect.top = spacing;
+                                listItemTransaksis.add( listItemDataTransaksi );
+                                adapterDataTransaksi.notifyDataSetChanged();
+                            }
+                        }
+                        refreshDataTransaksi.setRefreshing( false );
+                        progressBarDataTransaksi.setVisibility( View.GONE );
+                        koneksiDataTransaksi.setVisibility( View.GONE);
+                    }catch (JSONException e){
+                        e.printStackTrace();
+                        refreshDataTransaksi.setRefreshing( false );
+                        progressBarDataTransaksi.setVisibility( View.GONE );
+                        noDataTransaksi.setVisibility( View.GONE );
+                        listItemTransaksis.clear();
+                        koneksiDataTransaksi.setVisibility( View.VISIBLE );
+                    }
                 }
-                outRect.bottom = spacing; // item bottom
-            } else {
-                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
-                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
-                if (position >= spanCount) {
-                    outRect.top = spacing; // item top
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                    refreshDataTransaksi.setRefreshing( false );
+                    progressBarDataTransaksi.setVisibility( View.GONE );
+                    noDataTransaksi.setVisibility( View.GONE );
+                    listItemTransaksis.clear();
+                    koneksiDataTransaksi.setVisibility( View.VISIBLE );
                 }
             }
-        }
-    }
+        );
 
-    private int dpToPx(int dp) {
-        Resources r = getResources();
-        return Math.round( TypedValue.applyDimension( TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics() ) );
+        RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
+        requestQueue.add( stringRequest );*/
     }
 }
-

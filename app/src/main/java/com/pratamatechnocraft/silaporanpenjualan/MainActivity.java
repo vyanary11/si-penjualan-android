@@ -28,7 +28,7 @@ import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataBarangFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataKategoriBarangFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataUserFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.ProfileFragment;
-import com.pratamatechnocraft.silaporanpenjualan.Fragment.TransaksiFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.TabLayoutFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 
@@ -127,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_dashboard) {
             fragment = new DashboardFragment();
         } else if (id == R.id.nav_transaksi_penjualan) {
-            fragment = new TransaksiFragment();
+            fragment = new TabLayoutFragment(0);
         } else if (id == R.id.nav_transaksi_pembelian) {
-            fragment = new TransaksiFragment();
+            fragment = new TabLayoutFragment(1);
         } else if (id == R.id.nav_biaya) {
             fragment = new BiayaFragment();
         } else if (id == R.id.nav_laporan_harian) {
