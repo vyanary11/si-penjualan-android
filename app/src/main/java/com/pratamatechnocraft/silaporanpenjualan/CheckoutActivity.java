@@ -23,7 +23,7 @@ public class CheckoutActivity extends AppCompatActivity {
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_checkout);
         setSupportActionBar(ToolBarAtas2);
         ToolBarAtas2.setLogoDescription("Checkout");
-        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
         upArrow.setColorFilter(ContextCompat.getColor(this, R.color.colorIcons), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
