@@ -1,5 +1,6 @@
 package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
+import com.pratamatechnocraft.silaporanpenjualan.TambahUserActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,8 +94,8 @@ public class DataUserFragment extends Fragment {
         fabTambahDataUser.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent i = new Intent(getContext(), TambahSuratMasukActivity.class);
-                getContext().startActivity(i);*/
+                Intent i = new Intent(getContext(), TambahUserActivity.class);
+                getContext().startActivity(i);
             }
         } );
 
