@@ -204,7 +204,7 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardElevation="6dp">
+                app:cardCornerRadius="4dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -225,8 +225,8 @@
                         android:text="Data Kategori Barang"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
-                        android:textSize="12sp"/>
-                        <!--android:textStyle="bold" />-->
+                        android:textSize="12sp" />
+                    <!--android:textStyle="bold" />-->
 
                 </LinearLayout>
 
@@ -392,8 +392,7 @@
                 android:layout_weight="1"
                 android:clickable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardCornerRadius="4dp"
-                app:cardElevation="6dp">
+                app:cardCornerRadius="4dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -414,8 +413,8 @@
                         android:text="Laporan Tahunan"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
-                        android:textSize="12sp"/>
-                        <!--android:textStyle="bold" />-->
+                        android:textSize="12sp" />
+                    <!--android:textStyle="bold" />-->
 
                 </LinearLayout>
 

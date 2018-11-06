@@ -51,12 +51,16 @@
         <activity
             android:name=".ZoomFotoProfile"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@style/FullscreenTheme"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/FullscreenTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"></meta-data>
+                android:value=".MainActivity" />
         </activity>
+        <activity
+            android:name=".TransaksiBaruActivity"
+            android:label="@string/title_activity_transaksi_baru"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

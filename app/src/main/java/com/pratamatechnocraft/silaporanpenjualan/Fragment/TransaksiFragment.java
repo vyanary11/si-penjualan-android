@@ -1,9 +1,11 @@
 package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,10 +22,12 @@ import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataP
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPembelian;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPenjualan;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataUtang;
+import com.pratamatechnocraft.silaporanpenjualan.CheckoutActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
+import com.pratamatechnocraft.silaporanpenjualan.TransaksiBaruActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +44,7 @@ public class TransaksiFragment extends Fragment{
     SwipeRefreshLayout refreshDataTransaksi;
     ProgressBar progressBarDataTransaksi;
     Button cobaLagiDataTransaksi;
+    FloatingActionButton fabTransaksiBaru;
     SessionManager sessionManager;
     NavigationView navigationView;
 
@@ -54,15 +59,17 @@ public class TransaksiFragment extends Fragment{
         this.jenisTransaksi = jenisTransaksi;
     }
 
+    @SuppressLint("RestrictedApi")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate( R.layout.activity_transaksi_fragment, container, false);
+        View view = inflater.inflate( R.layout.fragment_transaksi, container, false);
         navigationView = getActivity().findViewById( R.id.nav_view );
         noDataTransaksi = view.findViewById( R.id.noDataTransaksi );
         refreshDataTransaksi = (SwipeRefreshLayout) view.findViewById(R.id.refreshDataTransaksi);
         cobaLagiDataTransaksi = view.findViewById( R.id.cobaLagiTransaksi );
         koneksiDataTransaksi = view.findViewById( R.id.koneksiDataTransaksi );
+        fabTransaksiBaru = view.findViewById( R.id.fabTransaksiBaru );
 
         sessionManager = new SessionManager( getContext() );
         HashMap<String, String> transaksi = sessionManager.getUserDetail();
@@ -75,17 +82,28 @@ public class TransaksiFragment extends Fragment{
         if (jenisTransaksi==0){
             if (menuTab==0){
                 adapterDataTransaksi = new AdapterRecycleViewDataTransaksiPenjualan( listItemTransaksis, getContext());
+                fabTransaksiBaru.setVisibility( View.VISIBLE );
             }else {
                 adapterDataTransaksi = new AdapterRecycleViewDataPiutang( listItemTransaksis, getContext());
+                fabTransaksiBaru.setVisibility( View.GONE );
             }
         }else{
             if (menuTab==0){
                 adapterDataTransaksi = new AdapterRecycleViewDataTransaksiPembelian( listItemTransaksis, getContext());
+                fabTransaksiBaru.setVisibility( View.VISIBLE );
             }else {
                 adapterDataTransaksi = new AdapterRecycleViewDataUtang( listItemTransaksis, getContext());
+                fabTransaksiBaru.setVisibility( View.GONE );
             }
         }
 
+        fabTransaksiBaru.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getContext(), TransaksiBaruActivity.class );
+                startActivity(i);
+            }
+        } );
 
         progressBarDataTransaksi = view.findViewById( R.id.progressBarDataTransaksi );
 

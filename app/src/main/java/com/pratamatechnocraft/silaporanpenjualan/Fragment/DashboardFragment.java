@@ -24,7 +24,7 @@ public class DashboardFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate( R.layout.activity_dashboard_fragment, container, false);
+        View view = inflater.inflate( R.layout.fragment_dashboard, container, false);
         kliktransaksijual = view.findViewById(R.id.cardhometransaksipenjualan);
         kliktransaksibeli = view.findViewById(R.id.cardhometransaksipembelian);
         klikbarang = view.findViewById(R.id.cardhomebarang);

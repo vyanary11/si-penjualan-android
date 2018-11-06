@@ -47,7 +47,7 @@ public class BarangTransaksiFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate( R.layout.activity_barang_transaksi_fragment, container, false);
+        View view = inflater.inflate( R.layout.fragment_barang_transaksi, container, false);
         navigationView = getActivity().findViewById( R.id.nav_view );
 
         sessionManager = new SessionManager( getContext() );
@@ -66,7 +66,6 @@ public class BarangTransaksiFragment extends Fragment {
         }else{
             adapterRecycleViewBarangTransaksiPembelian = new AdapterRecycleViewBarangTransaksiPembelian( listItemBarangTransaksis, getContext());
         }
-
 
         for (int i=0;i<6;i++){
             ListItemBarangTransaksi listItemBarangTransaksi = new ListItemBarangTransaksi(
@@ -89,14 +88,8 @@ public class BarangTransaksiFragment extends Fragment {
         }else {
             recycleViewBarangTransaksi.setAdapter( adapterRecycleViewBarangTransaksiPembelian );
         }
-
-
-
         return view;
     }
-
-
-
 
     private class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 

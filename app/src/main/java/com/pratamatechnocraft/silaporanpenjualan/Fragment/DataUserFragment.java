@@ -50,7 +50,7 @@ public class DataUserFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate( R.layout.activity_data_user_fragment, container, false);
+        View view = inflater.inflate( R.layout.fragment_data_user, container, false);
         noDataUser = view.findViewById( R.id.noDataUser );
         refreshDataUser = (SwipeRefreshLayout) view.findViewById(R.id.refreshDataUser);
         fabTambahDataUser = view.findViewById( R.id.fabTambahDataUser );

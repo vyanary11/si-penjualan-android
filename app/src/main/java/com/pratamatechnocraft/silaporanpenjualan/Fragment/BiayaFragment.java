@@ -48,7 +48,7 @@ public class BiayaFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate( R.layout.activity_biaya_fragment, container, false);
+        View view = inflater.inflate( R.layout.fragment_biaya, container, false);
         noDataBiaya = view.findViewById( R.id.noDataBiaya );
         refreshDataBiaya = (SwipeRefreshLayout) view.findViewById(R.id.refreshDataBiaya);
         fabTambahDataBiaya = view.findViewById( R.id.fabTambahDataBiaya );

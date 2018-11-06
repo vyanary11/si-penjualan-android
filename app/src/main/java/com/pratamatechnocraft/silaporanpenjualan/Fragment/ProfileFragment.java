@@ -31,7 +31,6 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
-import com.pratamatechnocraft.silaporanpenjualan.MainActivity;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.ZoomFotoProfile;
 
@@ -65,7 +64,7 @@ public class ProfileFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate( R.layout.activity_profile_fragment, container, false);
+        View view = inflater.inflate( R.layout.fragment_profile, container, false);
         txtNamaUserProfile = view.findViewById( R.id.txtNamaUserProfile );
         txtNamaDepan = view.findViewById( R.id.txtNamaDepan );
         txtNamaBelakang = view.findViewById( R.id.txtNamaBelakang );

@@ -42,10 +42,11 @@ public class TabLayoutFragment extends Fragment {
 
     private void setupViewPager(ViewPager viewPager) {
         adapter = new Adapter(getChildFragmentManager());
-        adapter.addFragment(new TransaksiFragment(0,jenisTransaksi), "Penjualan");
         if (jenisTransaksi==0){
+            adapter.addFragment(new TransaksiFragment(0,jenisTransaksi), "Penjualan");
             adapter.addFragment(new TransaksiFragment(1,jenisTransaksi), "Piutang");
         }else {
+            adapter.addFragment(new TransaksiFragment(0,jenisTransaksi), "Pembelian");
             adapter.addFragment(new TransaksiFragment(1,jenisTransaksi), "Hutang");
         }
         viewPager.setAdapter(adapter);
@@ -53,7 +54,7 @@ public class TabLayoutFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_tab_layout_transaksi_fragment, container, false);
+        view = inflater.inflate(R.layout.fragment_tab_layout_transaksi, container, false);
         navigationView = getActivity().findViewById( R.id.nav_view );
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this, view);

@@ -48,7 +48,7 @@ public class DataKategoriBarangFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate( R.layout.activity_data_kategori_barang_fragment, container, false);
+        View view = inflater.inflate( R.layout.fragment_data_kategori_barang, container, false);
         noDataKategoriBarang = view.findViewById( R.id.noDataKategoriBarang );
         refreshDataKategoriBarang = (SwipeRefreshLayout) view.findViewById(R.id.refreshDataKategoriBarang);
         imageButtonTambahKategoriBarang = view.findViewById( R.id.imageButtonTambahKategoriBarang );
