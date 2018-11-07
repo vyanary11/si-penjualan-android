@@ -22,7 +22,6 @@ import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataP
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPembelian;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPenjualan;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataUtang;
-import com.pratamatechnocraft.silaporanpenjualan.CheckoutActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
