@@ -59,7 +59,7 @@
         </activity>
         <activity
             android:name=".TransaksiBaruActivity"
-            android:label="@string/title_activity_transaksi_baru"
+            android:label="Transaksi Baru"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
