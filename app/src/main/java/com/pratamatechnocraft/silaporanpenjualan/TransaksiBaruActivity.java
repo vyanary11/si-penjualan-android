@@ -1,7 +1,11 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -16,122 +20,112 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterPagerTransaksiBaru;
 
 public class TransaksiBaruActivity extends AppCompatActivity {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
+    private int[] layouts = {R.layout.fragment_transaksi_baru_satu,R.layout.fragment_transaksi_baru_dua};
+    private AdapterPagerTransaksiBaru adapterPagerTransaksiBaru;
+
+    private LinearLayout dots_layout;
+    private ImageView[] dots;
+    private Button btnLanjut,btnKembali;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_transaksi_baru );
 
-        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar );
-        setSupportActionBar( toolbar );
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter( getSupportFragmentManager() );
+        Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_transaksi_baru);
+        setSupportActionBar(ToolBarAtas2);
+        ToolBarAtas2.setLogoDescription("Transaksi ");
+        final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_close_white_24dp);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.colorIcons), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById( R.id.container );
-        mViewPager.setAdapter( mSectionsPagerAdapter );
+        mViewPager = findViewById( R.id.viewPager );
+        adapterPagerTransaksiBaru = new AdapterPagerTransaksiBaru( layouts,this );
+        mViewPager.setAdapter( adapterPagerTransaksiBaru );
 
+        dots_layout = findViewById( R.id.dotsLayouts );
+        btnLanjut = findViewById( R.id.lanjut );
+        btnKembali = findViewById( R.id.kembali );
+
+        btnKembali.setVisibility( View.GONE );
+
+        btnLanjut.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem( 1 );
+                btnLanjut.setVisibility( View.GONE );
+                btnKembali.setVisibility( View.VISIBLE );
+            }
+        } );
+
+        btnKembali.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewPager.setCurrentItem( 0 );
+                btnKembali.setVisibility( View.GONE );
+                btnLanjut.setVisibility( View.VISIBLE );
+            }
+        } );
+        createDots( 0 );
+
+        mViewPager.addOnPageChangeListener( new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                createDots( i );
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        } );
 
     }
 
+    private void createDots(int current_position){
+        if (dots_layout!=null)
+            dots_layout.removeAllViews();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate( R.menu.menu_transaksi_baru, menu );
-        return true;
+        dots=new  ImageView[layouts.length];
+        for (int i=0;i<layouts.length;i++){
+            dots[i] = new ImageView( this );
+            if (i==current_position){
+                dots[i].setImageDrawable( ContextCompat.getDrawable( this, R.drawable.active_dots ) );
+            }else{
+                dots[i].setImageDrawable( ContextCompat.getDrawable( this, R.drawable.inactive_dots ) );
+            }
+
+            LinearLayout.LayoutParams params=new LinearLayout.LayoutParams( ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT );
+            params.setMargins( 4,0,4,0 );
+            dots_layout.addView( dots[i], params );
+
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected( item );
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt( ARG_SECTION_NUMBER, sectionNumber );
-            fragment.setArguments( args );
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate( R.layout.fragment_transaksi_baru, container, false );
-            TextView textView = (TextView) rootView.findViewById( R.id.section_label );
-            textView.setText( getString( R.string.section_format, getArguments().getInt( ARG_SECTION_NUMBER ) ) );
-            return rootView;
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super( fm );
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance( position + 1 );
-        }
-
-        @Override
-        public int getCount() {
-            // Show 2 total pages.
-            return 2;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                super.onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
