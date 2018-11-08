@@ -31,35 +31,45 @@
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_dateresult2"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:text="Tanggal Biaya"
+                android:textSize="15dp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_dateresult"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Tanggal Biaya"
+                android:layout_weight="1"
                 android:textSize="15dp"
                 android:textStyle="bold" />
 
-                <ImageButton
-                    android:id="@+id/imagebutton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="100dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_date_range_black_24dp" />
+        </LinearLayout>
 
-            </LinearLayout>
+        <ImageButton
+            android:id="@+id/imagebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="100dp"
+            android:src="@drawable/ic_date_range_black_24dp" />
+
     </LinearLayout>
 
     <LinearLayout
