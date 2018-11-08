@@ -60,10 +60,6 @@
         <activity
             android:name=".TransaksiBaruActivity"
             android:label="@string/title_activity_transaksi_baru"
-<<<<<<< HEAD
-            android:theme="@style/AppTheme" />
-        <activity android:name=".TambahBiayaActivity"></activity>
-=======
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -77,7 +73,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
->>>>>>> 8eb887b007774b352f5013daec81714a5db29cdc
     </application>
 
 </manifest>
