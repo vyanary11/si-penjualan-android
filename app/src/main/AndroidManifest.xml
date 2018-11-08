@@ -60,7 +60,8 @@
         <activity
             android:name=".TransaksiBaruActivity"
             android:label="@string/title_activity_transaksi_baru"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity android:name=".TambahBiayaActivity"></activity>
     </application>
 
 </manifest>
