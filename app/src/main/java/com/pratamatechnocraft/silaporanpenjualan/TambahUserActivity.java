@@ -27,6 +27,8 @@ import android.widget.TextView;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class TambahUserActivity extends AppCompatActivity {
 
     private Button btnPilihFotoTambahUser,buttonSimpanTambahUser,buttonBatalTambahUser;
@@ -39,16 +41,22 @@ public class TambahUserActivity extends AppCompatActivity {
     private Button galeri,kamera;
     private TextView txtFotoTambahUser;
     private ProgressDialog progress;
-    private ImageView fotoTambahUser;
+    private CircleImageView fotoTambahUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tambah_user);
 
+        final Intent i = getIntent();
+        progress = new ProgressDialog(this);
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbartambahuser);
         setSupportActionBar(ToolBarAtas2);
-        ToolBarAtas2.setLogoDescription("Tambah User");
+        if (i.getStringExtra( "type" ).equals( "tambah" )){
+            this.setTitle("Tambah User");
+        }else if(i.getStringExtra( "type" ).equals( "edit" )){
+            this.setTitle("Edit User");
+        }
         final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
         upArrow.setColorFilter(ContextCompat.getColor(this, R.color.colorIcons), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
@@ -75,9 +83,17 @@ public class TambahUserActivity extends AppCompatActivity {
         inputNoTelp = (EditText) findViewById(R.id.inputNoTelp);
         inputAlamat = (EditText) findViewById(R.id.inputAlamat);
 
+        if (i.getStringExtra( "type" ).equals( "tambah" )){
+            buttonSimpanTambahUser.setText("Tambah");
+        }else if(i.getStringExtra( "type" ).equals( "edit" )){
+            buttonSimpanTambahUser.setText("Simpan");
+            inputLayoutUsername.setVisibility( View.GONE );
+            inputLayoutPassword.setVisibility( View.GONE );
+        }
+
 
         /*IMAGE*/
-        fotoTambahUser = (ImageView) findViewById( R.id.fotoTambahUser );
+        fotoTambahUser = (CircleImageView) findViewById( R.id.fotoTambahUser );
         txtFotoTambahUser = (TextView) findViewById( R.id.txtFotoTambahUser );
 
 
@@ -88,6 +104,32 @@ public class TambahUserActivity extends AppCompatActivity {
                 klikPilihFotoTambahUser();
             }
         } );
+        buttonSimpanTambahUser.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (i.getStringExtra( "type" ).equals( "tambah" )){
+                    if (!validateUsername() || !validatePassword() || !validateNamaDepan() || !validateNamaBelakang() || !validateNamaBelakang() || !validateNotelp() || !validateAlamat()) {
+                        return;
+                    }else {
+                        progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
+                        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progress.setIndeterminate(false);
+                        progress.setCanceledOnTouchOutside(false);
+
+                    }
+                }else if(i.getStringExtra( "type" ).equals( "edit" )){
+                    if (!validateNamaDepan() || !validateNamaBelakang() || !validateNamaBelakang() || !validateNotelp() || !validateAlamat()) {
+                        return;
+                    }else {
+                        progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
+                        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                        progress.setIndeterminate(false);
+                        progress.setCanceledOnTouchOutside(false);
+
+                    }
+                }
+            }
+        } );
 
         /*VALIDASI DATA*/
         inputUsername.addTextChangedListener( new MyTextWatcher( inputUsername) );
@@ -96,6 +138,12 @@ public class TambahUserActivity extends AppCompatActivity {
         inputNamaBelakang.addTextChangedListener( new MyTextWatcher( inputNamaBelakang) );
         inputNoTelp.addTextChangedListener( new MyTextWatcher( inputNoTelp) );
         inputAlamat.addTextChangedListener( new MyTextWatcher( inputAlamat) );
+
+        if (i.getStringExtra( "type" )=="tambah"){
+            buttonSimpanTambahUser.setText("Tambah");
+        }else if(i.getStringExtra( "type" )=="edit"){
+            buttonSimpanTambahUser.setText("Simpan");
+        }
     }
 
     private void klikPilihFotoTambahUser() {

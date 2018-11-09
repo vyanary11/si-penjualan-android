@@ -69,14 +69,14 @@ public class BiayaFragment extends Fragment {
 
         progressBarDataBiaya = view.findViewById( R.id.progressBarDataBiaya );
 
-        loadSuratMasuk();
+        loadBiaya();
 
         refreshDataBiaya.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 listItemBiayas.clear();
                 adapterDataBiaya.notifyDataSetChanged();
-                loadSuratMasuk();
+                loadBiaya();
             }
         } );
 
@@ -85,7 +85,7 @@ public class BiayaFragment extends Fragment {
             public void onClick(View view) {
                 koneksiDataBiaya.setVisibility( View.GONE );
                 progressBarDataBiaya.setVisibility( View.VISIBLE );
-                loadSuratMasuk();
+                loadBiaya();
             }
         } );
 
@@ -95,6 +95,7 @@ public class BiayaFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), TambahBiayaActivity.class);
+                i.putExtra( "type","tambah" );
                 getContext().startActivity(i);
             }
         } );
@@ -109,7 +110,7 @@ public class BiayaFragment extends Fragment {
         getActivity().setTitle("Data Biaya");
     }
 
-    private void loadSuratMasuk(){
+    private void loadBiaya(){
 
 
         ListItemBiaya listItemDataBiaya = new ListItemBiaya(

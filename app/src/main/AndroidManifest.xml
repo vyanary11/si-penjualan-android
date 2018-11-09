@@ -67,7 +67,7 @@
         </activity>
         <activity
             android:name=".TambahUserActivity"
-            android:label="Tambah User"
+            android:label="@string/app_name"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -75,7 +75,14 @@
         </activity>
         <activity
             android:name=".TambahBiayaActivity"
-            android:label="Tambah Biaya"
+            android:label="@string/app_name"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".DetailUserActivity"
+            android:label="@string/app_name"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

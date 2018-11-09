@@ -51,26 +51,15 @@ public class TambahBiayaActivity extends AppCompatActivity {
     }
 
     private void showDateDialog(){
-
-
         Calendar newCalendar = Calendar.getInstance();
-
-
         datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-
-
                 tvDateResult.setText(dateFormatter.format(newDate.getTime()));
             }
-
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-
         datePickerDialog.show();
     }
 

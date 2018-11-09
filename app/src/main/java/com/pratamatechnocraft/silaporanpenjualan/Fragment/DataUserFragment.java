@@ -95,6 +95,7 @@ public class DataUserFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), TambahUserActivity.class);
+                i.putExtra( "type","tambah" );
                 getContext().startActivity(i);
             }
         } );

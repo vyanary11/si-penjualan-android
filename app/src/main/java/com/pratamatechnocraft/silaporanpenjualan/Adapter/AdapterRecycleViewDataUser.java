@@ -1,6 +1,7 @@
 package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pratamatechnocraft.silaporanpenjualan.DetailUserActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
@@ -44,9 +46,9 @@ public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecy
         holder.cardViewDataUser.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent i = new Intent(context, DetailSuratMasukActivity.class);
-                i.putExtra("idSuratMasuk", listItemDataUser.getIdSuratMasuk());
-                context.startActivity(i);*/
+                Intent i = new Intent(context, DetailUserActivity.class);
+                i.putExtra("kdUser", listItemDataUser.getKdUser());
+                context.startActivity(i);
             }
         });
 
