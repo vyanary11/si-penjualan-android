@@ -10,18 +10,16 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.support.v7.widget.SearchView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
@@ -29,20 +27,14 @@ import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import com.pratamatechnocraft.silaporanpenjualan.FormUserActivity;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//import com.pratamatechnocraft.silaporanpenjualan.TambahSuratMasukActivity;
-
 public class DataUserFragment extends Fragment {
 
     private RecyclerView recyclerViewDataUser;
-    private RecyclerView.Adapter adapterDataUser;
+    private AdapterRecycleViewDataUser adapterDataUser;
     LinearLayout noDataUser, koneksiDataUser;
     SwipeRefreshLayout refreshDataUser;
     FloatingActionButton fabTambahDataUser;
@@ -56,7 +48,6 @@ public class DataUserFragment extends Fragment {
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private static final String API_URL = "api/user?api=all";
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -66,27 +57,18 @@ public class DataUserFragment extends Fragment {
         fabTambahDataUser = view.findViewById( R.id.fabTambahDataUser );
         cobaLagiDataUser = view.findViewById( R.id.cobaLagiUser );
         koneksiDataUser = view.findViewById( R.id.koneksiDataUser );
+        progressBarDataUser = view.findViewById( R.id.progressBarDataUser );
+        recyclerViewDataUser = (RecyclerView) view.findViewById(R.id.recycleViewDataUser);
 
         sessionManager = new SessionManager( getContext() );
         HashMap<String, String> user = sessionManager.getUserDetail();
-
-        recyclerViewDataUser = (RecyclerView) view.findViewById(R.id.recycleViewDataUser);
-        recyclerViewDataUser.setHasFixedSize(true);
-        recyclerViewDataUser.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        listItemDataUsers = new ArrayList<>();
-        adapterDataUser = new AdapterRecycleViewDataUser( listItemDataUsers, getContext());
-
-        progressBarDataUser = view.findViewById( R.id.progressBarDataUser );
-
-        loadSuratMasuk();
 
         refreshDataUser.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 listItemDataUsers.clear();
                 adapterDataUser.notifyDataSetChanged();
-                loadSuratMasuk();
+                loadDataUser();
             }
         } );
 
@@ -95,11 +77,9 @@ public class DataUserFragment extends Fragment {
             public void onClick(View view) {
                 koneksiDataUser.setVisibility( View.GONE );
                 progressBarDataUser.setVisibility( View.VISIBLE );
-                loadSuratMasuk();
+                loadDataUser();
             }
         } );
-
-        recyclerViewDataUser.setAdapter( adapterDataUser );
 
         fabTambahDataUser.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -113,37 +93,59 @@ public class DataUserFragment extends Fragment {
         return view;
     }
 
+
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle("Data User");
+        setHasOptionsMenu( true );
+        loadDataUser();
     }
 
-    private void loadSuratMasuk(){
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.ic_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapterDataUser.getFilter().filter(s);
+                return false;
+            }
+        } );
+        searchView.setQueryHint("Search");
 
-            ListItemDataUser listItemDataUser = new ListItemDataUser(
-                    "",
-                    "Owner Kantin",
-                    "081543xxxxxx",
-                    "Owner",
-                    ""
-            );
+    }
 
-            listItemDataUsers.add( listItemDataUser );
-            adapterDataUser.notifyDataSetChanged();
+    private void loadDataUser(){
+        listItemDataUsers = new ArrayList<>();
+        ListItemDataUser listItemDataUser = new ListItemDataUser(
+                "",
+                "Owner Kantin",
+                "081543xxxxxx",
+                "Owner",
+                ""
+        );
 
-            ListItemDataUser listItemDataUser1 = new ListItemDataUser(
-                    "",
-                    "Kasir Kantin",
-                    "081465xxxxxx",
-                    "Kasir",
-                    ""
-            );
+        listItemDataUsers.add( listItemDataUser );
 
-            listItemDataUsers.add( listItemDataUser1 );
-            adapterDataUser.notifyDataSetChanged();
+        ListItemDataUser listItemDataUser1 = new ListItemDataUser(
+                "",
+                "Kasir Kantin",
+                "081465xxxxxx",
+                "Kasir",
+                ""
+        );
+
+        listItemDataUsers.add( listItemDataUser1 );
 
         refreshDataUser.setRefreshing( false );
         progressBarDataUser.setVisibility( View.GONE );
@@ -203,5 +205,16 @@ public class DataUserFragment extends Fragment {
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
         requestQueue.add( stringRequest );*/
+
+        setUpRecycleView();
     }
+
+    private void setUpRecycleView(){
+        recyclerViewDataUser.setHasFixedSize(true);
+        recyclerViewDataUser.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapterDataUser = new AdapterRecycleViewDataUser( listItemDataUsers, getContext());
+        recyclerViewDataUser.setAdapter( adapterDataUser );
+        adapterDataUser.notifyDataSetChanged();
+    }
+
 }

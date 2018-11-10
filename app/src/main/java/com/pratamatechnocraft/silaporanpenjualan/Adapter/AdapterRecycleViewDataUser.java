@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,18 +16,21 @@ import com.pratamatechnocraft.silaporanpenjualan.DetailUserActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecycleViewDataUser.ViewHolder> {
+public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecycleViewDataUser.ViewHolder> implements Filterable {
 
     private List<ListItemDataUser> listItemDataUsers;
+    private List<ListItemDataUser> listItemDataUserFull;
     private Context context;
 
     public AdapterRecycleViewDataUser(List<ListItemDataUser> listItemDataUsers, Context context) {
         this.listItemDataUsers = listItemDataUsers;
         this.context = context;
+        listItemDataUserFull = new ArrayList<>( listItemDataUsers );
     }
 
     @Override
@@ -125,6 +130,42 @@ public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecy
     public int getItemCount() {
         return listItemDataUsers.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return listItemFilter;
+    }
+
+    private Filter listItemFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<ListItemDataUser> filteredList = new ArrayList<>(  );
+
+            if (charSequence == null || charSequence.length()==0){
+                filteredList.addAll( listItemDataUserFull );
+            }else{
+              String filterPattern = charSequence.toString().toLowerCase().trim();
+
+              for (ListItemDataUser itemDataUser : listItemDataUserFull){
+                  if (itemDataUser.getNamaUser().toLowerCase().contains( filterPattern )){
+                      filteredList.add( itemDataUser );
+                  }
+              }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values=filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            listItemDataUsers.clear();
+            listItemDataUsers.addAll((List) filterResults.values );
+            notifyDataSetChanged();
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 

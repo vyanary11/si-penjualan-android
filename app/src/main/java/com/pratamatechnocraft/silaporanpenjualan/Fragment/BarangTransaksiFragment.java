@@ -17,9 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewBarangTransaksiPembelian;
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewBarangTransaksiPenjualan;
-
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemBarangTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;

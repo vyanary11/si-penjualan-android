@@ -11,32 +11,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataPiutang;
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPembelian;
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPenjualan;
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataUtang;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import com.pratamatechnocraft.silaporanpenjualan.TransaksiBaruActivity;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +39,8 @@ public class TransaksiFragment extends Fragment{
 
     Integer menuTab,jenisTransaksi;
     private RecyclerView recyclerViewDataTransaksi;
-    private RecyclerView.Adapter adapterDataTransaksi;
+    private RecyclerView.Adapter recycleViewAdapter;
+    private AdapterRecycleViewDataTransaksi adapterDataTransaksi;
     LinearLayout noDataTransaksi, koneksiDataTransaksi;
     SwipeRefreshLayout refreshDataTransaksi;
     ProgressBar progressBarDataTransaksi;
@@ -79,35 +71,17 @@ public class TransaksiFragment extends Fragment{
         cobaLagiDataTransaksi = view.findViewById( R.id.cobaLagiTransaksi );
         koneksiDataTransaksi = view.findViewById( R.id.koneksiDataTransaksi );
         fabTransaksiBaru = view.findViewById( R.id.fabTransaksiBaru );
+        progressBarDataTransaksi = view.findViewById( R.id.progressBarDataTransaksi );
 
         sessionManager = new SessionManager( getContext() );
         HashMap<String, String> transaksi = sessionManager.getUserDetail();
 
         recyclerViewDataTransaksi = (RecyclerView) view.findViewById(R.id.recycleViewDataTransaksi);
-        recyclerViewDataTransaksi.setHasFixedSize(true);
-        recyclerViewDataTransaksi.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        listItemTransaksis = new ArrayList<>();
-        if (jenisTransaksi==0){
-            if (menuTab==0){
-                adapterDataTransaksi = new AdapterRecycleViewDataTransaksiPenjualan( listItemTransaksis, getContext());
-                fabTransaksiBaru.setVisibility( View.VISIBLE );
-                loadDataTransaksiPenjualan("penjualan");
-            }else {
-                adapterDataTransaksi = new AdapterRecycleViewDataPiutang( listItemTransaksis, getContext());
-                fabTransaksiBaru.setVisibility( View.GONE );
-                loadDataTransaksiPenjualan("piutang");
-            }
-        }else{
-            if (menuTab==0){
-                adapterDataTransaksi = new AdapterRecycleViewDataTransaksiPembelian( listItemTransaksis, getContext());
-                fabTransaksiBaru.setVisibility( View.VISIBLE );
-                loadDataTransaksiPenjualan("pembelian");
-            }else {
-                adapterDataTransaksi = new AdapterRecycleViewDataUtang( listItemTransaksis, getContext());
-                fabTransaksiBaru.setVisibility( View.GONE );
-                loadDataTransaksiPenjualan("utang");
-            }
+        if (menuTab==0){
+            fabTransaksiBaru.setVisibility( View.VISIBLE );
+        }else {
+            fabTransaksiBaru.setVisibility( View.GONE );
         }
 
         fabTransaksiBaru.setOnClickListener( new View.OnClickListener() {
@@ -118,8 +92,6 @@ public class TransaksiFragment extends Fragment{
             }
         } );
 
-        progressBarDataTransaksi = view.findViewById( R.id.progressBarDataTransaksi );
-
         refreshDataTransaksi.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -127,15 +99,15 @@ public class TransaksiFragment extends Fragment{
                 adapterDataTransaksi.notifyDataSetChanged();
                 if (jenisTransaksi==0){
                     if (menuTab==0){
-                        loadDataTransaksiPenjualan("penjualan");
+                        loadDataTransaksi("penjualan");
                     }else {
-                        loadDataTransaksiPenjualan("piutang");
+                        loadDataTransaksi("piutang");
                     }
                 }else{
                     if (menuTab==0){
-                        loadDataTransaksiPenjualan("pembelian");
+                        loadDataTransaksi("pembelian");
                     }else {
-                        loadDataTransaksiPenjualan("utang");
+                        loadDataTransaksi("utang");
                     }
                 }
             }
@@ -148,21 +120,19 @@ public class TransaksiFragment extends Fragment{
                 progressBarDataTransaksi.setVisibility( View.VISIBLE );
                 if (jenisTransaksi==0){
                     if (menuTab==0){
-                        loadDataTransaksiPenjualan("penjualan");
+                        loadDataTransaksi("penjualan");
                     }else {
-                        loadDataTransaksiPenjualan("piutang");
+                        loadDataTransaksi("piutang");
                     }
                 }else{
                     if (menuTab==0){
-                        loadDataTransaksiPenjualan("pembelian");
+                        loadDataTransaksi("pembelian");
                     }else {
-                        loadDataTransaksiPenjualan("utang");
+                        loadDataTransaksi("utang");
                     }
                 }
             }
         } );
-
-        recyclerViewDataTransaksi.setAdapter( adapterDataTransaksi );
 
         return view;
     }
@@ -171,15 +141,47 @@ public class TransaksiFragment extends Fragment{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
+        setHasOptionsMenu( true );
         if (jenisTransaksi==0){
             getActivity().setTitle("Trasaksi Penjualan");
+            if (menuTab==0){
+                loadDataTransaksi("penjualan");
+            }else {
+                loadDataTransaksi("piutang");
+            }
         }else{
             getActivity().setTitle("Trasaksi Pembelian");
+            if (menuTab==0){
+                loadDataTransaksi("pembelian");
+            }else {
+                loadDataTransaksi("utang");
+            }
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.ic_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapterDataTransaksi.getFilter().filter(s);
+                return false;
+            }
+        } );
+        searchView.setQueryHint("Search");
 
     }
 
-    private void loadDataTransaksiPenjualan(String jenis){
+    private void loadDataTransaksi(String jenis){
+        listItemTransaksis = new ArrayList<>();
         if (jenis.equals( "penjualan" )){
             API_URL = "api/transaksi?api=penjualan";
         }else if (jenis.equals( "piutang" )){
@@ -192,13 +194,12 @@ public class TransaksiFragment extends Fragment{
 
 
         ListItemTransaksi listItemDataTransaksi = new ListItemTransaksi(
-                "#2928",
+                "#123",
                 "Rp. 15.000",
                 "22 Oktober 2018"
         );
 
         listItemTransaksis.add( listItemDataTransaksi );
-        adapterDataTransaksi.notifyDataSetChanged();
 
         ListItemTransaksi listItemDataTransaksi1 = new ListItemTransaksi(
                 "#2928",
@@ -207,7 +208,6 @@ public class TransaksiFragment extends Fragment{
         );
 
         listItemTransaksis.add( listItemDataTransaksi1 );
-        adapterDataTransaksi.notifyDataSetChanged();
 
         refreshDataTransaksi.setRefreshing( false );
         progressBarDataTransaksi.setVisibility( View.GONE );
@@ -265,5 +265,15 @@ public class TransaksiFragment extends Fragment{
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
         requestQueue.add( stringRequest );*/
+
+        setUpRecycleView();
+    }
+
+    private void setUpRecycleView(){
+        recyclerViewDataTransaksi.setHasFixedSize(true);
+        recyclerViewDataTransaksi.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapterDataTransaksi = new AdapterRecycleViewDataTransaksi( listItemTransaksis, getContext());
+        recyclerViewDataTransaksi.setAdapter( adapterDataTransaksi );
+        adapterDataTransaksi.notifyDataSetChanged();
     }
 }
