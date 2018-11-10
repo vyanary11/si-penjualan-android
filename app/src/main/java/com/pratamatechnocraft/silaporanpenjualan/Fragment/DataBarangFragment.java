@@ -8,29 +8,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 //import com.pratamatechnocraft.silaporanpenjualan.TambahSuratMasukActivity;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +33,7 @@ import java.util.List;
 public class DataBarangFragment extends Fragment {
 
     private RecyclerView recyclerViewDataBarang;
-    private RecyclerView.Adapter adapterDataBarang;
+    private AdapterRecycleViewDataBarang adapterDataBarang;
     LinearLayout noDataBarang, koneksiDataBarang;
     SwipeRefreshLayout refreshDataBarang;
     FloatingActionButton floatingActionButton1;
@@ -63,27 +57,19 @@ public class DataBarangFragment extends Fragment {
         floatingActionButton1 = view.findViewById( R.id.floatingActionButton );
         cobaLagiDataBarang = view.findViewById( R.id.cobaLagiBarang );
         koneksiDataBarang = view.findViewById( R.id.koneksiDataBarang );
+        progressBarDataBarang = view.findViewById( R.id.progressBarDataBarang );
+        recyclerViewDataBarang = (RecyclerView) view.findViewById(R.id.recycleViewDataBarang);
 
         sessionManager = new SessionManager( getContext() );
         HashMap<String, String> user = sessionManager.getUserDetail();
 
-        recyclerViewDataBarang = (RecyclerView) view.findViewById(R.id.recycleViewDataBarang);
-        recyclerViewDataBarang.setHasFixedSize(true);
-        recyclerViewDataBarang.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        listItemDataBarangs = new ArrayList<>();
-        adapterDataBarang = new AdapterRecycleViewDataBarang( listItemDataBarangs, getContext());
-
-        progressBarDataBarang = view.findViewById( R.id.progressBarDataBarang );
-
-        loadSuratMasuk();
 
         refreshDataBarang.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 listItemDataBarangs.clear();
                 adapterDataBarang.notifyDataSetChanged();
-                loadSuratMasuk();
+                loadDataBarang();
             }
         } );
 
@@ -92,11 +78,10 @@ public class DataBarangFragment extends Fragment {
             public void onClick(View view) {
                 koneksiDataBarang.setVisibility( View.GONE );
                 progressBarDataBarang.setVisibility( View.VISIBLE );
-                loadSuratMasuk();
+                loadDataBarang();
             }
         } );
 
-        recyclerViewDataBarang.setAdapter( adapterDataBarang );
 
         floatingActionButton1.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -114,10 +99,35 @@ public class DataBarangFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle("Data Barang");
+        setHasOptionsMenu( true );
+        loadDataBarang();
     }
 
-    private void loadSuratMasuk(){
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.ic_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapterDataBarang.getFilter().filter(s);
+                return false;
+            }
+        } );
+        
+        searchView.setQueryHint("Search");
+
+    }
+
+    private void loadDataBarang(){
+        refreshDataBarang.setEnabled( true );
+        listItemDataBarangs = new ArrayList<>();
         for (int i=0;i<10;i++){
             ListItemDataBarang listItemDataBarang = new ListItemDataBarang(
                     "",
@@ -126,9 +136,7 @@ public class DataBarangFragment extends Fragment {
                     ""+1000*i,
                     ""
             );
-
             listItemDataBarangs.add( listItemDataBarang );
-            adapterDataBarang.notifyDataSetChanged();
         }
 
         refreshDataBarang.setRefreshing( false );
@@ -189,5 +197,15 @@ public class DataBarangFragment extends Fragment {
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
         requestQueue.add( stringRequest );*/
+
+        setUpRecycleView();
+    }
+
+    private void setUpRecycleView() {
+        recyclerViewDataBarang.setHasFixedSize(true);
+        recyclerViewDataBarang.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapterDataBarang = new AdapterRecycleViewDataBarang( listItemDataBarangs, getContext());
+        recyclerViewDataBarang.setAdapter( adapterDataBarang );
+        adapterDataBarang.notifyDataSetChanged();
     }
 }

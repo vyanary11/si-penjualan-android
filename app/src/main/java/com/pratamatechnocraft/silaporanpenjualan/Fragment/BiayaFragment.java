@@ -42,7 +42,7 @@ import java.util.List;
 public class BiayaFragment extends Fragment {
 
     private RecyclerView recyclerViewDataBiaya;
-    private RecyclerView.Adapter adapterDataBiaya;
+    private AdapterRecycleViewDataBiaya adapterDataBiaya;
     LinearLayout noDataBiaya, koneksiDataBiaya;
     SwipeRefreshLayout refreshDataBiaya;
     FloatingActionButton fabTambahDataBiaya;
@@ -66,20 +66,11 @@ public class BiayaFragment extends Fragment {
         fabTambahDataBiaya = view.findViewById( R.id.fabTambahDataBiaya );
         cobaLagiDataBiaya = view.findViewById( R.id.cobaLagiBiaya );
         koneksiDataBiaya = view.findViewById( R.id.koneksiDataBiaya );
+        progressBarDataBiaya = view.findViewById( R.id.progressBarDataBiaya );
+        recyclerViewDataBiaya = (RecyclerView) view.findViewById(R.id.recycleViewDataBiaya);
 
         sessionManager = new SessionManager( getContext() );
         HashMap<String, String> biaya = sessionManager.getUserDetail();
-
-        recyclerViewDataBiaya = (RecyclerView) view.findViewById(R.id.recycleViewDataBiaya);
-        recyclerViewDataBiaya.setHasFixedSize(true);
-        recyclerViewDataBiaya.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        listItemBiayas = new ArrayList<>();
-        adapterDataBiaya = new AdapterRecycleViewDataBiaya( listItemBiayas, getContext());
-
-        progressBarDataBiaya = view.findViewById( R.id.progressBarDataBiaya );
-
-        loadBiaya();
 
         refreshDataBiaya.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -99,8 +90,6 @@ public class BiayaFragment extends Fragment {
             }
         } );
 
-        recyclerViewDataBiaya.setAdapter( adapterDataBiaya );
-
         fabTambahDataBiaya.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -118,20 +107,19 @@ public class BiayaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
         getActivity().setTitle("Data Biaya");
+        setHasOptionsMenu( true );
+        loadBiaya();
     }
 
     private void loadBiaya(){
-
-
+        listItemBiayas = new ArrayList<>();
         ListItemBiaya listItemDataBiaya = new ListItemBiaya(
                 "",
                 "Uang Makan Pekerja",
                 "Rp. 15.000",
                 "22 Oktober 2018"
         );
-
         listItemBiayas.add( listItemDataBiaya );
-        adapterDataBiaya.notifyDataSetChanged();
 
         ListItemBiaya listItemDataBiaya1 = new ListItemBiaya(
                 "",
@@ -139,9 +127,7 @@ public class BiayaFragment extends Fragment {
                 "Rp. 900.000",
                 "22 Oktober 2018"
         );
-
         listItemBiayas.add( listItemDataBiaya1 );
-        adapterDataBiaya.notifyDataSetChanged();
 
         refreshDataBiaya.setRefreshing( false );
         progressBarDataBiaya.setVisibility( View.GONE );
@@ -200,5 +186,16 @@ public class BiayaFragment extends Fragment {
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
         requestQueue.add( stringRequest );*/
+
+        setUpRecycleView();
     }
+
+    private void setUpRecycleView() {
+        recyclerViewDataBiaya.setHasFixedSize(true);
+        recyclerViewDataBiaya.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapterDataBiaya = new AdapterRecycleViewDataBiaya( listItemBiayas, getContext());
+        recyclerViewDataBiaya.setAdapter( adapterDataBiaya );
+        adapterDataBiaya.notifyDataSetChanged();
+    }
+
 }
