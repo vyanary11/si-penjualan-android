@@ -16,12 +16,22 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataBiaya;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemBiaya;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import com.pratamatechnocraft.silaporanpenjualan.TambahBiayaActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -149,16 +159,16 @@ public class BiayaFragment extends Fragment {
                             noDataBiaya.setVisibility( View.GONE );
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i<data.length(); i++){
-                                JSONObject suratmasukobject = data.getJSONObject( i );
+                                JSONObject biayaobject = data.getJSONObject( i );
 
-                                ListItemDataBiaya listItemDataBiaya = new ListItemDataBiaya(
-                                        suratmasukobject.getString( "id_surat_masuk"),
-                                        suratmasukobject.getString( "asal_surat" ),
-                                        suratmasukobject.getString( "perihal" ),
-                                        suratmasukobject.getString( "tgl_arsip")
+                                ListItemBiaya listItemBiaya = new ListItemBiaya(
+                                        biayaobject.getString( "kd_biaya"),
+                                        biayaobject.getString( "nama_biaya" ),
+                                        biayaobject.getString( "jumlah_biaya" ),
+                                        biayaobject.getString( "tgl_biaya" )
                                 );
 
-                                listItemBiayas.add( listItemDataBiaya );
+                                listItemBiayas.add( listItemBiaya );
                                 adapterDataBiaya.notifyDataSetChanged();
                             }
                         }

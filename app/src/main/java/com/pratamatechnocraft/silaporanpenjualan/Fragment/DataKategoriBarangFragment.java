@@ -15,11 +15,21 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataKategoriBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataKategoriBarang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -141,13 +151,11 @@ public class DataKategoriBarangFragment extends Fragment {
                             noDataKategoriBarang.setVisibility( View.GONE );
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i<data.length(); i++){
-                                JSONObject suratmasukobject = data.getJSONObject( i );
+                                JSONObject kategoribarangobject = data.getJSONObject( i );
 
                                 ListItemDataKategoriBarang listItemDataKategoriBarang = new ListItemDataKategoriBarang(
-                                        suratmasukobject.getString( "id_surat_masuk"),
-                                        suratmasukobject.getString( "asal_surat" ),
-                                        suratmasukobject.getString( "perihal" ),
-                                        suratmasukobject.getString( "tgl_arsip")
+                                        kategoribarangobject.getString( "kd_kategori"),
+                                        kategoribarangobject.getString( "nama_kategori" )
                                 );
 
                                 listItemDataKategorisBarangs.add( listItemDataKategoriBarang );

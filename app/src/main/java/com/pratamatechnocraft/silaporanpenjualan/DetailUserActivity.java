@@ -46,7 +46,7 @@ public class DetailUserActivity extends AppCompatActivity {
                 super.onBackPressed();
                 return true;
             case R.id.icon_edit:
-                Intent i = new Intent(DetailUserActivity.this, TambahUserActivity.class );
+                Intent i = new Intent(DetailUserActivity.this, FormUserActivity.class );
                 i.putExtra( "type", "edit" );
                 startActivity(i);
                 return true;

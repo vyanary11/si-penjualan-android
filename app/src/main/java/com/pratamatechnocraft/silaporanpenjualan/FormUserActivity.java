@@ -10,26 +10,42 @@ import android.provider.MediaStore;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class TambahUserActivity extends AppCompatActivity {
+public class FormUserActivity extends AppCompatActivity {
 
     private Button btnPilihFotoTambahUser,buttonSimpanTambahUser,buttonBatalTambahUser;
     private TextInputLayout inputLayoutUsername,inputLayoutPassword,inputLayoutNamaDepan,inputLayoutNamaBelakang,inputLayoutNoTelp,inputLayoutAlamat;
@@ -42,14 +58,19 @@ public class TambahUserActivity extends AppCompatActivity {
     private TextView txtFotoTambahUser;
     private ProgressDialog progress;
     private CircleImageView fotoTambahUser;
+    private SwipeRefreshLayout refreshFormUser;
+    private BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
+    private String baseUrl=baseUrlApiModel.getBaseURL();
+    private static final String API_URL = "api/user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tambah_user);
+        setContentView(R.layout.activity_form_user );
 
         final Intent i = getIntent();
         progress = new ProgressDialog(this);
+        refreshFormUser = findViewById( R.id.refreshFormUser );
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbartambahuser);
         setSupportActionBar(ToolBarAtas2);
         if (i.getStringExtra( "type" ).equals( "tambah" )){
@@ -96,6 +117,33 @@ public class TambahUserActivity extends AppCompatActivity {
         fotoTambahUser = (CircleImageView) findViewById( R.id.fotoTambahUser );
         txtFotoTambahUser = (TextView) findViewById( R.id.txtFotoTambahUser );
 
+        /*VALIDASI DATA*/
+        inputUsername.addTextChangedListener( new MyTextWatcher( inputUsername) );
+        inputPassword.addTextChangedListener( new MyTextWatcher( inputPassword) );
+        inputNamaDepan.addTextChangedListener( new MyTextWatcher( inputNamaDepan) );
+        inputNamaBelakang.addTextChangedListener( new MyTextWatcher( inputNamaBelakang) );
+        inputNoTelp.addTextChangedListener( new MyTextWatcher( inputNoTelp) );
+        inputAlamat.addTextChangedListener( new MyTextWatcher( inputAlamat) );
+
+        if (i.getStringExtra( "type" ).equals("tambah")){
+            buttonSimpanTambahUser.setText("Tambah");
+            refreshFormUser.setEnabled( false );
+
+        }else if(i.getStringExtra( "type" ).equals("edit")){
+            buttonSimpanTambahUser.setText("Simpan");
+        }
+
+        refreshFormUser.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (i.getStringExtra( "type" ).equals("tambah")){
+                    refreshFormUser.setRefreshing( false );
+                }else if(i.getStringExtra( "type" ).equals("edit")){
+
+                }
+            }
+        } );
+
 
         /*FUNGSI KLIK*/
         btnPilihFotoTambahUser.setOnClickListener( new View.OnClickListener() {
@@ -115,7 +163,16 @@ public class TambahUserActivity extends AppCompatActivity {
                         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         progress.setIndeterminate(false);
                         progress.setCanceledOnTouchOutside(false);
-
+                        prosesTambahUser(
+                            inputUsername.getText().toString().trim(),
+                            inputPassword.getText().toString().trim(),
+                            inputNamaDepan.getText().toString().trim(),
+                            inputNamaBelakang.getText().toString().trim(),
+                            inputNoTelp.getText().toString().trim(),
+                            inputAlamat.getText().toString().trim(),
+                            "",
+                            txtFotoTambahUser.getText().toString().trim()
+                        );
                     }
                 }else if(i.getStringExtra( "type" ).equals( "edit" )){
                     if (!validateNamaDepan() || !validateNamaBelakang() || !validateNamaBelakang() || !validateNotelp() || !validateAlamat()) {
@@ -125,27 +182,133 @@ public class TambahUserActivity extends AppCompatActivity {
                         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         progress.setIndeterminate(false);
                         progress.setCanceledOnTouchOutside(false);
-
+                        prosesEditUser(
+                                inputNamaDepan.getText().toString().trim(),
+                                inputNamaBelakang.getText().toString().trim(),
+                                inputNoTelp.getText().toString().trim(),
+                                inputAlamat.getText().toString().trim(),
+                                "",
+                                txtFotoTambahUser.getText().toString().trim()
+                        );
                     }
                 }
             }
         } );
 
-        /*VALIDASI DATA*/
-        inputUsername.addTextChangedListener( new MyTextWatcher( inputUsername) );
-        inputPassword.addTextChangedListener( new MyTextWatcher( inputPassword) );
-        inputNamaDepan.addTextChangedListener( new MyTextWatcher( inputNamaDepan) );
-        inputNamaBelakang.addTextChangedListener( new MyTextWatcher( inputNamaBelakang) );
-        inputNoTelp.addTextChangedListener( new MyTextWatcher( inputNoTelp) );
-        inputAlamat.addTextChangedListener( new MyTextWatcher( inputAlamat) );
-
-        if (i.getStringExtra( "type" )=="tambah"){
-            buttonSimpanTambahUser.setText("Tambah");
-        }else if(i.getStringExtra( "type" )=="edit"){
-            buttonSimpanTambahUser.setText("Simpan");
-        }
     }
 
+    /*PROSES KE DATABASE*/
+    private void prosesEditUser(final String namaDepan, final String namaBelakang, final String noTelp, final String alamat, final String levelUser, final String fotoUser) {
+        progress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, baseUrl+API_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String kode = jsonObject.getString("kode");
+                    if (kode.equals("1")) {
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        String idUser = data.getString("kd_user").trim();
+
+                        Intent i = new Intent(FormUserActivity.this, DetailUserActivity.class);
+                        i.putExtra( "idUser", idUser );
+                        startActivity(i);
+                        Toast.makeText(FormUserActivity.this, "Berhasil Edit User", Toast.LENGTH_SHORT).show();
+
+                    }else{
+                        Toast.makeText(FormUserActivity.this, "Gagal Edit User", Toast.LENGTH_SHORT).show();
+                    }
+                    progress.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d( "TAG", e.toString() );
+                    Toast.makeText(FormUserActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                    progress.dismiss();
+                }
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(FormUserActivity.this, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
+                progress.dismiss();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("nama_depan", namaDepan);
+                params.put("nama_belakang", namaBelakang);
+                params.put("no_telp", noTelp);
+                params.put("alamat", alamat);
+                params.put("level_user", levelUser);
+                params.put("foto_user", fotoUser);
+                params.put("api", "edit");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+    private void prosesTambahUser(final String username, final String password, final String namaDepan, final String namaBelakang, final String noTelp, final String alamat, final String levelUser, final String fotoUser) {
+        progress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, baseUrl+API_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String kode = jsonObject.getString("kode");
+                    if (kode.equals("1")) {
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        String idUser = data.getString("kd_user").trim();
+
+                        Intent i = new Intent(FormUserActivity.this, DetailUserActivity.class);
+                        i.putExtra( "idUser", idUser );
+                        startActivity(i);
+                        Toast.makeText(FormUserActivity.this, "Berhasil Menambahkan User", Toast.LENGTH_SHORT).show();
+
+                    }else{
+                        Toast.makeText(FormUserActivity.this, "Gagal Menambahkan User", Toast.LENGTH_SHORT).show();
+                    }
+                    progress.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d( "TAG", e.toString() );
+                    Toast.makeText(FormUserActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                    progress.dismiss();
+                }
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(FormUserActivity.this, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
+                progress.dismiss();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", username);
+                params.put("password", password);
+                params.put("nama_depan", namaDepan);
+                params.put("nama_belakang", namaBelakang);
+                params.put("no_telp", noTelp);
+                params.put("alamat", alamat);
+                params.put("level_user", levelUser);
+                params.put("foto_user", fotoUser);
+                params.put("api", "tambah");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+    /*PROSES KE DATABASE*/
+
+    /*FOTO*/
     private void klikPilihFotoTambahUser() {
         View view = getLayoutInflater().inflate(R.layout.fragment_bottom_sheet_dialog_tambah_foto, null);
         bottomSheetDialog = new BottomSheetDialog(this);
@@ -170,21 +333,18 @@ public class TambahUserActivity extends AppCompatActivity {
 
         bottomSheetDialog.show();
     }
-
     private void pilihFotoTambahUser(){
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(intent.ACTION_PICK);
         startActivityForResult(Intent.createChooser(intent,"Pilih Foto"),1);
     }
-
     private void takePicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult( requestCode, resultCode, data );
@@ -204,7 +364,6 @@ public class TambahUserActivity extends AppCompatActivity {
             txtFotoTambahUser.setText( getStringImage( mImageBitmap ) );
         }
     }
-
     private String getStringImage(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(  );
         bitmap.compress( Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream );
@@ -213,7 +372,9 @@ public class TambahUserActivity extends AppCompatActivity {
 
         return encodedImage;
     }
+    /*FOTO*/
 
+    /*INPUT*/
     private class MyTextWatcher implements TextWatcher {
 
         private View view;
@@ -251,13 +412,11 @@ public class TambahUserActivity extends AppCompatActivity {
             }
         }
     }
-
     private void requestFocus(View view) {
         if (view.requestFocus()) {
             getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
-
     private boolean validatePassword() {
         if (inputPassword.getText().toString().trim().isEmpty()) {
             inputLayoutPassword.setError("Masukkan Password");
@@ -268,7 +427,6 @@ public class TambahUserActivity extends AppCompatActivity {
         }
         return true;
     }
-
     private boolean validateNotelp() {
         if (inputNoTelp.getText().toString().trim().isEmpty()) {
             inputLayoutNoTelp.setError("Masukkan No Telepon");
@@ -279,7 +437,6 @@ public class TambahUserActivity extends AppCompatActivity {
         }
         return true;
     }
-
     private boolean validateNamaDepan() {
         if (inputNamaDepan.getText().toString().trim().isEmpty()) {
             inputLayoutNamaDepan.setError("Masukkan Nama Depan");
@@ -290,7 +447,6 @@ public class TambahUserActivity extends AppCompatActivity {
         }
         return true;
     }
-
     private boolean validateNamaBelakang() {
         if (inputNamaBelakang.getText().toString().trim().isEmpty()) {
             inputLayoutNamaBelakang.setError("Masukkan Nama Belakang");
@@ -301,7 +457,6 @@ public class TambahUserActivity extends AppCompatActivity {
         }
         return true;
     }
-
     private boolean validateAlamat() {
         if (inputAlamat.getText().toString().trim().isEmpty()) {
             inputLayoutAlamat.setError("Masukkan Alamat");
@@ -312,7 +467,6 @@ public class TambahUserActivity extends AppCompatActivity {
         }
         return true;
     }
-
     private boolean validateUsername() {
         if (inputUsername.getText().toString().trim().isEmpty()) {
             inputLayoutUsername.setError("Masukkan Username");
@@ -323,6 +477,7 @@ public class TambahUserActivity extends AppCompatActivity {
         }
         return true;
     }
+    /*INPUT*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

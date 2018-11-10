@@ -34,6 +34,11 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = layoutInflater.inflate( layouts[position],container,false );
         container.addView( view );
+        if (position==0){
+
+        }else if(position==1){
+
+        }
         return view;
     }
 

@@ -15,12 +15,22 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 //import com.pratamatechnocraft.silaporanpenjualan.TambahSuratMasukActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,13 +147,14 @@ public class DataBarangFragment extends Fragment {
                             noDataBarang.setVisibility( View.GONE );
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i<data.length(); i++){
-                                JSONObject suratmasukobject = data.getJSONObject( i );
+                                JSONObject barangobject = data.getJSONObject( i );
 
                                 ListItemDataBarang listItemDataBarang = new ListItemDataBarang(
-                                        suratmasukobject.getString( "id_surat_masuk"),
-                                        suratmasukobject.getString( "asal_surat" ),
-                                        suratmasukobject.getString( "perihal" ),
-                                        suratmasukobject.getString( "tgl_arsip")
+                                        barangobject.getString( "kd_barang"),
+                                        barangobject.getString( "nama_barang" ),
+                                        barangobject.getString( "stok_barang" ),
+                                        barangobject.getString( "harga_jual"),
+                                        barangobject.getString( "gamabar_barang")
                                 );
 
                                 listItemDataBarangs.add( listItemDataBarang );

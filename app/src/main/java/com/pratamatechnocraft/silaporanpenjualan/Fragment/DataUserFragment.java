@@ -16,12 +16,22 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
-import com.pratamatechnocraft.silaporanpenjualan.TambahUserActivity;
+import com.pratamatechnocraft.silaporanpenjualan.FormUserActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +54,7 @@ public class DataUserFragment extends Fragment {
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private static final String API_URL = "api/surat_masuk?api=suratmasukall";
+    private static final String API_URL = "api/user?api=all";
 
 
     @Nullable
@@ -94,7 +104,7 @@ public class DataUserFragment extends Fragment {
         fabTambahDataUser.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getContext(), TambahUserActivity.class);
+                Intent i = new Intent(getContext(), FormUserActivity.class);
                 i.putExtra( "type","tambah" );
                 getContext().startActivity(i);
             }
@@ -151,13 +161,14 @@ public class DataUserFragment extends Fragment {
                             noDataUser.setVisibility( View.GONE );
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i<data.length(); i++){
-                                JSONObject suratmasukobject = data.getJSONObject( i );
+                                JSONObject userobject = data.getJSONObject( i );
 
                                 ListItemDataUser listItemDataUser = new ListItemDataUser(
-                                        suratmasukobject.getString( "id_surat_masuk"),
-                                        suratmasukobject.getString( "asal_surat" ),
-                                        suratmasukobject.getString( "perihal" ),
-                                        suratmasukobject.getString( "tgl_arsip")
+                                        userobject.getString( "kd_user"),
+                                        userobject.getString( "nama_depan" )+" "+userobject.getString( "nama_belakang" ),
+                                        userobject.getString( "no_telp" ),
+                                        userobject.getString( "level_user"),
+                                        userobject.getString( "foto_user")
                                 );
 
                                 listItemDataUsers.add( listItemDataUser );

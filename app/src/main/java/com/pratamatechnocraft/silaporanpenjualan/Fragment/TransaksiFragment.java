@@ -18,6 +18,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataPiutang;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPembelian;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksiPenjualan;
@@ -27,6 +33,10 @@ import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import com.pratamatechnocraft.silaporanpenjualan.TransaksiBaruActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +61,7 @@ public class TransaksiFragment extends Fragment{
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private static final String API_URL = "api/surat_masuk?api=suratmasukall";
+    private static String API_URL ="";
 
     public TransaksiFragment(Integer menuTab, Integer jenisTransaksi) {
         this.menuTab = menuTab;
@@ -82,17 +92,21 @@ public class TransaksiFragment extends Fragment{
             if (menuTab==0){
                 adapterDataTransaksi = new AdapterRecycleViewDataTransaksiPenjualan( listItemTransaksis, getContext());
                 fabTransaksiBaru.setVisibility( View.VISIBLE );
+                loadDataTransaksiPenjualan("penjualan");
             }else {
                 adapterDataTransaksi = new AdapterRecycleViewDataPiutang( listItemTransaksis, getContext());
                 fabTransaksiBaru.setVisibility( View.GONE );
+                loadDataTransaksiPenjualan("piutang");
             }
         }else{
             if (menuTab==0){
                 adapterDataTransaksi = new AdapterRecycleViewDataTransaksiPembelian( listItemTransaksis, getContext());
                 fabTransaksiBaru.setVisibility( View.VISIBLE );
+                loadDataTransaksiPenjualan("pembelian");
             }else {
                 adapterDataTransaksi = new AdapterRecycleViewDataUtang( listItemTransaksis, getContext());
                 fabTransaksiBaru.setVisibility( View.GONE );
+                loadDataTransaksiPenjualan("utang");
             }
         }
 
@@ -106,14 +120,24 @@ public class TransaksiFragment extends Fragment{
 
         progressBarDataTransaksi = view.findViewById( R.id.progressBarDataTransaksi );
 
-        loadSuratMasuk();
-
         refreshDataTransaksi.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 listItemTransaksis.clear();
                 adapterDataTransaksi.notifyDataSetChanged();
-                loadSuratMasuk();
+                if (jenisTransaksi==0){
+                    if (menuTab==0){
+                        loadDataTransaksiPenjualan("penjualan");
+                    }else {
+                        loadDataTransaksiPenjualan("piutang");
+                    }
+                }else{
+                    if (menuTab==0){
+                        loadDataTransaksiPenjualan("pembelian");
+                    }else {
+                        loadDataTransaksiPenjualan("utang");
+                    }
+                }
             }
         } );
 
@@ -122,7 +146,19 @@ public class TransaksiFragment extends Fragment{
             public void onClick(View view) {
                 koneksiDataTransaksi.setVisibility( View.GONE );
                 progressBarDataTransaksi.setVisibility( View.VISIBLE );
-                loadSuratMasuk();
+                if (jenisTransaksi==0){
+                    if (menuTab==0){
+                        loadDataTransaksiPenjualan("penjualan");
+                    }else {
+                        loadDataTransaksiPenjualan("piutang");
+                    }
+                }else{
+                    if (menuTab==0){
+                        loadDataTransaksiPenjualan("pembelian");
+                    }else {
+                        loadDataTransaksiPenjualan("utang");
+                    }
+                }
             }
         } );
 
@@ -143,7 +179,16 @@ public class TransaksiFragment extends Fragment{
 
     }
 
-    private void loadSuratMasuk(){
+    private void loadDataTransaksiPenjualan(String jenis){
+        if (jenis.equals( "penjualan" )){
+            API_URL = "api/transaksi?api=penjualan";
+        }else if (jenis.equals( "piutang" )){
+            API_URL = "api/transaksi?api=piutang";
+        }else if (jenis.equals( "pembelian" )){
+            API_URL = "api/transaksi?api=pembelian";
+        }else if (jenis.equals( "utang" )){
+            API_URL = "api/transaksi?api=utang";
+        }
 
 
         ListItemTransaksi listItemDataTransaksi = new ListItemTransaksi(
@@ -180,16 +225,15 @@ public class TransaksiFragment extends Fragment{
                             noDataTransaksi.setVisibility( View.GONE );
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i<data.length(); i++){
-                                JSONObject suratmasukobject = data.getJSONObject( i );
+                                JSONObject transaksiobject = data.getJSONObject( i );
 
-                                ListItemDataTransaksi listItemDataTransaksi = new ListItemDataTransaksi(
-                                        suratmasukobject.getString( "id_surat_masuk"),
-                                        suratmasukobject.getString( "asal_surat" ),
-                                        suratmasukobject.getString( "perihal" ),
-                                        suratmasukobject.getString( "tgl_arsip")
+                                ListItemTransaksi listItemTransaksi = new ListItemTransaksi(
+                                        transaksiobject.getString( "kd_transaksi"),
+                                        transaksiobject.getString( "total_harga" ),
+                                        transaksiobject.getString( "tgl_transaksi" )
                                 );
 
-                                listItemTransaksis.add( listItemDataTransaksi );
+                                listItemTransaksis.add( listItemTransaksi );
                                 adapterDataTransaksi.notifyDataSetChanged();
                             }
                         }

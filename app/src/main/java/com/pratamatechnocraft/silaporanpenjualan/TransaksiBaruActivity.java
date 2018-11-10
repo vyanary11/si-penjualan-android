@@ -64,8 +64,6 @@ public class TransaksiBaruActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mViewPager.setCurrentItem( 1 );
-                btnLanjut.setVisibility( View.GONE );
-                btnKembali.setVisibility( View.VISIBLE );
             }
         } );
 
@@ -73,8 +71,6 @@ public class TransaksiBaruActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mViewPager.setCurrentItem( 0 );
-                btnKembali.setVisibility( View.GONE );
-                btnLanjut.setVisibility( View.VISIBLE );
             }
         } );
         createDots( 0 );
@@ -88,6 +84,13 @@ public class TransaksiBaruActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int i) {
                 createDots( i );
+                if (i==0){
+                    btnKembali.setVisibility( View.GONE );
+                    btnLanjut.setVisibility( View.VISIBLE );
+                }else if(i==1){
+                    btnLanjut.setVisibility( View.GONE );
+                    btnKembali.setVisibility( View.VISIBLE );
+                }
             }
 
             @Override
