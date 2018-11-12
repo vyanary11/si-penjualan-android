@@ -48,21 +48,59 @@
                         android:gravity="center_vertical|center_horizontal|center"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/txtFotoTambahUser"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:textAlignment="center"
-                            android:visibility="gone" />
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/fotoTambahUser"
+                        <RelativeLayout
+                            android:id="@+id/adaGambarFormUser"
                             android:layout_width="match_parent"
-                            android:layout_height="80dp"
-                            android:src="@drawable/default_foto_user"
-                            app:civ_border_color="@color/colorSecondaryText"
-                            app:civ_border_width="2dp" />
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/txtFotoTambahUser"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:textAlignment="center"
+                                android:visibility="gone" />
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/fotoTambahUser"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_gravity="center_horizontal|center_vertical"
+                                android:src="@drawable/default_foto_user"
+                                app:civ_border_color="@color/colorSecondaryText"
+                                app:civ_border_width="2dp" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/tidakAdaGambarFormUser"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:visibility="gone"
+                            android:layout_weight="1">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/fotoTambahUser1"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_gravity="center_horizontal|center_vertical"
+                                android:layout_weight="1"
+                                android:src="@android:color/holo_blue_bright"
+                                app:civ_border_color="#fff" />
+
+                            <TextView
+                                android:id="@+id/hurufDepanUserDetail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="55dp"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:text="A"
+                                android:textAllCaps="true"
+                                android:textColor="@android:color/white"
+                                android:textSize="40sp" />
+                        </RelativeLayout>
 
                         <Button
                             android:id="@+id/buttonPilihFotoTambahUser"
@@ -173,8 +211,54 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingLeft="5dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Level User"
+                        android:textSize="18sp" />
+
+                    <RadioGroup
+                        android:id="@+id/rbglevelUser"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:checkedButton="@+id/rbOwner"
+                        android:orientation="horizontal"
+                        android:weightSum="2">
+
+                        <RadioButton
+                            android:id="@+id/rbOwner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:duplicateParentState="false"
+                            android:text="Owner"
+                            android:textSize="18sp" />
+
+                        <RadioButton
+                            android:id="@+id/rbKasir"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Kasir"
+                            android:textSize="18sp" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="10dp"
+                    android:layout_weight="1"
                     android:orientation="horizontal">
 
                     <Button

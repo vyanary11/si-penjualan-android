@@ -12,7 +12,10 @@ import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.pratamatechnocraft.silaporanpenjualan.DetailUserActivity;
+import com.pratamatechnocraft.silaporanpenjualan.MainActivity;
+import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
@@ -26,6 +29,8 @@ public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecy
     private List<ListItemDataUser> listItemDataUsers;
     private List<ListItemDataUser> listItemDataUserFull;
     private Context context;
+    BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
+    private String baseUrl=baseUrlApiModel.getBaseURL();
 
     public AdapterRecycleViewDataUser(List<ListItemDataUser> listItemDataUsers, Context context) {
         this.listItemDataUsers = listItemDataUsers;
@@ -57,9 +62,14 @@ public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecy
             }
         });
 
-        if (listItemDataUser.getFotoUser()!=""){
+        if (!listItemDataUser.getFotoUser().equals("")){
             holder.adaGambarUser.setVisibility( View.VISIBLE );
             holder.tidakAdaGambarUser.setVisibility( View.GONE );
+            Glide.with(context)
+                    // LOAD URL DARI INTERNET
+                    .load(baseUrl+listItemDataUser.getFotoUser())
+                    // LOAD GAMBAR AWAL SEBELUM GAMBAR UTAMA MUNCUL, BISA DARI LOKAL DAN INTERNET
+                    .into(holder.fotoDataUser1);
         }else {
             holder.adaGambarUser.setVisibility( View.GONE );
             holder.tidakAdaGambarUser.setVisibility( View.VISIBLE );

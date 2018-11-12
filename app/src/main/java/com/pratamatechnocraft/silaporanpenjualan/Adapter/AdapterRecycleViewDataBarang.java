@@ -56,7 +56,7 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
             }
         });
 
-        if (listItemDataBarang.getGambarBarang()!=""){
+        if (!listItemDataBarang.getGambarBarang().equals("")){
             holder.adaGambar.setVisibility( View.VISIBLE );
             holder.tidakAdaGambar.setVisibility( View.GONE );
         }else {

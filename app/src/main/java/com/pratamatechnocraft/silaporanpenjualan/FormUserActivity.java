@@ -23,6 +23,9 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +36,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 
 import org.json.JSONException;
@@ -48,6 +52,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FormUserActivity extends AppCompatActivity {
 
     private Button btnPilihFotoTambahUser,buttonSimpanTambahUser,buttonBatalTambahUser;
+    private RelativeLayout adaGambar, tidakAdaGambar;
+    private RadioGroup rbglevelUser;
     private TextInputLayout inputLayoutUsername,inputLayoutPassword,inputLayoutNamaDepan,inputLayoutNamaBelakang,inputLayoutNoTelp,inputLayoutAlamat;
     private EditText inputUsername,inputPassword,inputNamaDepan,inputNamaBelakang,inputNoTelp,inputAlamat;
     private BottomSheetDialog bottomSheetDialog;
@@ -55,9 +61,9 @@ public class FormUserActivity extends AppCompatActivity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private Bitmap mImageBitmap;
     private Button galeri,kamera;
-    private TextView txtFotoTambahUser;
+    private TextView txtFotoTambahUser, txtHurufDepanUserForm;
     private ProgressDialog progress;
-    private CircleImageView fotoTambahUser;
+    private CircleImageView fotoTambahUser,fotoTambahUser1;
     private SwipeRefreshLayout refreshFormUser;
     private BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
@@ -83,6 +89,9 @@ public class FormUserActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        /*RADIOBUTTON*/
+        rbglevelUser =  (RadioGroup) findViewById(R.id.rbglevelUser);
+
         /*BUTTON*/
         btnPilihFotoTambahUser = findViewById( R.id.buttonPilihFotoTambahUser );
         buttonSimpanTambahUser = findViewById( R.id.buttonSimpanTambahUser );
@@ -107,6 +116,7 @@ public class FormUserActivity extends AppCompatActivity {
         if (i.getStringExtra( "type" ).equals( "tambah" )){
             buttonSimpanTambahUser.setText("Tambah");
         }else if(i.getStringExtra( "type" ).equals( "edit" )){
+            loadTampilEdit(i.getStringExtra( "kdUser" ));
             buttonSimpanTambahUser.setText("Simpan");
             inputLayoutUsername.setVisibility( View.GONE );
             inputLayoutPassword.setVisibility( View.GONE );
@@ -114,8 +124,13 @@ public class FormUserActivity extends AppCompatActivity {
 
 
         /*IMAGE*/
+        adaGambar=findViewById( R.id.adaGambarFormUser );
+        tidakAdaGambar=findViewById( R.id.tidakAdaGambarFormUser );
         fotoTambahUser = (CircleImageView) findViewById( R.id.fotoTambahUser );
+        fotoTambahUser1 = (CircleImageView) findViewById( R.id.fotoTambahUser1 );
         txtFotoTambahUser = (TextView) findViewById( R.id.txtFotoTambahUser );
+        txtHurufDepanUserForm = (TextView) findViewById( R.id.hurufDepanUserDetail );
+        txtFotoTambahUser.setText( "" );
 
         /*VALIDASI DATA*/
         inputUsername.addTextChangedListener( new MyTextWatcher( inputUsername) );
@@ -136,11 +151,7 @@ public class FormUserActivity extends AppCompatActivity {
         refreshFormUser.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (i.getStringExtra( "type" ).equals("tambah")){
-                    refreshFormUser.setRefreshing( false );
-                }else if(i.getStringExtra( "type" ).equals("edit")){
-
-                }
+                loadTampilEdit(i.getStringExtra( "kdUser" ));
             }
         } );
 
@@ -155,6 +166,13 @@ public class FormUserActivity extends AppCompatActivity {
         buttonSimpanTambahUser.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int selectedId = rbglevelUser .getCheckedRadioButtonId();
+                String indexRadioButtonLevelUser;
+                if (selectedId == R.id.rbOwner){
+                    indexRadioButtonLevelUser="0";
+                }else{
+                    indexRadioButtonLevelUser="1";
+                }
                 if (i.getStringExtra( "type" ).equals( "tambah" )){
                     if (!validateUsername() || !validatePassword() || !validateNamaDepan() || !validateNamaBelakang() || !validateNamaBelakang() || !validateNotelp() || !validateAlamat()) {
                         return;
@@ -170,7 +188,7 @@ public class FormUserActivity extends AppCompatActivity {
                             inputNamaBelakang.getText().toString().trim(),
                             inputNoTelp.getText().toString().trim(),
                             inputAlamat.getText().toString().trim(),
-                            "",
+                            indexRadioButtonLevelUser,
                             txtFotoTambahUser.getText().toString().trim()
                         );
                     }
@@ -187,7 +205,7 @@ public class FormUserActivity extends AppCompatActivity {
                                 inputNamaBelakang.getText().toString().trim(),
                                 inputNoTelp.getText().toString().trim(),
                                 inputAlamat.getText().toString().trim(),
-                                "",
+                                indexRadioButtonLevelUser,
                                 txtFotoTambahUser.getText().toString().trim()
                         );
                     }
@@ -260,12 +278,13 @@ public class FormUserActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     String kode = jsonObject.getString("kode");
                     if (kode.equals("1")) {
-                        JSONObject data = jsonObject.getJSONObject("data");
+                        /*JSONObject data = jsonObject.getJSONObject("data");
                         String idUser = data.getString("kd_user").trim();
 
                         Intent i = new Intent(FormUserActivity.this, DetailUserActivity.class);
                         i.putExtra( "idUser", idUser );
-                        startActivity(i);
+                        startActivity(i);*/
+                        finish();
                         Toast.makeText(FormUserActivity.this, "Berhasil Menambahkan User", Toast.LENGTH_SHORT).show();
 
                     }else{
@@ -283,6 +302,8 @@ public class FormUserActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                Log.d( "TAG", error.toString() );
+                /*Log.d(TAG, error.printStackTrace() );*/
                 Toast.makeText(FormUserActivity.this, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
                 progress.dismiss();
             }
@@ -305,6 +326,57 @@ public class FormUserActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    private void loadTampilEdit(String kdUser){
+        refreshFormUser.setRefreshing(true);
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL+"?api=profile&kd_user="+kdUser,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            final JSONObject userdetail = new JSONObject(response);
+                            inputNamaDepan.setText( userdetail.getString( "nama_depan" ) );
+                            inputNamaBelakang.setText( userdetail.getString( "nama_belakang" ) );
+                            inputNoTelp.setText( userdetail.getString( "no_telp" ) );
+                            inputAlamat.setText( userdetail.getString( "alamat" ) );
+                            /*if(Integer.parseInt( userdetail.getString( "level_user" ) )==0){
+                                txtDetailLevelUser.setText("Owner");
+                            }else if(Integer.parseInt( userdetail.getString( "level_user" ) )==1){
+                                txtDetailLevelUser.setText("Kasir");
+                            }*/
+                            if (userdetail.getString( "foto" ).equals( "" )){
+                                adaGambar.setVisibility( View.GONE );
+                                tidakAdaGambar.setVisibility( View.VISIBLE );
+                                setTidakAdaGambar(userdetail.getString( "nama_depan" ));
+                            }else{
+                                adaGambar.setVisibility( View.VISIBLE );
+                                tidakAdaGambar.setVisibility( View.GONE );
+                                Glide.with(FormUserActivity.this)
+                                        // LOAD URL DARI INTERNET
+                                        .load(baseUrl+String.valueOf( userdetail.getString( "foto" )  ))
+                                        // LOAD GAMBAR AWAL SEBELUM GAMBAR UTAMA MUNCUL, BISA DARI LOKAL DAN INTERNET
+                                        .into(fotoTambahUser);
+                                txtFotoTambahUser.setText( "ada" );
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(FormUserActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                        }
+                        refreshFormUser.setRefreshing( false );
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(FormUserActivity.this, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
+                        refreshFormUser.setRefreshing( false );
+                    }
+                }
+        );
+
+        RequestQueue requestQueue = Volley.newRequestQueue( FormUserActivity.this );
+        requestQueue.add( stringRequest );
     }
     /*PROSES KE DATABASE*/
 
@@ -354,6 +426,8 @@ public class FormUserActivity extends AppCompatActivity {
                 bitmap = MediaStore.Images.Media.getBitmap( getContentResolver(),filePath );
                 fotoTambahUser.setImageBitmap( bitmap );
                 txtFotoTambahUser.setText( getStringImage( bitmap ) );
+                adaGambar.setVisibility( View.VISIBLE );
+                tidakAdaGambar.setVisibility( View.GONE );
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -362,6 +436,8 @@ public class FormUserActivity extends AppCompatActivity {
             mImageBitmap = (Bitmap) extras.get("data");
             fotoTambahUser.setImageBitmap(mImageBitmap);
             txtFotoTambahUser.setText( getStringImage( mImageBitmap ) );
+            adaGambar.setVisibility( View.VISIBLE );
+            tidakAdaGambar.setVisibility( View.GONE );
         }
     }
     private String getStringImage(Bitmap bitmap) {
@@ -488,5 +564,67 @@ public class FormUserActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void setTidakAdaGambar(String namaDepan){
+        txtHurufDepanUserForm.setText(namaDepan.substring( 0,1 ));
+
+        int color=0;
+
+        if (txtHurufDepanUserForm.getText().equals( "A" ) || txtHurufDepanUserForm.getText().equals( "a" )){
+            color=R.color.amber_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "B" ) || txtHurufDepanUserForm.getText().equals( "b" )){
+            color=R.color.blue_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "C" ) || txtHurufDepanUserForm.getText().equals( "c" )){
+            color=R.color.blue_grey_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "D" ) || txtHurufDepanUserForm.getText().equals( "d" )){
+            color=R.color.brown_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "E" ) || txtHurufDepanUserForm.getText().equals( "e" )){
+            color=R.color.cyan_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "F" ) || txtHurufDepanUserForm.getText().equals( "f" )){
+            color=R.color.deep_orange_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "G" ) || txtHurufDepanUserForm.getText().equals( "g" )){
+            color=R.color.deep_purple_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "H" ) || txtHurufDepanUserForm.getText().equals( "h" )){
+            color=R.color.green_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "I" ) || txtHurufDepanUserForm.getText().equals( "i" )){
+            color=R.color.grey_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "J" ) || txtHurufDepanUserForm.getText().equals( "j" )){
+            color=R.color.indigo_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "K" ) || txtHurufDepanUserForm.getText().equals( "k" )){
+            color=R.color.teal_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "L" ) || txtHurufDepanUserForm.getText().equals( "l" )){
+            color=R.color.lime_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "M" ) || txtHurufDepanUserForm.getText().equals( "m" )){
+            color=R.color.red_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "N" ) || txtHurufDepanUserForm.getText().equals( "n" )){
+            color=R.color.light_blue_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "O" ) || txtHurufDepanUserForm.getText().equals( "o" )){
+            color=R.color.light_green_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "P" ) || txtHurufDepanUserForm.getText().equals( "p" )){
+            color=R.color.orange_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "Q" ) || txtHurufDepanUserForm.getText().equals( "q" )){
+            color=R.color.pink_500;
+        }else if(txtHurufDepanUserForm.getText().equals( "R" ) || txtHurufDepanUserForm.getText().equals( "r" )){
+            color=R.color.red_600;
+        }else if(txtHurufDepanUserForm.getText().equals( "S" ) || txtHurufDepanUserForm.getText().equals( "s" )){
+            color=R.color.yellow_600;
+        }else if(txtHurufDepanUserForm.getText().equals( "T" ) || txtHurufDepanUserForm.getText().equals( "t" )){
+            color=R.color.blue_600;
+        }else if(txtHurufDepanUserForm.getText().equals( "U" ) || txtHurufDepanUserForm.getText().equals( "u" )){
+            color=R.color.cyan_600;
+        }else if(txtHurufDepanUserForm.getText().equals( "V" ) || txtHurufDepanUserForm.getText().equals( "v" )){
+            color=R.color.green_600;
+        }else if(txtHurufDepanUserForm.getText().equals( "W" ) || txtHurufDepanUserForm.getText().equals( "w" )){
+            color=R.color.purple_600;
+        }else if(txtHurufDepanUserForm.getText().equals( "X" ) || txtHurufDepanUserForm.getText().equals( "x" )){
+            color=R.color.pink_600;
+        }else if(txtHurufDepanUserForm.getText().equals( "Y" ) || txtHurufDepanUserForm.getText().equals( "y" )){
+            color=R.color.lime_600;
+        }else if(txtHurufDepanUserForm.getText().equals( "Z" ) || txtHurufDepanUserForm.getText().equals( "z" )){
+            color=R.color.orange_600;
+        }
+
+        fotoTambahUser1.setImageResource(color);
     }
 }

@@ -169,12 +169,12 @@ public class DataKategoriBarangFragment extends Fragment {
                                     );
 
                                     listItemDataKategorisBarangs.add( listItemDataKategoriBarang );
-                                    adapterDataKategoriBarang.notifyDataSetChanged();
                                 }
                             }
                             refreshDataKategoriBarang.setRefreshing( false );
                             progressBarDataKategoriBarang.setVisibility( View.GONE );
                             koneksiDataKategoriBarang.setVisibility( View.GONE);
+                            setUpRecycleView();
                         }catch (JSONException e){
                             e.printStackTrace();
                             refreshDataKategoriBarang.setRefreshing( false );
@@ -204,8 +204,6 @@ public class DataKategoriBarangFragment extends Fragment {
         refreshDataKategoriBarang.setRefreshing( false );
         progressBarDataKategoriBarang.setVisibility( View.GONE );
         koneksiDataKategoriBarang.setVisibility( View.GONE);
-
-        setUpRecycleView();
     }
 
     private void setUpRecycleView(){

@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,12 +21,22 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.support.v7.widget.SearchView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import com.pratamatechnocraft.silaporanpenjualan.FormUserActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +57,7 @@ public class DataUserFragment extends Fragment {
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private static final String API_URL = "api/user?api=all";
+    private static final String API_URL = "api/user?api=userall";
 
     @Nullable
     @Override
@@ -127,31 +138,8 @@ public class DataUserFragment extends Fragment {
 
     private void loadDataUser(){
         listItemDataUsers = new ArrayList<>();
-        ListItemDataUser listItemDataUser = new ListItemDataUser(
-                "",
-                "Owner Kantin",
-                "081543xxxxxx",
-                "Owner",
-                ""
-        );
 
-        listItemDataUsers.add( listItemDataUser );
-
-        ListItemDataUser listItemDataUser1 = new ListItemDataUser(
-                "",
-                "Kasir Kantin",
-                "081465xxxxxx",
-                "Kasir",
-                ""
-        );
-
-        listItemDataUsers.add( listItemDataUser1 );
-
-        refreshDataUser.setRefreshing( false );
-        progressBarDataUser.setVisibility( View.GONE );
-        koneksiDataUser.setVisibility( View.GONE);
-
-        /*StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -164,24 +152,32 @@ public class DataUserFragment extends Fragment {
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i<data.length(); i++){
                                 JSONObject userobject = data.getJSONObject( i );
+                                String level_user;
+                                if (userobject.getString( "level_user" ).equals( "0" )){
+                                    level_user="Owner";
+                                }else{
+                                    level_user="Kasir";
+                                }
 
                                 ListItemDataUser listItemDataUser = new ListItemDataUser(
                                         userobject.getString( "kd_user"),
                                         userobject.getString( "nama_depan" )+" "+userobject.getString( "nama_belakang" ),
                                         userobject.getString( "no_telp" ),
-                                        userobject.getString( "level_user"),
-                                        userobject.getString( "foto_user")
+                                        level_user,
+                                        userobject.getString( "foto")
                                 );
 
                                 listItemDataUsers.add( listItemDataUser );
-                                adapterDataUser.notifyDataSetChanged();
+                                //adapterDataUser.notifyDataSetChanged();
                             }
                         }
                         refreshDataUser.setRefreshing( false );
                         progressBarDataUser.setVisibility( View.GONE );
                         koneksiDataUser.setVisibility( View.GONE);
+                        setUpRecycleView();
                     }catch (JSONException e){
                         e.printStackTrace();
+                        Log.d( "TAG", e.toString() );
                         refreshDataUser.setRefreshing( false );
                         progressBarDataUser.setVisibility( View.GONE );
                         noDataUser.setVisibility( View.GONE );
@@ -194,6 +190,7 @@ public class DataUserFragment extends Fragment {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     error.printStackTrace();
+                    Log.d( "TAG", error.toString() );
                     refreshDataUser.setRefreshing( false );
                     progressBarDataUser.setVisibility( View.GONE );
                     noDataUser.setVisibility( View.GONE );
@@ -204,9 +201,7 @@ public class DataUserFragment extends Fragment {
         );
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
-        requestQueue.add( stringRequest );*/
-
-        setUpRecycleView();
+        requestQueue.add( stringRequest );
     }
 
     private void setUpRecycleView(){
