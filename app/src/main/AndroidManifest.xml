@@ -90,7 +90,8 @@
                 android:value=".MainActivity" />
         </activity>
         <activity android:name=".DetailBarangActivity" />
-        <activity android:name=".DetailBiayaActivity"></activity>
+        <activity android:name=".DetailBiayaActivity" />
+        <activity android:name=".FormBarangActivity"></activity>
     </application>
 
 </manifest>
