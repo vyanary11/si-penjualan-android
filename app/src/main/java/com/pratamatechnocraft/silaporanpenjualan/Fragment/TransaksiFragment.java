@@ -96,7 +96,6 @@ public class TransaksiFragment extends Fragment{
             @Override
             public void onRefresh() {
                 listItemTransaksis.clear();
-                adapterDataTransaksi.notifyDataSetChanged();
                 if (jenisTransaksi==0){
                     if (menuTab==0){
                         loadDataTransaksi("penjualan");
@@ -176,7 +175,7 @@ public class TransaksiFragment extends Fragment{
                 return false;
             }
         } );
-        searchView.setQueryHint("Search");
+        searchView.setQueryHint("Cari: No Invoice, Tanggal");
 
     }
 
@@ -234,12 +233,12 @@ public class TransaksiFragment extends Fragment{
                                 );
 
                                 listItemTransaksis.add( listItemTransaksi );
-                                adapterDataTransaksi.notifyDataSetChanged();
                             }
                         }
                         refreshDataTransaksi.setRefreshing( false );
                         progressBarDataTransaksi.setVisibility( View.GONE );
                         koneksiDataTransaksi.setVisibility( View.GONE);
+                        setUpRecycleView();
                     }catch (JSONException e){
                         e.printStackTrace();
                         refreshDataTransaksi.setRefreshing( false );
