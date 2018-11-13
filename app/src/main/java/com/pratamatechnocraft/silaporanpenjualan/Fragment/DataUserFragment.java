@@ -53,6 +53,8 @@ public class DataUserFragment extends Fragment {
     Button cobaLagiDataUser;
     SessionManager sessionManager;
 
+    private Boolean statusFragment = false;
+
     private List<ListItemDataUser> listItemDataUsers;
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
@@ -132,8 +134,22 @@ public class DataUserFragment extends Fragment {
                 return false;
             }
         } );
-        searchView.setQueryHint("Search");
+        searchView.setQueryHint("Cari: Nama, Jenis User");
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        statusFragment=true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (statusFragment){
+            loadDataUser();
+        }
     }
 
     private void loadDataUser(){
@@ -211,5 +227,4 @@ public class DataUserFragment extends Fragment {
         recyclerViewDataUser.setAdapter( adapterDataUser );
         adapterDataUser.notifyDataSetChanged();
     }
-
 }

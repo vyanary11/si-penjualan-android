@@ -78,11 +78,13 @@ public class FormUserActivity extends AppCompatActivity {
         progress = new ProgressDialog(this);
         refreshFormUser = findViewById( R.id.refreshFormUser );
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbartambahuser);
+        ToolBarAtas2.setSubtitleTextColor( ContextCompat.getColor(this, R.color.colorIcons) );
+        this.setTitle("Data User");
         setSupportActionBar(ToolBarAtas2);
         if (i.getStringExtra( "type" ).equals( "tambah" )){
-            this.setTitle("Tambah User");
+            ToolBarAtas2.setSubtitle( "Tambah User" );
         }else if(i.getStringExtra( "type" ).equals( "edit" )){
-            this.setTitle("Edit User");
+            ToolBarAtas2.setSubtitle( "Edit User" );
         }
         final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
         upArrow.setColorFilter(ContextCompat.getColor(this, R.color.colorIcons), PorterDuff.Mode.SRC_ATOP);
@@ -278,12 +280,6 @@ public class FormUserActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     String kode = jsonObject.getString("kode");
                     if (kode.equals("1")) {
-                        /*JSONObject data = jsonObject.getJSONObject("data");
-                        String idUser = data.getString("kd_user").trim();
-
-                        Intent i = new Intent(FormUserActivity.this, DetailUserActivity.class);
-                        i.putExtra( "idUser", idUser );
-                        startActivity(i);*/
                         finish();
                         Toast.makeText(FormUserActivity.this, "Berhasil Menambahkan User", Toast.LENGTH_SHORT).show();
 
@@ -340,11 +336,13 @@ public class FormUserActivity extends AppCompatActivity {
                             inputNamaBelakang.setText( userdetail.getString( "nama_belakang" ) );
                             inputNoTelp.setText( userdetail.getString( "no_telp" ) );
                             inputAlamat.setText( userdetail.getString( "alamat" ) );
-                            /*if(Integer.parseInt( userdetail.getString( "level_user" ) )==0){
-                                txtDetailLevelUser.setText("Owner");
+                            if(Integer.parseInt( userdetail.getString( "level_user" ) )==0){
+                                RadioButton rbOwner = findViewById( R.id.rbOwner );
+                                rbOwner.setChecked( true );
                             }else if(Integer.parseInt( userdetail.getString( "level_user" ) )==1){
-                                txtDetailLevelUser.setText("Kasir");
-                            }*/
+                                RadioButton rbKasir = findViewById( R.id.rbKasir );
+                                rbKasir.setChecked( true );
+                            }
                             if (userdetail.getString( "foto" ).equals( "" )){
                                 adaGambar.setVisibility( View.GONE );
                                 tidakAdaGambar.setVisibility( View.VISIBLE );

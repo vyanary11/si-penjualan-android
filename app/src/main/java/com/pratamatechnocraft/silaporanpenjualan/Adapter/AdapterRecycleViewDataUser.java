@@ -157,7 +157,7 @@ public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecy
               String filterPattern = charSequence.toString().toLowerCase().trim();
 
               for (ListItemDataUser itemDataUser : listItemDataUserFull){
-                  if (itemDataUser.getNamaUser().toLowerCase().contains( filterPattern )){
+                  if (itemDataUser.getNamaUser().toLowerCase().contains( filterPattern ) || itemDataUser.getLevelUser().toLowerCase().contains( filterPattern )){
                       filteredList.add( itemDataUser );
                   }
               }

@@ -1,5 +1,6 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -44,6 +45,7 @@ public class DetailUserActivity extends AppCompatActivity {
     private static final String API_URL = "api/user?api=profile&kd_user=";
     Intent intent;
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -67,13 +69,22 @@ public class DetailUserActivity extends AppCompatActivity {
 
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_detailuser);
         setSupportActionBar(ToolBarAtas2);
-        this.setTitle("Nama User");
+        this.setTitle("Data User");
+        ToolBarAtas2.setSubtitle( "Detail User" );
+        ToolBarAtas2.setSubtitleTextColor( ContextCompat.getColor(this, R.color.colorIcons) );
         final Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
         upArrow.setColorFilter(ContextCompat.getColor(this, R.color.colorIcons), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         loadDetail(intent.getStringExtra( "kdUser" ));
+
+        refreshDetailUser.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadDetail(intent.getStringExtra( "kdUser" ));
+            }
+        } );
     }
 
     @Override
@@ -102,7 +113,7 @@ public class DetailUserActivity extends AppCompatActivity {
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface arg0, int arg1) {
-                                        Toast.makeText(DetailUserActivity.this,"You clicked yes button",Toast.LENGTH_LONG).show();
+                                        deleteUser(intent.getStringExtra( "kdUser" ));
                                     }
                                 });
 
@@ -130,7 +141,6 @@ public class DetailUserActivity extends AppCompatActivity {
                         try {
                             final JSONObject userdetail = new JSONObject(response);
                             txtDetailNamaUser.setText(  userdetail.getString( "nama_depan" )+" "+userdetail.getString( "nama_belakang" ));
-                            DetailUserActivity.this.setTitle(userdetail.getString( "nama_depan" )+" "+userdetail.getString( "nama_belakang" ));
                             if(Integer.parseInt( userdetail.getString( "level_user" ) )==0){
                                 txtDetailLevelUser.setText("Owner");
                             }else if(Integer.parseInt( userdetail.getString( "level_user" ) )==1){
@@ -150,6 +160,47 @@ public class DetailUserActivity extends AppCompatActivity {
                                         .load(baseUrl+String.valueOf( userdetail.getString( "foto" )  ))
                                         // LOAD GAMBAR AWAL SEBELUM GAMBAR UTAMA MUNCUL, BISA DARI LOKAL DAN INTERNET
                                         .into(fotoUserDetail);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(DetailUserActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                        }
+                        refreshDetailUser.setRefreshing( false );
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(DetailUserActivity.this, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
+                        refreshDetailUser.setRefreshing( false );
+                    }
+                }
+        );
+
+        RequestQueue requestQueue = Volley.newRequestQueue( DetailUserActivity.this );
+        requestQueue.add( stringRequest );
+    }
+
+    private void deleteUser(String kdUser){
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+"api/user?api=delete&kd_user="+kdUser,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String kode = jsonObject.getString("kode");
+                            if (kode.equals("1")) {
+                                /*JSONObject data = jsonObject.getJSONObject("data");
+                                String idUser = data.getString("kd_user").trim();
+
+                                Intent i = new Intent(FormUserActivity.this, DetailUserActivity.class);
+                                i.putExtra( "idUser", idUser );
+                                startActivity(i);*/
+                                finish();
+                                Toast.makeText(DetailUserActivity.this, "Berhasil Menghapus User", Toast.LENGTH_SHORT).show();
+
+                            }else{
+                                Toast.makeText(DetailUserActivity.this, "Gagal Menghapus User", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

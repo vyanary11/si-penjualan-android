@@ -52,6 +52,7 @@ public class DataKategoriBarangFragment extends Fragment {
     ProgressBar progressBarDataKategoriBarang;
     Button cobaLagiDataKategoriBarang;
     SessionManager sessionManager;
+    private Boolean statusFragment = false;
 
     private List<ListItemDataKategoriBarang> listItemDataKategorisBarangs;
 
@@ -79,7 +80,6 @@ public class DataKategoriBarangFragment extends Fragment {
             @Override
             public void onRefresh() {
                 listItemDataKategorisBarangs.clear();
-                adapterDataKategoriBarang.notifyDataSetChanged();
                 loadKategoriBarang();
             }
         } );
@@ -131,6 +131,20 @@ public class DataKategoriBarangFragment extends Fragment {
         getActivity().setTitle("Data Kategori");
         setHasOptionsMenu( true );
         loadKategoriBarang();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        statusFragment=true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(statusFragment) {
+            loadKategoriBarang();
+        }
     }
 
     private void loadKategoriBarang(){

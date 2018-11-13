@@ -40,6 +40,7 @@ public class DataBarangFragment extends Fragment {
     ProgressBar progressBarDataBarang;
     Button cobaLagiDataBarang;
     SessionManager sessionManager;
+    private Boolean statusFragment = false;
 
     private List<ListItemDataBarang> listItemDataBarangs;
 
@@ -123,6 +124,20 @@ public class DataBarangFragment extends Fragment {
         
         searchView.setQueryHint("Search");
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        statusFragment=true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (statusFragment) {
+            loadDataBarang();
+        }
     }
 
     private void loadDataBarang(){
