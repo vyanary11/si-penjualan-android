@@ -46,8 +46,8 @@ public class TambahBiayaActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        buttonSimpanTambahBiaya = findViewById( R.id.buttonSimpanTambahBiaya );
-        buttonBatalTambahBiaya = findViewById( R.id.buttonBatalTambahBiaya);
+        //buttonSimpanTambahBiaya = findViewById( R.id.buttonSimpanTambahBiaya );
+        //buttonBatalTambahBiaya = findViewById( R.id.buttonBatalTambahBiaya);
 
         /*LAYOUT INPUT*/
         inputLayoutNamaBiaya = (TextInputLayout) findViewById(R.id.inputLayoutNamaBiaya);
@@ -79,15 +79,8 @@ public class TambahBiayaActivity extends AppCompatActivity {
         datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-<<<<<<< HEAD
-
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
-
-=======
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
->>>>>>> ac9ca7c666f1d6d6ef1d33560776e3293f32eb54
                 tvDateResult.setText(dateFormatter.format(newDate.getTime()));
             }
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
