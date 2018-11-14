@@ -2,35 +2,24 @@ package com.pratamatechnocraft.silaporanpenjualan;
 
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterPagerTransaksiBaru;
 
-public class TransaksiBaruActivity extends AppCompatActivity {
+public class DetailTransaksiActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
-    private int[] layouts = {R.layout.fragment_transaksi_baru_satu,R.layout.fragment_transaksi_baru_dua};
+    private int[] layouts = {R.layout.fragment_detail_transaksi_satu,R.layout.fragment_detail_transaksi_dua};
     private AdapterPagerTransaksiBaru adapterPagerTransaksiBaru;
 
     private LinearLayout dots_layout;

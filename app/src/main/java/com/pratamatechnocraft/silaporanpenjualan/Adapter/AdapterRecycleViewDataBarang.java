@@ -6,23 +6,29 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRecycleViewDataBarang.ViewHolder> {
+public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRecycleViewDataBarang.ViewHolder> implements Filterable {
 
     private List<ListItemDataBarang> listItemDataBarangs;
+    private List<ListItemDataBarang> listItemDataBarangFull;
     private Context context;
 
     public AdapterRecycleViewDataBarang(List<ListItemDataBarang> listItemDataBarangs, Context context) {
         this.listItemDataBarangs = listItemDataBarangs;
+        listItemDataBarangFull = new ArrayList<>( listItemDataBarangs );
         this.context = context;
     }
 
@@ -50,7 +56,7 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
             }
         });
 
-        if (listItemDataBarang.getGambarBarang()!=""){
+        if (!listItemDataBarang.getGambarBarang().equals("")){
             holder.adaGambar.setVisibility( View.VISIBLE );
             holder.tidakAdaGambar.setVisibility( View.GONE );
         }else {
@@ -149,6 +155,40 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
         }
     }
 
+    @Override
+    public Filter getFilter() {
+        return listItemFilter;
+    }
 
+    private Filter listItemFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<ListItemDataBarang> filteredList = new ArrayList<>(  );
+
+            if (charSequence == null || charSequence.length()==0){
+                filteredList.addAll( listItemDataBarangFull );
+            }else{
+                String filterPattern = charSequence.toString().toLowerCase().trim();
+
+                for (ListItemDataBarang itemDataBarang : listItemDataBarangFull){
+                    if (itemDataBarang.getNamaBarang().toLowerCase().contains( filterPattern )){
+                        filteredList.add( itemDataBarang );
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values=filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            listItemDataBarangs.clear();
+            listItemDataBarangs.addAll((List) filterResults.values );
+            notifyDataSetChanged();
+        }
+    };
 
 }

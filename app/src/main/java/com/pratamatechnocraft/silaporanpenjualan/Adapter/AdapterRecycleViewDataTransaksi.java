@@ -6,20 +6,25 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterRecycleViewDataTransaksiPembelian extends RecyclerView.Adapter<AdapterRecycleViewDataTransaksiPembelian.ViewHolder> {
+public class AdapterRecycleViewDataTransaksi extends RecyclerView.Adapter<AdapterRecycleViewDataTransaksi.ViewHolder> implements Filterable {
 
     private List<ListItemTransaksi> listItemTransaksis;
+    private List<ListItemTransaksi> listItemTransaksiFull;
     private Context context;
 
-    public AdapterRecycleViewDataTransaksiPembelian(List<ListItemTransaksi> listItemTransaksis, Context context) {
+    public AdapterRecycleViewDataTransaksi(List<ListItemTransaksi> listItemTransaksis, Context context) {
         this.listItemTransaksis = listItemTransaksis;
+        listItemTransaksiFull = new ArrayList<>( listItemTransaksis );
         this.context = context;
     }
 
@@ -67,6 +72,39 @@ public class AdapterRecycleViewDataTransaksiPembelian extends RecyclerView.Adapt
         }
     }
 
+    public Filter getFilter() {
+        return listItemFilter;
+    }
 
+    private Filter listItemFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<ListItemTransaksi> filteredList = new ArrayList<>();
+
+            if (charSequence == null || charSequence.length() == 0) {
+                filteredList.addAll( listItemTransaksiFull );
+            } else {
+                String filterPattern = charSequence.toString().toLowerCase().trim();
+
+                for (ListItemTransaksi itemTransaksi : listItemTransaksiFull) {
+                    if (itemTransaksi.getNoInvoice().toLowerCase().contains( filterPattern )) {
+                        filteredList.add( itemTransaksi );
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            listItemTransaksis.clear();
+            listItemTransaksis.addAll((List) filterResults.values );
+            notifyDataSetChanged();
+        }
+    };
 
 }

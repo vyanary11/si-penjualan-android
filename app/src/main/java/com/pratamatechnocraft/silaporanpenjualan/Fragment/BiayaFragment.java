@@ -9,13 +9,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataBiaya;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemBiaya;
@@ -23,28 +34,31 @@ import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import com.pratamatechnocraft.silaporanpenjualan.TambahBiayaActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//import com.pratamatechnocraft.silaporanpenjualan.TambahSuratMasukActivity;
-
 public class BiayaFragment extends Fragment {
 
     private RecyclerView recyclerViewDataBiaya;
-    private RecyclerView.Adapter adapterDataBiaya;
+    private AdapterRecycleViewDataBiaya adapterDataBiaya;
     LinearLayout noDataBiaya, koneksiDataBiaya;
     SwipeRefreshLayout refreshDataBiaya;
     FloatingActionButton fabTambahDataBiaya;
     ProgressBar progressBarDataBiaya;
     Button cobaLagiDataBiaya;
     SessionManager sessionManager;
+    private Boolean statusFragment = false;
 
     private List<ListItemBiaya> listItemBiayas;
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private static final String API_URL = "api/surat_masuk?api=suratmasukall";
+    private static final String API_URL = "api/biaya?api=biayaall";
 
 
     @Nullable
@@ -56,27 +70,17 @@ public class BiayaFragment extends Fragment {
         fabTambahDataBiaya = view.findViewById( R.id.fabTambahDataBiaya );
         cobaLagiDataBiaya = view.findViewById( R.id.cobaLagiBiaya );
         koneksiDataBiaya = view.findViewById( R.id.koneksiDataBiaya );
+        progressBarDataBiaya = view.findViewById( R.id.progressBarDataBiaya );
+        recyclerViewDataBiaya = (RecyclerView) view.findViewById(R.id.recycleViewDataBiaya);
 
         sessionManager = new SessionManager( getContext() );
         HashMap<String, String> biaya = sessionManager.getUserDetail();
-
-        recyclerViewDataBiaya = (RecyclerView) view.findViewById(R.id.recycleViewDataBiaya);
-        recyclerViewDataBiaya.setHasFixedSize(true);
-        recyclerViewDataBiaya.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        listItemBiayas = new ArrayList<>();
-        adapterDataBiaya = new AdapterRecycleViewDataBiaya( listItemBiayas, getContext());
-
-        progressBarDataBiaya = view.findViewById( R.id.progressBarDataBiaya );
-
-        loadSuratMasuk();
 
         refreshDataBiaya.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 listItemBiayas.clear();
-                adapterDataBiaya.notifyDataSetChanged();
-                loadSuratMasuk();
+                loadBiaya();
             }
         } );
 
@@ -85,16 +89,15 @@ public class BiayaFragment extends Fragment {
             public void onClick(View view) {
                 koneksiDataBiaya.setVisibility( View.GONE );
                 progressBarDataBiaya.setVisibility( View.VISIBLE );
-                loadSuratMasuk();
+                loadBiaya();
             }
         } );
-
-        recyclerViewDataBiaya.setAdapter( adapterDataBiaya );
 
         fabTambahDataBiaya.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), TambahBiayaActivity.class);
+                i.putExtra( "type","tambah" );
                 getContext().startActivity(i);
             }
         } );
@@ -106,37 +109,29 @@ public class BiayaFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
-        getActivity().setTitle("Data Biaya");
+        getActivity().setTitle("Biaya");
+        setHasOptionsMenu( true );
+        loadBiaya();
     }
 
-    private void loadSuratMasuk(){
+    @Override
+    public void onPause() {
+        super.onPause();
+        statusFragment = true;
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (statusFragment) {
+            loadBiaya();
+        }
+    }
 
-        ListItemBiaya listItemDataBiaya = new ListItemBiaya(
-                "",
-                "Uang Makan Pekerja",
-                "Rp. 15.000",
-                "22 Oktober 2018"
-        );
+    private void loadBiaya(){
+        listItemBiayas = new ArrayList<>();
 
-        listItemBiayas.add( listItemDataBiaya );
-        adapterDataBiaya.notifyDataSetChanged();
-
-        ListItemBiaya listItemDataBiaya1 = new ListItemBiaya(
-                "",
-                "Gaji Pekerja",
-                "Rp. 900.000",
-                "22 Oktober 2018"
-        );
-
-        listItemBiayas.add( listItemDataBiaya1 );
-        adapterDataBiaya.notifyDataSetChanged();
-
-        refreshDataBiaya.setRefreshing( false );
-        progressBarDataBiaya.setVisibility( View.GONE );
-        koneksiDataBiaya.setVisibility( View.GONE);
-
-        /*StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -148,24 +143,25 @@ public class BiayaFragment extends Fragment {
                             noDataBiaya.setVisibility( View.GONE );
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i<data.length(); i++){
-                                JSONObject suratmasukobject = data.getJSONObject( i );
+                                JSONObject biayaobject = data.getJSONObject( i );
 
-                                ListItemDataBiaya listItemDataBiaya = new ListItemDataBiaya(
-                                        suratmasukobject.getString( "id_surat_masuk"),
-                                        suratmasukobject.getString( "asal_surat" ),
-                                        suratmasukobject.getString( "perihal" ),
-                                        suratmasukobject.getString( "tgl_arsip")
+                                ListItemBiaya listItemBiaya = new ListItemBiaya(
+                                        biayaobject.getString( "kd_biaya"),
+                                        biayaobject.getString( "nama_biaya" ),
+                                        biayaobject.getString( "jumlah_biaya" ),
+                                        biayaobject.getString( "tgl_biaya" )
                                 );
 
-                                listItemBiayas.add( listItemDataBiaya );
-                                adapterDataBiaya.notifyDataSetChanged();
+                                listItemBiayas.add( listItemBiaya );
                             }
                         }
                         refreshDataBiaya.setRefreshing( false );
                         progressBarDataBiaya.setVisibility( View.GONE );
                         koneksiDataBiaya.setVisibility( View.GONE);
+                        setUpRecycleView();
                     }catch (JSONException e){
                         e.printStackTrace();
+                        Log.d( "TAG", e.toString() );
                         refreshDataBiaya.setRefreshing( false );
                         progressBarDataBiaya.setVisibility( View.GONE );
                         noDataBiaya.setVisibility( View.GONE );
@@ -178,6 +174,7 @@ public class BiayaFragment extends Fragment {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     error.printStackTrace();
+                    Log.d( "TAG", error.toString() );
                     refreshDataBiaya.setRefreshing( false );
                     progressBarDataBiaya.setVisibility( View.GONE );
                     noDataBiaya.setVisibility( View.GONE );
@@ -188,6 +185,35 @@ public class BiayaFragment extends Fragment {
         );
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
-        requestQueue.add( stringRequest );*/
+        requestQueue.add( stringRequest );
+    }
+
+    private void setUpRecycleView() {
+        recyclerViewDataBiaya.setHasFixedSize(true);
+        recyclerViewDataBiaya.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapterDataBiaya = new AdapterRecycleViewDataBiaya( listItemBiayas, getContext());
+        recyclerViewDataBiaya.setAdapter( adapterDataBiaya );
+        adapterDataBiaya.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.ic_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapterDataBiaya.getFilter().filter(s);
+                return false;
+            }
+        } );
+        searchView.setQueryHint("Cari: Nama Biaya");
+
     }
 }

@@ -7,13 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class AdapterPagerTransaksiBaru extends PagerAdapter {
+public class AdapterPagerDetailTransaksi extends PagerAdapter {
 
     private int[] layouts;
     private LayoutInflater layoutInflater;
     private Context context;
 
-    public AdapterPagerTransaksiBaru(int[] layouts, Context context) {
+    public AdapterPagerDetailTransaksi(int[] layouts, Context context) {
         this.layouts = layouts;
         layoutInflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         this.context = context;

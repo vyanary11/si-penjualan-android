@@ -1,29 +1,41 @@
 package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.pratamatechnocraft.silaporanpenjualan.DetailUserActivity;
+import com.pratamatechnocraft.silaporanpenjualan.MainActivity;
+import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecycleViewDataUser.ViewHolder> {
+public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecycleViewDataUser.ViewHolder> implements Filterable {
 
     private List<ListItemDataUser> listItemDataUsers;
+    private List<ListItemDataUser> listItemDataUserFull;
     private Context context;
+    BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
+    private String baseUrl=baseUrlApiModel.getBaseURL();
 
     public AdapterRecycleViewDataUser(List<ListItemDataUser> listItemDataUsers, Context context) {
         this.listItemDataUsers = listItemDataUsers;
         this.context = context;
+        listItemDataUserFull = new ArrayList<>( listItemDataUsers );
     }
 
     @Override
@@ -44,15 +56,20 @@ public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecy
         holder.cardViewDataUser.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent i = new Intent(context, DetailSuratMasukActivity.class);
-                i.putExtra("idSuratMasuk", listItemDataUser.getIdSuratMasuk());
-                context.startActivity(i);*/
+                Intent i = new Intent(context, DetailUserActivity.class);
+                i.putExtra("kdUser", listItemDataUser.getKdUser());
+                context.startActivity(i);
             }
         });
 
-        if (listItemDataUser.getFotoUser()!=""){
+        if (!listItemDataUser.getFotoUser().equals("")){
             holder.adaGambarUser.setVisibility( View.VISIBLE );
             holder.tidakAdaGambarUser.setVisibility( View.GONE );
+            Glide.with(context)
+                    // LOAD URL DARI INTERNET
+                    .load(baseUrl+listItemDataUser.getFotoUser())
+                    // LOAD GAMBAR AWAL SEBELUM GAMBAR UTAMA MUNCUL, BISA DARI LOKAL DAN INTERNET
+                    .into(holder.fotoDataUser1);
         }else {
             holder.adaGambarUser.setVisibility( View.GONE );
             holder.tidakAdaGambarUser.setVisibility( View.VISIBLE );
@@ -123,6 +140,42 @@ public class AdapterRecycleViewDataUser extends RecyclerView.Adapter<AdapterRecy
     public int getItemCount() {
         return listItemDataUsers.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return listItemFilter;
+    }
+
+    private Filter listItemFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<ListItemDataUser> filteredList = new ArrayList<>(  );
+
+            if (charSequence == null || charSequence.length()==0){
+                filteredList.addAll( listItemDataUserFull );
+            }else{
+              String filterPattern = charSequence.toString().toLowerCase().trim();
+
+              for (ListItemDataUser itemDataUser : listItemDataUserFull){
+                  if (itemDataUser.getNamaUser().toLowerCase().contains( filterPattern ) || itemDataUser.getLevelUser().toLowerCase().contains( filterPattern )){
+                      filteredList.add( itemDataUser );
+                  }
+              }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values=filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            listItemDataUsers.clear();
+            listItemDataUsers.addAll((List) filterResults.values );
+            notifyDataSetChanged();
+        }
+    };
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
