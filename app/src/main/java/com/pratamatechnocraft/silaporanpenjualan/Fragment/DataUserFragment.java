@@ -52,6 +52,7 @@ public class DataUserFragment extends Fragment {
     ProgressBar progressBarDataUser;
     Button cobaLagiDataUser;
     SessionManager sessionManager;
+    HashMap<String, String> user;
 
     private Boolean statusFragment = false;
 
@@ -74,7 +75,7 @@ public class DataUserFragment extends Fragment {
         recyclerViewDataUser = (RecyclerView) view.findViewById(R.id.recycleViewDataUser);
 
         sessionManager = new SessionManager( getContext() );
-        HashMap<String, String> user = sessionManager.getUserDetail();
+        user = sessionManager.getUserDetail();
 
         refreshDataUser.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -155,7 +156,7 @@ public class DataUserFragment extends Fragment {
     private void loadDataUser(){
         listItemDataUsers = new ArrayList<>();
 
-        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL+"&kd_user_login="+user.get( sessionManager.KD_USER ),
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {

@@ -132,6 +132,12 @@ public class DetailUserActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadDetail(intent.getStringExtra( "kdUser" ));
+    }
+
     private void loadDetail(String kdUser){
         refreshDetailUser.setRefreshing(true);
         StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL+kdUser,

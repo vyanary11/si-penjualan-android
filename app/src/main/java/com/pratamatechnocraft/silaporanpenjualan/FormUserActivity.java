@@ -68,13 +68,14 @@ public class FormUserActivity extends AppCompatActivity {
     private BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private static final String API_URL = "api/user";
+    Intent i;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_user );
 
-        final Intent i = getIntent();
+        i = getIntent();
         progress = new ProgressDialog(this);
         refreshFormUser = findViewById( R.id.refreshFormUser );
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbartambahuser);
@@ -227,12 +228,7 @@ public class FormUserActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     String kode = jsonObject.getString("kode");
                     if (kode.equals("1")) {
-                        JSONObject data = jsonObject.getJSONObject("data");
-                        String idUser = data.getString("kd_user").trim();
-
-                        Intent i = new Intent(FormUserActivity.this, DetailUserActivity.class);
-                        i.putExtra( "idUser", idUser );
-                        startActivity(i);
+                        finish();
                         Toast.makeText(FormUserActivity.this, "Berhasil Edit User", Toast.LENGTH_SHORT).show();
 
                     }else{
@@ -257,6 +253,7 @@ public class FormUserActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
+                params.put("kd_user", i.getStringExtra( "kdUser" ));
                 params.put("nama_depan", namaDepan);
                 params.put("nama_belakang", namaBelakang);
                 params.put("no_telp", noTelp);
