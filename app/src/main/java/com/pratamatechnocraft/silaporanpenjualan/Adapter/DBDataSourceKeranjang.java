@@ -131,32 +131,32 @@ public class DBDataSourceKeranjang {
         return modelKeranjang;
     }
 
-    //ambil satu barang sesuai id
-    public ModelKeranjang cekKeranjang(String kdBarang)
+    public Boolean cekKeranjang(String kdBarang)
     {
-        ModelKeranjang modelKeranjang = new ModelKeranjang(); //inisialisasi barang
+        ModelKeranjang modelKeranjang = new ModelKeranjang();
         //select query
-        Cursor cursor = database.q(DBHelperSqlLiteKeranjang.TABLE_NAME, allColumns, "kd_barang ="+kdBarang, null, null, null, null);
+        Cursor cursor = database.rawQuery("select count(*) from data_keranjang where kd_barang='" + kdBarang + "'", null);
         //ambil data yang pertama
         cursor.moveToFirst();
-        //masukkan data cursor ke objek barang
-        modelKeranjang = cursorToKeranjang(cursor);
+        int count= cursor.getInt(0);
         //tutup sambungan
         cursor.close();
-        //return barang
-        return modelKeranjang;
+        if (count>0){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     //update barang yang diedit
     public void updateBarang(ModelKeranjang b)
     {
         //ambil id barang
-        String strFilter = "_id=" + b.getKdKeranjang();
+        String strFilter = "kd_barang=" + b.getKdBarang();
         //memasukkan ke content values
         ContentValues args = new ContentValues();
         //masukkan data sesuai dengan kolom pada database
-        args.put(DBHelperSqlLiteKeranjang.KD_BARANG, b.getKdBarang());
-        args.put(DBHelperSqlLiteKeranjang.QTY, b.getQty());
+        args.put(DBHelperSqlLiteKeranjang.QTY, DBHelperSqlLiteKeranjang.QTY+1);
         //update query
         database.update(DBHelperSqlLiteKeranjang.TABLE_NAME, args, strFilter, null);
     }
