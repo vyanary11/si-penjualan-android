@@ -41,22 +41,22 @@
                 <item
                     android:id="@+id/nav_laporan_harian"
                     android:checkable="true"
-                    android:icon="@drawable/laporanhariann"
+                    android:icon="@drawable/laporanhariann1"
                     android:title="Laporan Penjualan Harian" />
                 <item
                     android:id="@+id/nav_laporan_bulanan"
                     android:checkable="true"
-                    android:icon="@drawable/laporanbulanann"
+                    android:icon="@drawable/laporanbulanann1"
                     android:title="Laporan Penjualan Bulanan" />
                 <item
                     android:id="@+id/nav_laporan_tahunan"
                     android:checkable="true"
-                    android:icon="@drawable/laporantahunann"
+                    android:icon="@drawable/laporantahunann1"
                     android:title="Laporan Penjualan Tahunan" />
                 <item
                     android:id="@+id/nav_laporan_labarugi"
                     android:checkable="true"
-                    android:icon="@drawable/laporanlabarugii"
+                    android:icon="@drawable/laporanlabarugii1"
                     android:title="Laporan Laba/Rugi" />
             </group>
         </menu>

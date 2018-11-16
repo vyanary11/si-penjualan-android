@@ -10,7 +10,7 @@
             <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_dashboard"
-                android:icon="@drawable/ic_dashboard_black_24dp"
+                android:icon="@drawable/dashboardd"
                 android:title="Dashboard" />
             <item
                 android:id="@+id/nav_transaksi_penjualan"
@@ -25,15 +25,15 @@
             <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_laporan_harian"
-                android:icon="@drawable/laporanhariann"
+                android:icon="@drawable/laporanhariann1"
                 android:title="Laporan Penjualan Harian" />
             <item
                 android:id="@+id/nav_laporan_bulanan"
-                android:icon="@drawable/laporanbulanann"
+                android:icon="@drawable/laporanbulanann1"
                 android:title="Laporan Penjualan Bulanan" />
             <item
                 android:id="@+id/nav_laporan_tahunan"
-                android:icon="@drawable/laporantahunann"
+                android:icon="@drawable/laporantahunann1"
                 android:title="Laporan Penjualan Tahunan" />
             </group>
         </menu>

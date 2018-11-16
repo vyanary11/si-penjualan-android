@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_weight="1"
-            android:background="@drawable/side_back_nav2">
+            android:background="@drawable/background23">
 
             <TextView
                 android:id="@+id/textView"
@@ -31,7 +31,7 @@
                 android:text="Aplikasi Penjualan"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                android:textSize="36sp"
+                android:textSize="32sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -42,7 +42,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="Kantin Pelita Hati"
                 android:textColor="@android:color/white"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -311,7 +311,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/laporanharian1" />
+                        android:src="@drawable/laporanhariann1" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -366,7 +366,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/laporanbulanan1" />-->
+                        android:src="@drawable/laporanbulanann1" />-->
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -405,7 +405,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:src="@drawable/laporantahunan1" />
+                        android:src="@drawable/laporantahunann1" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -499,7 +499,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                    android:src="@drawable/laporanlabarugi" />
+                    android:src="@drawable/laporanlabarugii1" />
 
                     <TextView
                         android:layout_width="wrap_content"

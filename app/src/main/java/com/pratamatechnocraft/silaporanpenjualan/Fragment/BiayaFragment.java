@@ -32,7 +32,7 @@ import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemBiaya;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
-import com.pratamatechnocraft.silaporanpenjualan.TambahBiayaActivity;
+import com.pratamatechnocraft.silaporanpenjualan.FormBiayaActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,7 +96,7 @@ public class BiayaFragment extends Fragment {
         fabTambahDataBiaya.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getContext(), TambahBiayaActivity.class);
+                Intent i = new Intent(getContext(), FormBiayaActivity.class);
                 i.putExtra( "type","tambah" );
                 getContext().startActivity(i);
             }
