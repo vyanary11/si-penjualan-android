@@ -1,6 +1,7 @@
 package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.pratamatechnocraft.silaporanpenjualan.BarangTransaksiActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
@@ -76,7 +78,9 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
             tambahBarangKeKeranjang.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    Intent intent = new Intent(context, BarangTransaksiActivity.class);
+                    intent.putExtra( "type", "0" );
+                    context.startActivity(intent);
                 }
             } );
         }else if(position==1){

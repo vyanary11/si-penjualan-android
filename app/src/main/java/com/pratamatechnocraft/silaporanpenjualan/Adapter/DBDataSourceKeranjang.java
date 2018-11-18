@@ -122,15 +122,26 @@ public class DBDataSourceKeranjang {
         }
     }
 
-    //update barang yang diedit
-    public void updateBarang(ModelKeranjang b)
+    public void updateBarang(String kdBarang)
     {
         //ambil id barang
-        String strFilter = "kd_barang=" + b.getKdBarang();
+        String strFilter = "kd_barang=" + kdBarang;
         //memasukkan ke content values
         ContentValues args = new ContentValues();
         //masukkan data sesuai dengan kolom pada database
         args.put(DBHelperSqlLiteKeranjang.QTY, DBHelperSqlLiteKeranjang.QTY+1);
+        //update query
+        database.update(DBHelperSqlLiteKeranjang.TABLE_NAME, args, strFilter, null);
+    }
+
+    public void updateBarangTypeDua(String kdBarang, int qty)
+    {
+        //ambil id barang
+        String strFilter = "kd_barang=" + kdBarang;
+        //memasukkan ke content values
+        ContentValues args = new ContentValues();
+        //masukkan data sesuai dengan kolom pada database
+        args.put(DBHelperSqlLiteKeranjang.QTY, qty);
         //update query
         database.update(DBHelperSqlLiteKeranjang.TABLE_NAME, args, strFilter, null);
     }
@@ -140,5 +151,10 @@ public class DBDataSourceKeranjang {
     {
         String strFilter = "_kd_keranjang=" + id;
         database.delete(DBHelperSqlLiteKeranjang.TABLE_NAME, strFilter, null);
+    }
+
+    public void deleteAll()
+    {
+        database.delete(DBHelperSqlLiteKeranjang.TABLE_NAME, null, null);
     }
 }

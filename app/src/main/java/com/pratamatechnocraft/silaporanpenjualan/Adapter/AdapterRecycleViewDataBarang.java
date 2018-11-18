@@ -10,9 +10,11 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
 import java.util.ArrayList;
@@ -25,11 +27,14 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
     private List<ListItemDataBarang> listItemDataBarangs;
     private List<ListItemDataBarang> listItemDataBarangFull;
     private Context context;
+    private Integer type;
+    private DBDataSourceKeranjang dbDataSourceKeranjang;
 
-    public AdapterRecycleViewDataBarang(List<ListItemDataBarang> listItemDataBarangs, Context context) {
+    public AdapterRecycleViewDataBarang(List<ListItemDataBarang> listItemDataBarangs, Context context, Integer type) {
         this.listItemDataBarangs = listItemDataBarangs;
         listItemDataBarangFull = new ArrayList<>( listItemDataBarangs );
         this.context = context;
+        this.type = type;
     }
 
     @Override
@@ -50,6 +55,25 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
         holder.cardViewDataBarang.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (type==0){
+                    dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
+                    dbDataSourceKeranjang.open();
+                    ModelKeranjang modelKeranjang=null;
+                    if(dbDataSourceKeranjang.cekKeranjang( listItemDataBarang.getKdBarang())==true){
+                        modelKeranjang = dbDataSourceKeranjang.createModelKeranjang(
+                                listItemDataBarang.getKdBarang(),
+                                listItemDataBarang.getNamaBarang(),
+                                listItemDataBarang.getHargaBarang(),
+                                listItemDataBarang.getGambarBarang(),
+                                "1" );
+                    }else{
+                        dbDataSourceKeranjang.updateBarang( listItemDataBarang.getKdBarang() );
+                    }
+
+                    Toast.makeText( context,"KLIK BARANG",Toast.LENGTH_LONG );
+                }else{
+                    Toast.makeText( context,"KLIK TRANSAKSI",Toast.LENGTH_LONG );
+                }
                 /*Intent i = new Intent(context, DetailSuratMasukActivity.class);
                 i.putExtra("idSuratMasuk", listItemDataBarang.getIdSuratMasuk());
                 context.startActivity(i);*/
