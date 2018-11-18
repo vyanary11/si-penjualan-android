@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.pratamatechnocraft.silaporanpenjualan.DetailUserActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
 import java.util.ArrayList;
@@ -25,13 +26,23 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRecycleViewKeranjang.ViewHolder>  {
 
-    private List<ListItemDataUser> listItemDataUsers;
+    private ArrayList<ModelKeranjang> modelKeranjangs;
     private Context context;
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
+    private int totalHarga=0;
+    private int jmlItem=0;
 
-    public AdapterRecycleViewKeranjang(List<ListItemDataUser> listItemDataUsers, Context context) {
-        this.listItemDataUsers = listItemDataUsers;
+    public int getTotalHarga() {
+        return totalHarga;
+    }
+
+    public int getJmlItem() {
+        return jmlItem;
+    }
+
+    public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context) {
+        this.modelKeranjangs = modelKeranjangs;
         this.context = context;
     }
 
@@ -44,118 +55,123 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final ListItemDataUser listItemDataUser = listItemDataUsers.get(position);
+        final ModelKeranjang modelKeranjang = modelKeranjangs.get(position);
 
-        holder.txtNamaUser.setText(listItemDataUser.getNamaUser());
-        holder.txtNoTelp.setText(listItemDataUser.getNoTelp());
-        holder.txtLevelUser.setText(listItemDataUser.getLevelUser());
+        int subTotal= Integer.parseInt( modelKeranjang.getHargaBarang() )*Integer.parseInt( modelKeranjang.getQty() ) ;
+        totalHarga = totalHarga+subTotal;
+        jmlItem=jmlItem+Integer.parseInt( modelKeranjang.getQty());
 
-        holder.cardViewDataUser.setOnClickListener( new View.OnClickListener() {
+        holder.txtNamaBarangdiKeranjang.setText(modelKeranjang.getNamaBrang());
+        holder.txtHargaBarangdiKeranjang.setText(modelKeranjang.getHargaBarang());
+        holder.txtQTYBarangdiKeranjang.setText(modelKeranjang.getQty());
+        holder.txtSubTotalBarangdiKeranjang.setText( subTotal );
+
+        holder.cardViewDataBarangdiKeranjang.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(context, DetailUserActivity.class);
-                i.putExtra("kdUser", listItemDataUser.getKdUser());
+                i.putExtra("kdUser", modelKeranjang.getKdKeranjang());
                 context.startActivity(i);
             }
         });
 
-        if (!listItemDataUser.getFotoUser().equals("")){
-            holder.adaGambarUser.setVisibility( View.VISIBLE );
-            holder.tidakAdaGambarUser.setVisibility( View.GONE );
+        if (!modelKeranjang.getUrlGambarBarang().equals("")){
+            holder.adaGambar.setVisibility( View.VISIBLE );
+            holder.tidakAdaGambar.setVisibility( View.GONE );
             Glide.with(context)
                     // LOAD URL DARI INTERNET
-                    .load(baseUrl+listItemDataUser.getFotoUser())
+                    .load(baseUrl+modelKeranjang.getUrlGambarBarang())
                     // LOAD GAMBAR AWAL SEBELUM GAMBAR UTAMA MUNCUL, BISA DARI LOKAL DAN INTERNET
-                    .into(holder.fotoDataUser1);
+                    .into(holder.fotoDataBarangdiKeranjang1);
         }else {
-            holder.adaGambarUser.setVisibility( View.GONE );
-            holder.tidakAdaGambarUser.setVisibility( View.VISIBLE );
+            holder.adaGambar.setVisibility( View.GONE );
+            holder.tidakAdaGambar.setVisibility( View.VISIBLE );
         }
-        String namaDepan=listItemDataUser.getNamaUser();
-        holder.hurufDepanDataUser.setText(namaDepan.substring( 0,1 ));
+        String namaDepan=modelKeranjang.getNamaBrang();
+        holder.hurufDepanBarangdiKeranjang.setText(namaDepan.substring( 0,1 ));
 
         int color=0;
 
-        if (holder.hurufDepanDataUser.getText().equals( "A" ) || holder.hurufDepanDataUser.getText().equals( "a" )){
+        if (holder.hurufDepanBarangdiKeranjang.getText().equals( "A" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "a" )){
             color=R.color.amber_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "B" ) || holder.hurufDepanDataUser.getText().equals( "b" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "B" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "b" )){
             color=R.color.blue_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "C" ) || holder.hurufDepanDataUser.getText().equals( "c" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "C" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "c" )){
             color=R.color.blue_grey_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "D" ) || holder.hurufDepanDataUser.getText().equals( "d" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "D" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "d" )){
             color=R.color.brown_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "E" ) || holder.hurufDepanDataUser.getText().equals( "e" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "E" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "e" )){
             color=R.color.cyan_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "F" ) || holder.hurufDepanDataUser.getText().equals( "f" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "F" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "f" )){
             color=R.color.deep_orange_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "G" ) || holder.hurufDepanDataUser.getText().equals( "g" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "G" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "g" )){
             color=R.color.deep_purple_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "H" ) || holder.hurufDepanDataUser.getText().equals( "h" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "H" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "h" )){
             color=R.color.green_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "I" ) || holder.hurufDepanDataUser.getText().equals( "i" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "I" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "i" )){
             color=R.color.grey_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "J" ) || holder.hurufDepanDataUser.getText().equals( "j" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "J" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "j" )){
             color=R.color.indigo_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "K" ) || holder.hurufDepanDataUser.getText().equals( "k" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "K" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "k" )){
             color=R.color.teal_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "L" ) || holder.hurufDepanDataUser.getText().equals( "l" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "L" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "l" )){
             color=R.color.lime_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "M" ) || holder.hurufDepanDataUser.getText().equals( "m" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "M" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "m" )){
             color=R.color.red_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "N" ) || holder.hurufDepanDataUser.getText().equals( "n" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "N" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "n" )){
             color=R.color.light_blue_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "O" ) || holder.hurufDepanDataUser.getText().equals( "o" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "O" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "o" )){
             color=R.color.light_green_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "P" ) || holder.hurufDepanDataUser.getText().equals( "p" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "P" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "p" )){
             color=R.color.orange_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "Q" ) || holder.hurufDepanDataUser.getText().equals( "q" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "Q" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "q" )){
             color=R.color.pink_500;
-        }else if(holder.hurufDepanDataUser.getText().equals( "R" ) || holder.hurufDepanDataUser.getText().equals( "r" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "R" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "r" )){
             color=R.color.red_600;
-        }else if(holder.hurufDepanDataUser.getText().equals( "S" ) || holder.hurufDepanDataUser.getText().equals( "s" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "S" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "s" )){
             color=R.color.yellow_600;
-        }else if(holder.hurufDepanDataUser.getText().equals( "T" ) || holder.hurufDepanDataUser.getText().equals( "t" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "T" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "t" )){
             color=R.color.blue_600;
-        }else if(holder.hurufDepanDataUser.getText().equals( "U" ) || holder.hurufDepanDataUser.getText().equals( "u" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "U" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "u" )){
             color=R.color.cyan_600;
-        }else if(holder.hurufDepanDataUser.getText().equals( "V" ) || holder.hurufDepanDataUser.getText().equals( "v" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "V" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "v" )){
             color=R.color.green_600;
-        }else if(holder.hurufDepanDataUser.getText().equals( "W" ) || holder.hurufDepanDataUser.getText().equals( "w" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "W" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "w" )){
             color=R.color.purple_600;
-        }else if(holder.hurufDepanDataUser.getText().equals( "X" ) || holder.hurufDepanDataUser.getText().equals( "x" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "X" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "x" )){
             color=R.color.pink_600;
-        }else if(holder.hurufDepanDataUser.getText().equals( "Y" ) || holder.hurufDepanDataUser.getText().equals( "y" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "Y" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "y" )){
             color=R.color.lime_600;
-        }else if(holder.hurufDepanDataUser.getText().equals( "Z" ) || holder.hurufDepanDataUser.getText().equals( "z" )){
+        }else if(holder.hurufDepanBarangdiKeranjang.getText().equals( "Z" ) || holder.hurufDepanBarangdiKeranjang.getText().equals( "z" )){
             color=R.color.orange_600;
         }
 
-        holder.fotoDataUser.setImageResource(color);
+        holder.fotoDataBarangdiKeranjang.setImageResource(color);
     }
 
     @Override
     public int getItemCount() {
-        return listItemDataUsers.size();
+        return modelKeranjangs.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView txtNamaUser, txtNoTelp, txtLevelUser, hurufDepanDataUser;
-        public CardView cardViewDataUser;
-        public CircleImageView fotoDataUser, fotoDataUser1;
-        public RelativeLayout adaGambarUser, tidakAdaGambarUser;
+        public TextView txtNamaBarangdiKeranjang, txtQTYBarangdiKeranjang, txtHargaBarangdiKeranjang, txtSubTotalBarangdiKeranjang,hurufDepanBarangdiKeranjang;
+        public CardView cardViewDataBarangdiKeranjang;
+        public CircleImageView fotoDataBarangdiKeranjang1, fotoDataBarangdiKeranjang;
+        public RelativeLayout adaGambar, tidakAdaGambar;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            txtNamaUser = (TextView) itemView.findViewById(R.id.txtNamaUser);
-            txtNoTelp = (TextView) itemView.findViewById(R.id.txtNoTelp);
-            txtLevelUser = (TextView) itemView.findViewById(R.id.txtLevelUser);
-            cardViewDataUser = (CardView) itemView.findViewById(R.id.cardViewDataUser);
-            hurufDepanDataUser = (TextView) itemView.findViewById(R.id.hurufDepanUser);
-            fotoDataUser = (CircleImageView) itemView.findViewById( R.id.fotoDataUser );
-            fotoDataUser1 = (CircleImageView) itemView.findViewById( R.id.fotoDataUser1 );
-            adaGambarUser = (RelativeLayout) itemView.findViewById( R.id.adaGambarUser );
-            tidakAdaGambarUser = (RelativeLayout) itemView.findViewById( R.id.tidakAdaGambarUser );
+            txtNamaBarangdiKeranjang = (TextView) itemView.findViewById(R.id.txtNamaBarangdiKeranjang);
+            txtHargaBarangdiKeranjang = (TextView) itemView.findViewById(R.id.txtHargaBarangdiKeranjang);
+            txtQTYBarangdiKeranjang = (TextView) itemView.findViewById(R.id.txtQTYBarangdiKeranjang);
+            cardViewDataBarangdiKeranjang = (CardView) itemView.findViewById(R.id.cardViewDataBarangdiKeranjang);
+            hurufDepanBarangdiKeranjang = (TextView) itemView.findViewById(R.id.hurufDepanUser);
+            fotoDataBarangdiKeranjang = (CircleImageView) itemView.findViewById( R.id.fotoDataUser );
+            fotoDataBarangdiKeranjang1 = (CircleImageView) itemView.findViewById( R.id.fotoDataUser1 );
+            adaGambar = (RelativeLayout) itemView.findViewById( R.id.adaGambar );
+            tidakAdaGambar = (RelativeLayout) itemView.findViewById( R.id.tidakAdaGambar );
         }
     }
 

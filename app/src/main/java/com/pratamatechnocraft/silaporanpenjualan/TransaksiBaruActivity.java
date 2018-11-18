@@ -26,6 +26,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterPagerTransaksiBaru;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.DBDataSourceKeranjang;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
+
+import java.util.ArrayList;
 
 public class TransaksiBaruActivity extends AppCompatActivity {
 
@@ -41,6 +45,7 @@ public class TransaksiBaruActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_transaksi_baru );
+
 
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_transaksi_baru);
         setSupportActionBar(ToolBarAtas2);
@@ -130,5 +135,10 @@ public class TransaksiBaruActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

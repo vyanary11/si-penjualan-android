@@ -74,7 +74,7 @@ public class TransaksiFragment extends Fragment{
         progressBarDataTransaksi = view.findViewById( R.id.progressBarDataTransaksi );
 
         sessionManager = new SessionManager( getContext() );
-        HashMap<String, String> transaksi = sessionManager.getUserDetail();
+        HashMap<String, String> user = sessionManager.getUserDetail();
 
         recyclerViewDataTransaksi = (RecyclerView) view.findViewById(R.id.recycleViewDataTransaksi);
 

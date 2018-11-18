@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.pratamatechnocraft.silaporanpenjualan.CheckoutActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Drawable.BadgeDrawable;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 

@@ -12,105 +12,79 @@ import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 import java.util.ArrayList;
 
 public class DBDataSourceKeranjang {
-    //inisialiasi SQLite Database
     private SQLiteDatabase database;
-
-    //inisialisasi kelas DBHelper
     private DBHelperSqlLiteKeranjang dbHelperSqlLiteKeranjang;
+    private String[] allColumns = {
+            dbHelperSqlLiteKeranjang.KD_KERANJANG,
+            dbHelperSqlLiteKeranjang.KD_BARANG,
+            dbHelperSqlLiteKeranjang.NAMA_BARANG,
+            dbHelperSqlLiteKeranjang.HARGA_BARANG,
+            dbHelperSqlLiteKeranjang.URL_GAMBAR_BARANG,
+            dbHelperSqlLiteKeranjang.QTY
+    };
 
-    //ambil semua nama kolom
-    private String[] allColumns = { dbHelperSqlLiteKeranjang.KD_KERANJANG,
-            dbHelperSqlLiteKeranjang.KD_BARANG, dbHelperSqlLiteKeranjang.QTY};
+    public DBDataSourceKeranjang(Context context){ dbHelperSqlLiteKeranjang = new DBHelperSqlLiteKeranjang(context); }
 
-    //DBHelper diinstantiasi pada constructor
-    public DBDataSourceKeranjang(Context context)
-    {
-        dbHelperSqlLiteKeranjang = new DBHelperSqlLiteKeranjang(context);
-    }
+    public void open() throws SQLException { database = dbHelperSqlLiteKeranjang.getWritableDatabase(); }
 
-    //membuka/membuat sambungan baru ke database
-    public void open() throws SQLException {
-        database = dbHelperSqlLiteKeranjang.getWritableDatabase();
-    }
-
-    //menutup sambungan ke database
     public void close() {
         dbHelperSqlLiteKeranjang.close();
     }
 
-    //method untuk create/insert barang ke database
-    public ModelKeranjang createModelKeranjang(String kd_barang, String qty) {
+    public ModelKeranjang createModelKeranjang(String kd_barang,String nama_barang,String harga_barang,String url_gambar_barang, String qty) {
 
-        // membuat sebuah ContentValues, yang berfungsi
-        // untuk memasangkan data dengan nama-nama
-        // kolom pada database
         ContentValues values = new ContentValues();
         values.put(dbHelperSqlLiteKeranjang.KD_BARANG, kd_barang);
+        values.put(dbHelperSqlLiteKeranjang.NAMA_BARANG, nama_barang);
+        values.put(dbHelperSqlLiteKeranjang.HARGA_BARANG, harga_barang);
+        values.put(dbHelperSqlLiteKeranjang.URL_GAMBAR_BARANG, url_gambar_barang);
         values.put(dbHelperSqlLiteKeranjang.QTY, qty);
 
-        // mengeksekusi perintah SQL insert data
-        // yang akan mengembalikan sebuah insert ID
         long insertId = database.insert(dbHelperSqlLiteKeranjang.TABLE_NAME, null,
                 values);
 
-        // setelah data dimasukkan, memanggil
-        // perintah SQL Select menggunakan Cursor untuk
-        // melihat apakah data tadi benar2 sudah masuk
-        // dengan menyesuaikan ID = insertID
         Cursor cursor = database.query(dbHelperSqlLiteKeranjang.TABLE_NAME,
                 allColumns, dbHelperSqlLiteKeranjang.KD_KERANJANG + " = " + insertId, null,
                 null, null, null);
 
-        // pindah ke data paling pertama
         cursor.moveToFirst();
 
-        // mengubah objek pada kursor pertama tadi
-        // ke dalam objek barang
         ModelKeranjang newKeranjang = cursorToKeranjang(cursor);
 
-        // close cursor
         cursor.close();
 
-        // mengembalikan barang baru
         return newKeranjang;
     }
 
     private ModelKeranjang cursorToKeranjang(Cursor cursor)
     {
-        // buat objek barang baru
         ModelKeranjang modelKeranjang = new ModelKeranjang();
         // debug LOGCAT
         Log.v("info", "The getLONG "+cursor.getLong(0));
         Log.v("info", "The setLatLng "+cursor.getString(1)+","+cursor.getString(2));
 
-        /* Set atribut pada objek barang dengan
-         * data kursor yang diambil dari database*/
         modelKeranjang.setKdKeranjang(cursor.getLong(0));
         modelKeranjang.setKdBarang(cursor.getString(1));
-        modelKeranjang.setQty(cursor.getString(2));
+        modelKeranjang.setNamaBrang(cursor.getString(2));
+        modelKeranjang.setHargaBarang(cursor.getString(3));
+        modelKeranjang.setUrlGambarBarang(cursor.getString(4));
+        modelKeranjang.setQty(cursor.getString(5));
 
-        //kembalikan sebagai objek barang
         return modelKeranjang;
     }
 
-    //mengambil semua data barang
     public ArrayList<ModelKeranjang> getAllKeranjang() {
         ArrayList<ModelKeranjang> modelKeranjangs = new ArrayList<ModelKeranjang>();
 
-        // select all SQL query
         Cursor cursor = database.query(DBHelperSqlLiteKeranjang.TABLE_NAME,
                 allColumns, null, null, null, null, null);
 
-        // pindah ke data paling pertama
         cursor.moveToFirst();
-        // jika masih ada data, masukkan data barang ke
-        // daftar barang
         while (!cursor.isAfterLast()) {
             ModelKeranjang modelKeranjang = cursorToKeranjang(cursor);
             modelKeranjangs.add(modelKeranjang);
             cursor.moveToNext();
         }
-        // Make sure to close the cursor
         cursor.close();
         return modelKeranjangs;
     }

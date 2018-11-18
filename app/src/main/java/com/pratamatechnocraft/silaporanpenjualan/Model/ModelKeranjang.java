@@ -3,7 +3,10 @@ package com.pratamatechnocraft.silaporanpenjualan.Model;
 public class ModelKeranjang {
     long kdKeranjang;
     String kdBarang;
+    String namaBrang;
     String qty;
+    String HargaBarang;
+    String urlGambarBarang;
 
     public long getKdKeranjang() {
         return kdKeranjang;
@@ -15,6 +18,18 @@ public class ModelKeranjang {
 
     public String getQty() {
         return qty;
+    }
+
+    public String getNamaBrang() {
+        return namaBrang;
+    }
+
+    public String getHargaBarang() {
+        return HargaBarang;
+    }
+
+    public String getUrlGambarBarang() {
+        return urlGambarBarang;
     }
 
     public void setKdKeranjang(long kdKeranjang) {
@@ -29,4 +44,15 @@ public class ModelKeranjang {
         this.qty = qty;
     }
 
+    public void setNamaBrang(String namaBrang) {
+        this.namaBrang = namaBrang;
+    }
+
+    public void setHargaBarang(String hargaBarang) {
+        HargaBarang = hargaBarang;
+    }
+
+    public void setUrlGambarBarang(String urlGambarBarang) {
+        this.urlGambarBarang = urlGambarBarang;
+    }
 }
