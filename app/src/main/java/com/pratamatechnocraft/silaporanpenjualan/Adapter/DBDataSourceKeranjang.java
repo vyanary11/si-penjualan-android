@@ -66,9 +66,9 @@ public class DBDataSourceKeranjang {
         modelKeranjang.setKdKeranjang(cursor.getLong(0));
         modelKeranjang.setKdBarang(cursor.getString(1));
         modelKeranjang.setNamaBrang(cursor.getString(2));
-        modelKeranjang.setHargaBarang(cursor.getString(3));
+        modelKeranjang.setHargaBarang(cursor.getInt(3));
         modelKeranjang.setUrlGambarBarang(cursor.getString(4));
-        modelKeranjang.setQty(cursor.getString(5));
+        modelKeranjang.setQty(cursor.getInt(5));
 
         return modelKeranjang;
     }
@@ -122,14 +122,14 @@ public class DBDataSourceKeranjang {
         }
     }
 
-    public void updateBarang(String kdBarang)
+    public void updateBarang(String kdBarang, int qty)
     {
         //ambil id barang
         String strFilter = "kd_barang=" + kdBarang;
         //memasukkan ke content values
         ContentValues args = new ContentValues();
         //masukkan data sesuai dengan kolom pada database
-        args.put(DBHelperSqlLiteKeranjang.QTY, DBHelperSqlLiteKeranjang.QTY+1);
+        args.put(DBHelperSqlLiteKeranjang.QTY, qty+1);
         //update query
         database.update(DBHelperSqlLiteKeranjang.TABLE_NAME, args, strFilter, null);
     }

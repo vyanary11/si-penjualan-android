@@ -4,8 +4,8 @@ public class ModelKeranjang {
     long kdKeranjang;
     String kdBarang;
     String namaBrang;
-    String qty;
-    String HargaBarang;
+    int qty;
+    int HargaBarang;
     String urlGambarBarang;
 
     public long getKdKeranjang() {
@@ -16,7 +16,7 @@ public class ModelKeranjang {
         return kdBarang;
     }
 
-    public String getQty() {
+    public int getQty() {
         return qty;
     }
 
@@ -24,7 +24,7 @@ public class ModelKeranjang {
         return namaBrang;
     }
 
-    public String getHargaBarang() {
+    public int getHargaBarang() {
         return HargaBarang;
     }
 
@@ -40,7 +40,7 @@ public class ModelKeranjang {
         this.kdBarang = kdBarang;
     }
 
-    public void setQty(String qty) {
+    public void setQty(int qty) {
         this.qty = qty;
     }
 
@@ -48,7 +48,7 @@ public class ModelKeranjang {
         this.namaBrang = namaBrang;
     }
 
-    public void setHargaBarang(String hargaBarang) {
+    public void setHargaBarang(int hargaBarang) {
         HargaBarang = hargaBarang;
     }
 

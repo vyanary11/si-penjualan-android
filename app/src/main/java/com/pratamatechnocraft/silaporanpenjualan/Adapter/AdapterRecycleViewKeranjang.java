@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,16 +33,9 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     private Context context;
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private int totalHarga=0;
-    private int jmlItem=0;
-
-    public int getTotalHarga() {
-        return totalHarga;
-    }
-
-    public int getJmlItem() {
-        return jmlItem;
-    }
+    private int totalHarga;
+    private int jmlItem;
+    private DBDataSourceKeranjang dbDataSourceKeranjang;
 
     public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context) {
         this.modelKeranjangs = modelKeranjangs;
@@ -49,7 +45,7 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate( R.layout.list_item_data_user,parent,false);
+                .inflate( R.layout.list_item_data_barang_dikeranjang,parent,false);
         return new ViewHolder(v);
     }
 
@@ -57,23 +53,32 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final ModelKeranjang modelKeranjang = modelKeranjangs.get(position);
 
-        int subTotal= Integer.parseInt( modelKeranjang.getHargaBarang() )*Integer.parseInt( modelKeranjang.getQty() ) ;
+        int subTotal=modelKeranjang.getHargaBarang()  *  modelKeranjang.getQty()  ;
         totalHarga = totalHarga+subTotal;
-        jmlItem=jmlItem+Integer.parseInt( modelKeranjang.getQty());
+        jmlItem=jmlItem+modelKeranjang.getQty();
+
+        Log.d( "TAG", "onBindViewHolder: "+String.valueOf( totalHarga )+" "+String.valueOf( jmlItem ) );
 
         holder.txtNamaBarangdiKeranjang.setText(modelKeranjang.getNamaBrang());
-        holder.txtHargaBarangdiKeranjang.setText(modelKeranjang.getHargaBarang());
-        holder.txtQTYBarangdiKeranjang.setText(modelKeranjang.getQty());
-        holder.txtSubTotalBarangdiKeranjang.setText( subTotal );
+        holder.txtHargaBarangdiKeranjang.setText(String.valueOf( modelKeranjang.getHargaBarang()));
+        holder.txtQTYBarangdiKeranjang.setText(String.valueOf( modelKeranjang.getQty()));
+        holder.txtSubTotalBarangdiKeranjang.setText( String.valueOf( subTotal ));
 
         holder.cardViewDataBarangdiKeranjang.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(context, DetailUserActivity.class);
-                i.putExtra("kdUser", modelKeranjang.getKdKeranjang());
-                context.startActivity(i);
+
             }
         });
+
+        holder.btnHapusKeranjang.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
+                dbDataSourceKeranjang.open();
+                dbDataSourceKeranjang.deleteBarang( modelKeranjang.getKdKeranjang() );
+            }
+        } );
 
         if (!modelKeranjang.getUrlGambarBarang().equals("")){
             holder.adaGambar.setVisibility( View.VISIBLE );
@@ -160,21 +165,29 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
         public CardView cardViewDataBarangdiKeranjang;
         public CircleImageView fotoDataBarangdiKeranjang1, fotoDataBarangdiKeranjang;
         public RelativeLayout adaGambar, tidakAdaGambar;
+        public ImageButton btnHapusKeranjang;
 
         public ViewHolder(View itemView) {
             super(itemView);
             txtNamaBarangdiKeranjang = (TextView) itemView.findViewById(R.id.txtNamaBarangdiKeranjang);
             txtHargaBarangdiKeranjang = (TextView) itemView.findViewById(R.id.txtHargaBarangdiKeranjang);
             txtQTYBarangdiKeranjang = (TextView) itemView.findViewById(R.id.txtQTYBarangdiKeranjang);
+            txtSubTotalBarangdiKeranjang = (TextView) itemView.findViewById( R.id.txtSubTotalBarangdiKeranjang );
             cardViewDataBarangdiKeranjang = (CardView) itemView.findViewById(R.id.cardViewDataBarangdiKeranjang);
-            hurufDepanBarangdiKeranjang = (TextView) itemView.findViewById(R.id.hurufDepanUser);
-            fotoDataBarangdiKeranjang = (CircleImageView) itemView.findViewById( R.id.fotoDataUser );
-            fotoDataBarangdiKeranjang1 = (CircleImageView) itemView.findViewById( R.id.fotoDataUser1 );
+            hurufDepanBarangdiKeranjang = (TextView) itemView.findViewById(R.id.hurufDepanBarangdiKeranjang);
+            fotoDataBarangdiKeranjang = (CircleImageView) itemView.findViewById( R.id.fotoDataBarangdiKeranjang );
+            fotoDataBarangdiKeranjang1 = (CircleImageView) itemView.findViewById( R.id.fotoDataBarangdiKeranjang1 );
             adaGambar = (RelativeLayout) itemView.findViewById( R.id.adaGambar );
             tidakAdaGambar = (RelativeLayout) itemView.findViewById( R.id.tidakAdaGambar );
+            btnHapusKeranjang = (ImageButton) itemView.findViewById( R.id.btnHapusKeranjang );
         }
     }
 
+    public int getTotalHarga() {
+        return totalHarga;
+    }
 
-
+    public int getJmlItem() {
+        return jmlItem;
+    }
 }

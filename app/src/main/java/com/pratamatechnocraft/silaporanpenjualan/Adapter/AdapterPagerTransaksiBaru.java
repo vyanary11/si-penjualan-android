@@ -57,12 +57,12 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
 
         // ambil semua data barang
         modelKeranjangs = dbDataSourceKeranjang.getAllKeranjang();
+        noDataKeranjang = view.findViewById( R.id.noDataKeranjang );
+        txtJmlItemKeranjang = view.findViewById( R.id.txtJmlItemKeranjang );
+        txtHargaTotalKeranjang = view.findViewById( R.id.txtHargaTotallKeranjang );
+        recyclerViewKeranjang = view.findViewById( R.id.recycleViewKeranjang );
+        tambahBarangKeKeranjang =view.findViewById( R.id.tambahBarangKeKeranjang );
         if (position==0){
-            noDataKeranjang = view.findViewById( R.id.noDataKeranjang );
-            txtJmlItemKeranjang = view.findViewById( R.id.txtJmlItemKeranjang );
-            txtHargaTotalKeranjang = view.findViewById( R.id.txtHargaTotallKeranjang );
-            recyclerViewKeranjang = view.findViewById( R.id.recycleViewKeranjang );
-            tambahBarangKeKeranjang =view.findViewById( R.id.tambahBarangKeKeranjang );
             recyclerViewKeranjang.setHasFixedSize(true);
             recyclerViewKeranjang.setLayoutManager(new LinearLayoutManager(context));
             adapterRecycleViewKeranjang = new AdapterRecycleViewKeranjang( modelKeranjangs, context);
@@ -78,9 +78,9 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
             tambahBarangKeKeranjang.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(context, BarangTransaksiActivity.class);
+                    Intent intent = new Intent( context.getApplicationContext(), BarangTransaksiActivity.class);
                     intent.putExtra( "type", "0" );
-                    context.startActivity(intent);
+                    context.getApplicationContext().startActivity(intent);
                 }
             } );
         }else if(position==1){
@@ -95,5 +95,8 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
         container.removeView( view );
     }
 
-
+    @Override
+    public int getItemPosition(@NonNull Object object) {
+        return POSITION_NONE;
+    }
 }

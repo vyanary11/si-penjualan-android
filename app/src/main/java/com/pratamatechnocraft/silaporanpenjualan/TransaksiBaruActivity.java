@@ -140,5 +140,11 @@ public class TransaksiBaruActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        adapterPagerTransaksiBaru.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

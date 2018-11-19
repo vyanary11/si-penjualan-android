@@ -3,6 +3,7 @@ package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pratamatechnocraft.silaporanpenjualan.BarangTransaksiActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
@@ -28,7 +30,9 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
     private List<ListItemDataBarang> listItemDataBarangFull;
     private Context context;
     private Integer type;
+    private RecyclerView.Adapter adapter;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
+    ModelKeranjang modelKeranjang=null;
 
     public AdapterRecycleViewDataBarang(List<ListItemDataBarang> listItemDataBarangs, Context context, Integer type) {
         this.listItemDataBarangs = listItemDataBarangs;
@@ -56,23 +60,23 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
             @Override
             public void onClick(View view) {
                 if (type==0){
+                    Log.d( "KLIK","BARANG" );
+                }else{
+                    Log.d( "KLIK", "TRANSAKSI");
                     dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
                     dbDataSourceKeranjang.open();
-                    ModelKeranjang modelKeranjang=null;
-                    if(dbDataSourceKeranjang.cekKeranjang( listItemDataBarang.getKdBarang())==true){
+                    if(dbDataSourceKeranjang.cekKeranjang( listItemDataBarang.getKdBarang())==false){
                         modelKeranjang = dbDataSourceKeranjang.createModelKeranjang(
                                 listItemDataBarang.getKdBarang(),
                                 listItemDataBarang.getNamaBarang(),
                                 listItemDataBarang.getHargaBarang(),
                                 listItemDataBarang.getGambarBarang(),
                                 "1" );
+                        ((BarangTransaksiActivity)context).finish();
                     }else{
-                        dbDataSourceKeranjang.updateBarang( listItemDataBarang.getKdBarang() );
+                        dbDataSourceKeranjang.updateBarang( listItemDataBarang.getKdBarang(), modelKeranjang.getQty() );
+                        ((BarangTransaksiActivity)context).finish();
                     }
-
-                    Toast.makeText( context,"KLIK BARANG",Toast.LENGTH_LONG );
-                }else{
-                    Toast.makeText( context,"KLIK TRANSAKSI",Toast.LENGTH_LONG );
                 }
                 /*Intent i = new Intent(context, DetailSuratMasukActivity.class);
                 i.putExtra("idSuratMasuk", listItemDataBarang.getIdSuratMasuk());

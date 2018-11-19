@@ -52,14 +52,13 @@ public class BarangTransaksiActivity extends AppCompatActivity {
     ProgressBar progressBarBarangTransaksi;
     Button cobaLagiBarangTransaksi;
     SessionManager sessionManager;
-    private Boolean statusFragment = false;
     private Intent intent;
 
     private List<ListItemDataBarang> listItemDataBarangs;
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private static final String API_URL = "api/surat_masuk?api=suratmasukall";
+    private static final String API_URL = "api/barang?api=barangall";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +85,8 @@ public class BarangTransaksiActivity extends AppCompatActivity {
 
         sessionManager = new SessionManager( this );
         HashMap<String, String> user = sessionManager.getUserDetail();
+
+        loadBarangTransaksi();
 
 
         refreshBarangTransaksi.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
@@ -119,20 +120,6 @@ public class BarangTransaksiActivity extends AppCompatActivity {
     private void loadBarangTransaksi(){
         refreshBarangTransaksi.setEnabled( true );
         listItemDataBarangs = new ArrayList<>();
-        for (int i=0;i<10;i++){
-            ListItemDataBarang itemDataBarang = new ListItemDataBarang(
-                    "",
-                    "Barang "+i,
-                    ""+i,
-                    ""+1000*i,
-                    ""
-            );
-            listItemDataBarangs.add( itemDataBarang );
-        }
-
-        refreshBarangTransaksi.setRefreshing( false );
-        progressBarBarangTransaksi.setVisibility( View.GONE );
-        koneksiBarangTransaksi.setVisibility( View.GONE);
         StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
             new Response.Listener<String>() {
                 @Override
@@ -151,9 +138,9 @@ public class BarangTransaksiActivity extends AppCompatActivity {
                                     ListItemDataBarang itemDataBarang = new ListItemDataBarang(
                                             barangobject.getString( "kd_barang"),
                                             barangobject.getString( "nama_barang" ),
-                                            barangobject.getString( "stok_barang" ),
+                                            barangobject.getString( "stok" ),
                                             barangobject.getString( "harga_jual"),
-                                            barangobject.getString( "gamabar_barang")
+                                            barangobject.getString( "gambar_barang")
                                     );
 
                                     listItemDataBarangs.add( itemDataBarang );
@@ -161,9 +148,9 @@ public class BarangTransaksiActivity extends AppCompatActivity {
                                     ListItemDataBarang itemDataBarang = new ListItemDataBarang(
                                             barangobject.getString( "kd_barang"),
                                             barangobject.getString( "nama_barang" ),
-                                            barangobject.getString( "stok_barang" ),
+                                            barangobject.getString( "stok" ),
                                             barangobject.getString( "harga_beli"),
-                                            barangobject.getString( "gamabar_barang")
+                                            barangobject.getString( "gambar_barang")
                                     );
                                     listItemDataBarangs.add( itemDataBarang );
                                 }
