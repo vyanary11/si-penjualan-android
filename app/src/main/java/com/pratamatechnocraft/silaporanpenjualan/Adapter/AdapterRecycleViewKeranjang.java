@@ -35,7 +35,24 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private int totalHarga;
     private int jmlItem;
+    private int subTotal;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
+
+    public int getTotalHarga() {
+        return totalHarga;
+    }
+
+    public void setTotalHarga(int totalHarga) {
+        this.totalHarga = totalHarga;
+    }
+
+    public int getJmlItem() {
+        return jmlItem;
+    }
+
+    public void setJmlItem(int jmlItem) {
+        this.jmlItem = jmlItem;
+    }
 
     public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context) {
         this.modelKeranjangs = modelKeranjangs;
@@ -50,12 +67,12 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ModelKeranjang modelKeranjang = modelKeranjangs.get(position);
 
-        int subTotal=modelKeranjang.getHargaBarang()  *  modelKeranjang.getQty()  ;
-        totalHarga = totalHarga+subTotal;
-        jmlItem=jmlItem+modelKeranjang.getQty();
+        subTotal=modelKeranjang.getHargaBarang() * modelKeranjang.getQty()  ;
+        setTotalHarga(getTotalHarga()+subTotal);
+        setJmlItem(getJmlItem()+modelKeranjang.getQty());
 
         Log.d( "TAG", "onBindViewHolder: "+String.valueOf( totalHarga )+" "+String.valueOf( jmlItem ) );
 
@@ -77,6 +94,8 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
                 dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
                 dbDataSourceKeranjang.open();
                 dbDataSourceKeranjang.deleteBarang( modelKeranjang.getKdKeranjang() );
+                modelKeranjangs.remove( position );
+                notifyDataSetChanged();
             }
         } );
 
@@ -181,13 +200,5 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
             tidakAdaGambar = (RelativeLayout) itemView.findViewById( R.id.tidakAdaGambar );
             btnHapusKeranjang = (ImageButton) itemView.findViewById( R.id.btnHapusKeranjang );
         }
-    }
-
-    public int getTotalHarga() {
-        return totalHarga;
-    }
-
-    public int getJmlItem() {
-        return jmlItem;
     }
 }

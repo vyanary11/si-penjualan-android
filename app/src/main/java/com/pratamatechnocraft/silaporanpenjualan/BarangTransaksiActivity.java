@@ -29,7 +29,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataBarang;
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.DBDataSourceKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
@@ -88,7 +87,6 @@ public class BarangTransaksiActivity extends AppCompatActivity {
 
         loadBarangTransaksi();
 
-
         refreshBarangTransaksi.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -110,8 +108,9 @@ public class BarangTransaksiActivity extends AppCompatActivity {
         floatingActionButton1.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                finish();
                 Intent i = new Intent(BarangTransaksiActivity.this, FormBarangActivity.class);
-                i.putExtra( "type","keranjang" );
+                i.putExtra( "type","tambah" );
                 startActivity(i);
             }
         } );

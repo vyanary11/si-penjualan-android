@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,7 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
             recyclerViewKeranjang.setAdapter( adapterRecycleViewKeranjang );
             txtJmlItemKeranjang.setText(String.valueOf( adapterRecycleViewKeranjang.getJmlItem() ));
             txtHargaTotalKeranjang.setText( "Rp. "+String.valueOf( adapterRecycleViewKeranjang.getTotalHarga()) );
-            adapterRecycleViewKeranjang.notifyDataSetChanged();
+            Log.d( "TAG", "onBindViewHolder1: "+String.valueOf( adapterRecycleViewKeranjang.getJmlItem() )+" "+String.valueOf( adapterRecycleViewKeranjang.getTotalHarga() ) );
             if (adapterRecycleViewKeranjang.getItemCount()==0){
                 noDataKeranjang.setVisibility( View.VISIBLE );
                 recyclerViewKeranjang.setVisibility( View.GONE );
