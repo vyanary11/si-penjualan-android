@@ -9,6 +9,9 @@ public class DBHelperSqlLiteKeranjang extends SQLiteOpenHelper {
     public static final String TABLE_NAME = "data_keranjang";
     public static final String KD_KERANJANG = "_kd_keranjang";
     public static final String KD_BARANG = "kd_barang";
+    public static final String NAMA_BARANG = "nama_barang";
+    public static final String HARGA_BARANG = "harga_barang";
+    public static final String URL_GAMBAR_BARANG = "url_gambar_barang";
     public static final String QTY = "qty";
     private static final String db_name ="penjualan.db";
     private static final int db_version=1;
@@ -18,6 +21,9 @@ public class DBHelperSqlLiteKeranjang extends SQLiteOpenHelper {
             + TABLE_NAME + "("
             + KD_KERANJANG +" integer primary key autoincrement, "
             + KD_BARANG+ " varchar(100) not null, "
+            + NAMA_BARANG+ " varchar(50) not null, "
+            + HARGA_BARANG+ " varchar(100) not null, "
+            + URL_GAMBAR_BARANG+ " varchar(255) not null, "
             + QTY+ " varchar(100) not null);";
 
     public DBHelperSqlLiteKeranjang(Context context) {

@@ -1,11 +1,13 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
+import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -26,6 +28,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterPagerTransaksiBaru;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.DBDataSourceKeranjang;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
+
+import java.util.ArrayList;
 
 public class TransaksiBaruActivity extends AppCompatActivity {
 
@@ -36,11 +42,14 @@ public class TransaksiBaruActivity extends AppCompatActivity {
     private LinearLayout dots_layout;
     private ImageView[] dots;
     private Button btnLanjut,btnKembali;
+    private AlertDialog alertDialog;
+    private DBDataSourceKeranjang dbDataSourceKeranjang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_transaksi_baru );
+
 
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_transaksi_baru);
         setSupportActionBar(ToolBarAtas2);
@@ -125,10 +134,50 @@ public class TransaksiBaruActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                super.onBackPressed();
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                alertDialogBuilder.setMessage("Yakin Ingin Menghapus Data Ini ??");
+                alertDialogBuilder.setPositiveButton("Iya",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                dbDataSourceKeranjang = new DBDataSourceKeranjang( getBaseContext() );
+                                dbDataSourceKeranjang.open();
+                                dbDataSourceKeranjang.deleteAll();
+                                onBackPressed();
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton("Tidak",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialog.dismiss();
+                    }
+                });
+
+                alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapterPagerTransaksiBaru.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        dbDataSourceKeranjang = new DBDataSourceKeranjang( getBaseContext() );
+        dbDataSourceKeranjang.open();
+        dbDataSourceKeranjang.deleteAll();
+        super.onBackPressed();
     }
 }

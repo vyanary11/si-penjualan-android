@@ -33,14 +33,6 @@
                 android:value=".LoginActivity" />
         </activity>
         <activity
-            android:name=".CheckoutActivity"
-            android:label="Checkout"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
             android:name=".InvoiceActivity"
             android:label="Invoice"
             android:parentActivityName=".MainActivity">
@@ -89,6 +81,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+        <activity android:name=".BarangTransaksiActivity" />
         <activity android:name=".DetailBarangActivity" />
         <activity android:name=".DetailBiayaActivity" />
         <activity android:name=".FormBarangActivity"></activity>
