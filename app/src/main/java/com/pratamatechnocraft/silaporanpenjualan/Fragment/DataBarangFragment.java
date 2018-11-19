@@ -1,5 +1,6 @@
 package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataBarang;
+import com.pratamatechnocraft.silaporanpenjualan.FormBarangActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
@@ -87,8 +89,8 @@ public class DataBarangFragment extends Fragment {
         floatingActionButton1.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent i = new Intent(getContext(), TambahSuratMasukActivity.class);
-                getContext().startActivity(i);*/
+                Intent i = new Intent(getContext(), FormBarangActivity.class);
+                getContext().startActivity(i);
             }
         } );
 
