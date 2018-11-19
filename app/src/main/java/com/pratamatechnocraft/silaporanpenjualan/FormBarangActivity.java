@@ -37,7 +37,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.DBDataSourceKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,6 +71,8 @@ public class FormBarangActivity extends AppCompatActivity {
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private static final String API_URL = "api/barang";
     Intent i;
+    private DBDataSourceKeranjang dbDataSourceKeranjang;
+    private ModelKeranjang modelKeranjang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -269,9 +273,27 @@ public class FormBarangActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     String kode = jsonObject.getString("kode");
                     if (kode.equals("1")) {
+                        if(i.getStringExtra( "typedua" ).equals( "keranjang" )){
+                            dbDataSourceKeranjang = new DBDataSourceKeranjang( FormBarangActivity.this );
+                            dbDataSourceKeranjang.open();
+                            if (i.getStringExtra( "typetiga" ).equals( "penjualan" )){
+                                modelKeranjang = dbDataSourceKeranjang.createModelKeranjang(
+                                        "",
+                                        namaBarang,
+                                        hargaJual,
+                                        fotoBarang,
+                                        "1" );
+                            }else{
+                                modelKeranjang = dbDataSourceKeranjang.createModelKeranjang(
+                                        "",
+                                        namaBarang,
+                                        hargaBeli,
+                                        fotoBarang,
+                                        "1" );
+                            }
+                        }
                         finish();
                         Toast.makeText(FormBarangActivity.this, "Berhasil Menambahkan Barang", Toast.LENGTH_SHORT).show();
-
                     }else{
                         Toast.makeText(FormBarangActivity.this, "Gagal Menambahkan Barang", Toast.LENGTH_SHORT).show();
                     }
@@ -296,7 +318,6 @@ public class FormBarangActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("kd_barang", i.getStringExtra( "kdBarang" ));
                 params.put("nama_barang", namaBarang);
                 params.put("harga_jual", hargaJual);
                 params.put("harga_beli", hargaBeli);
@@ -314,33 +335,33 @@ public class FormBarangActivity extends AppCompatActivity {
 
     private void loadTampilEdit(String kdBarang){
         refreshFormBarang.setRefreshing(true);
-        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL+"?api=profile&kd_barang="+kdBarang,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL+"?api=barangdetail&kd_barang="+kdBarang,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            final JSONObject userdetail = new JSONObject(response);
-                            inputBarang.setText( userdetail.getString( "nama_barang" ) );
-                            inputHargaJual.setText( userdetail.getString( "harga_jual" ) );
-                            inputHargaBeli.setText( userdetail.getString( "harga_beli" ) );
-                            inputStok.setText( userdetail.getString( "stok" ) );
-                            if(Integer.parseInt( userdetail.getString( "level_user" ) )==0){
+                            final JSONObject barangdetail = new JSONObject(response);
+                            inputBarang.setText( barangdetail.getString( "nama_barang" ) );
+                            inputHargaJual.setText( barangdetail.getString( "harga_jual" ) );
+                            inputHargaBeli.setText( barangdetail.getString( "harga_beli" ) );
+                            inputStok.setText( barangdetail.getString( "stok" ) );
+                            if(Integer.parseInt( barangdetail.getString( "level_user" ) )==0){
                                 RadioButton rbOwner = findViewById( R.id.rbOwner );
                                 rbOwner.setChecked( true );
-                            }else if(Integer.parseInt( userdetail.getString( "level_user" ) )==1){
+                            }else if(Integer.parseInt( barangdetail.getString( "level_user" ) )==1){
                                 RadioButton rbKasir = findViewById( R.id.rbKasir );
                                 rbKasir.setChecked( true );
                             }
-                            if (userdetail.getString( "foto" ).equals( "" )){
+                            if (barangdetail.getString( "foto" ).equals( "" )){
                                 adaGambar.setVisibility( View.GONE );
                                 tidakAdaGambar.setVisibility( View.VISIBLE );
-                                setTidakAdaGambar(userdetail.getString( "nama_barang" ));
+                                setTidakAdaGambar(barangdetail.getString( "nama_barang" ));
                             }else{
                                 adaGambar.setVisibility( View.VISIBLE );
                                 tidakAdaGambar.setVisibility( View.GONE );
                                 Glide.with(FormBarangActivity.this)
                                         // LOAD URL DARI INTERNET
-                                        .load(baseUrl+String.valueOf( userdetail.getString( "foto" )  ))
+                                        .load(baseUrl+String.valueOf( barangdetail.getString( "foto" )  ))
                                         // LOAD GAMBAR AWAL SEBELUM GAMBAR UTAMA MUNCUL, BISA DARI LOKAL DAN INTERNET
                                         .into(fotoTambahBarang);
                                 txtFotoTambahBarang.setText( "ada" );
@@ -378,7 +399,7 @@ public class FormBarangActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 bottomSheetDialog.dismiss();
-                pilihFotoTambahUser();
+                pilihFotoTambahBarang();
             }
         } );
         kamera.setOnClickListener( new View.OnClickListener() {
@@ -391,7 +412,7 @@ public class FormBarangActivity extends AppCompatActivity {
 
         bottomSheetDialog.show();
     }
-    private void pilihFotoTambahUser(){
+    private void pilihFotoTambahBarang(){
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(intent.ACTION_PICK);

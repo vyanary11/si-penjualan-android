@@ -88,6 +88,11 @@ public class TransaksiFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), TransaksiBaruActivity.class );
+                if (jenisTransaksi==0) {
+                    i.putExtra( "type", "0" );
+                }else {
+                    i.putExtra( "type", "1" );
+                }
                 startActivity(i);
             }
         } );

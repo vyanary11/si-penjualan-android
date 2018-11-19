@@ -67,7 +67,7 @@ public class DetailUserActivity extends AppCompatActivity {
         fotoUserDetail1=findViewById( R.id.fotoDetailUser1 );
 
 
-        Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_detailuser);
+        Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_detailbiaya );
         setSupportActionBar(ToolBarAtas2);
         this.setTitle("Data User");
         ToolBarAtas2.setSubtitle( "Detail User" );

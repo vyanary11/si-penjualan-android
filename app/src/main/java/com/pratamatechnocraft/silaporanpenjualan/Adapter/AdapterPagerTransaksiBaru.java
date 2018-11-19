@@ -30,11 +30,13 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
     private ArrayList<ModelKeranjang> modelKeranjangs;
     private TextView noDataKeranjang,txtJmlItemKeranjang, txtHargaTotalKeranjang;
     private Button tambahBarangKeKeranjang;
+    private int type;
 
-    public AdapterPagerTransaksiBaru(int[] layouts, Context context) {
+    public AdapterPagerTransaksiBaru(int[] layouts, Context context, int type) {
         this.layouts = layouts;
         layoutInflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
         this.context = context;
+        this.type = type;
     }
 
     @Override
@@ -80,7 +82,11 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent( context.getApplicationContext(), BarangTransaksiActivity.class);
-                    intent.putExtra( "type", "0" );
+                    if (type==0){
+                        intent.putExtra( "type", "0" );
+                    }else{
+                        intent.putExtra( "type", "1" );
+                    }
                     context.getApplicationContext().startActivity(intent);
                 }
             } );

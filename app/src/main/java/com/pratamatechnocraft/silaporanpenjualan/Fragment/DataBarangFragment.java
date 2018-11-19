@@ -90,6 +90,7 @@ public class DataBarangFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), FormBarangActivity.class);
+                i.putExtra( "type","tambah" );
                 getContext().startActivity(i);
             }
         } );

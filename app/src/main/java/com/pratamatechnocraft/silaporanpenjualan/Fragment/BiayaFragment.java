@@ -79,7 +79,10 @@ public class BiayaFragment extends Fragment {
         refreshDataBiaya.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                adapterDataBiaya = new AdapterRecycleViewDataBiaya( listItemBiayas, getContext());
+                recyclerViewDataBiaya.setAdapter( adapterDataBiaya );
                 listItemBiayas.clear();
+                adapterDataBiaya.notifyDataSetChanged();
                 loadBiaya();
             }
         } );
@@ -148,7 +151,7 @@ public class BiayaFragment extends Fragment {
                                 ListItemBiaya listItemBiaya = new ListItemBiaya(
                                         biayaobject.getString( "kd_biaya"),
                                         biayaobject.getString( "nama_biaya" ),
-                                        biayaobject.getString( "jumlah_biaya" ),
+                                        "Rp. "+biayaobject.getString( "jumlah_biaya" ),
                                         biayaobject.getString( "tgl_biaya" )
                                 );
 
@@ -165,7 +168,10 @@ public class BiayaFragment extends Fragment {
                         refreshDataBiaya.setRefreshing( false );
                         progressBarDataBiaya.setVisibility( View.GONE );
                         noDataBiaya.setVisibility( View.GONE );
+                        adapterDataBiaya = new AdapterRecycleViewDataBiaya( listItemBiayas, getContext());
+                        recyclerViewDataBiaya.setAdapter( adapterDataBiaya );
                         listItemBiayas.clear();
+                        adapterDataBiaya.notifyDataSetChanged();
                         koneksiDataBiaya.setVisibility( View.VISIBLE );
                     }
                 }
@@ -178,7 +184,10 @@ public class BiayaFragment extends Fragment {
                     refreshDataBiaya.setRefreshing( false );
                     progressBarDataBiaya.setVisibility( View.GONE );
                     noDataBiaya.setVisibility( View.GONE );
+                    adapterDataBiaya = new AdapterRecycleViewDataBiaya( listItemBiayas, getContext());
+                    recyclerViewDataBiaya.setAdapter( adapterDataBiaya );
                     listItemBiayas.clear();
+                    adapterDataBiaya.notifyDataSetChanged();
                     koneksiDataBiaya.setVisibility( View.VISIBLE );
                 }
             }
