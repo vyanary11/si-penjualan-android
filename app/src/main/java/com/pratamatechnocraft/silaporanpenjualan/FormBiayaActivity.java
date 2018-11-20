@@ -80,7 +80,7 @@ public class FormBiayaActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         /*DATE PICKER*/
-        dateFormatter = new SimpleDateFormat("yyyy/mm/dd", Locale.US);
+        dateFormatter = new SimpleDateFormat("dd MMMM yyyy HH:mm", Locale.US);
 
         tvDateResult = (TextView) findViewById(R.id.tv_dateresult);
         imgButton = (ImageButton) findViewById(R.id.imagebutton);

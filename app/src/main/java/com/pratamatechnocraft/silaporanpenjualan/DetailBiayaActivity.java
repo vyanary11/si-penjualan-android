@@ -29,6 +29,11 @@ import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DetailBiayaActivity extends AppCompatActivity {
@@ -132,10 +137,11 @@ public class DetailBiayaActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
+                            DecimalFormat formatter = new DecimalFormat("#,###,###");
                             final JSONObject biayadetail = new JSONObject(response);
                             txtDetailNamaBiaya.setText(  biayadetail.getString( "nama_biaya" ));
                             txtTanggalBiaya.setText( biayadetail.getString( "tgl_biaya" ) );
-                            txtJumlahBiaya.setText(  biayadetail.getString( "jumlah_biaya" )  );
+                            txtJumlahBiaya.setText(  "Rp. "+formatter.format(Double.parseDouble(biayadetail.getString( "jumlah_biaya" ))));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(DetailBiayaActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();

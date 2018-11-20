@@ -1,24 +1,33 @@
 package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,7 +37,6 @@ import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataKategoriBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataKategoriBarang;
-import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 
@@ -39,6 +47,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //import com.pratamatechnocraft.silaporanpenjualan.TambahSuratMasukActivity;
 
@@ -53,18 +62,22 @@ public class DataKategoriBarangFragment extends Fragment {
     Button cobaLagiDataKategoriBarang;
     SessionManager sessionManager;
     private Boolean statusFragment = false;
+    private ProgressDialog progress;
+    private TextInputLayout inputLayoutNamaKategori;
+    private EditText inputNamaKategori;
 
     private List<ListItemDataKategoriBarang> listItemDataKategorisBarangs;
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private static final String API_URL = "api/surat_masuk?api=suratmasukall";
+    private static final String API_URL = "api/kategori?api=kategoriall";
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate( R.layout.fragment_data_kategori_barang, container, false);
+        progress = new ProgressDialog(getContext());
         noDataKategoriBarang = view.findViewById( R.id.noDataKategoriBarang );
         refreshDataKategoriBarang = (SwipeRefreshLayout) view.findViewById(R.id.refreshDataKategoriBarang);
         imageButtonTambahKategoriBarang = view.findViewById( R.id.imageButtonTambahKategoriBarang );
@@ -72,6 +85,11 @@ public class DataKategoriBarangFragment extends Fragment {
         koneksiDataKategoriBarang = view.findViewById( R.id.koneksiDataKategoriBarang );
         progressBarDataKategoriBarang = view.findViewById( R.id.progressBarDataKategoriBarang );
         recyclerViewDataKategoriBarang = (RecyclerView) view.findViewById(R.id.recycleViewDataKategoriBarang);
+
+        inputLayoutNamaKategori = (TextInputLayout) view.findViewById(R.id.inputLayoutNamaKategori);
+        inputNamaKategori = (EditText) view.findViewById(R.id.inputNamaKategori);
+
+        inputNamaKategori.addTextChangedListener( new DataKategoriBarangFragment.MyTextWatcher( inputNamaKategori ) );
 
         sessionManager = new SessionManager( getContext() );
         HashMap<String, String> kategori = sessionManager.getUserDetail();
@@ -96,7 +114,17 @@ public class DataKategoriBarangFragment extends Fragment {
         imageButtonTambahKategoriBarang.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (!validateNamaKatgori() ) {
+                    return;
+                }else {
+                    progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
+                    progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progress.setIndeterminate(false);
+                    progress.setCanceledOnTouchOutside(false);
+                    prosesTambahKategori(
+                            inputNamaKategori.getText().toString().trim()
+                    );
+                }
             }
         } );
 
@@ -149,21 +177,7 @@ public class DataKategoriBarangFragment extends Fragment {
 
     private void loadKategoriBarang(){
         listItemDataKategorisBarangs = new ArrayList<>();
-        ListItemDataKategoriBarang listItemDataKategoriBarang = new ListItemDataKategoriBarang(
-                "",
-                "Makanan"
-        );
-
-        listItemDataKategorisBarangs.add( listItemDataKategoriBarang );
-
-        ListItemDataKategoriBarang listItemDataKategoriBarang1 = new ListItemDataKategoriBarang(
-                "",
-                "Minuman"
-        );
-
-        listItemDataKategorisBarangs.add( listItemDataKategoriBarang1 );
-
-        /*StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -213,12 +227,55 @@ public class DataKategoriBarangFragment extends Fragment {
         );
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
-        requestQueue.add( stringRequest );*/
+        requestQueue.add( stringRequest );
 
-        refreshDataKategoriBarang.setRefreshing( false );
-        progressBarDataKategoriBarang.setVisibility( View.GONE );
-        koneksiDataKategoriBarang.setVisibility( View.GONE);
     }
+
+    private void prosesTambahKategori(final String nama_kategori) {
+        progress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, baseUrl+API_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String kode = jsonObject.getString("kode");
+                    if (kode.equals("1")) {
+                        Toast.makeText(getContext(), "Berhasil Menambahkan Kategori Barang", Toast.LENGTH_SHORT).show();
+                        loadKategoriBarang();
+                    }else{
+                        Toast.makeText(getContext(), "Gagal Menambahkan Kategori Barang", Toast.LENGTH_SHORT).show();
+                    }
+                    progress.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d( "TAG", e.toString() );
+                    Toast.makeText(getContext(), "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                    progress.dismiss();
+                }
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.d( "TAG", error.toString() );
+                /*Log.d(TAG, error.printStackTrace() );*/
+                Toast.makeText(getContext(), "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
+                progress.dismiss();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("nama_kategori", nama_kategori);
+                params.put("api", "tambah");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
+    }
+
 
     private void setUpRecycleView(){
         recyclerViewDataKategoriBarang.setHasFixedSize(true);
@@ -227,4 +284,44 @@ public class DataKategoriBarangFragment extends Fragment {
         recyclerViewDataKategoriBarang.setAdapter( adapterDataKategoriBarang );
         adapterDataKategoriBarang.notifyDataSetChanged();
     }
+
+    /*INPUT*/
+    private class MyTextWatcher implements TextWatcher {
+
+        private View view;
+
+        private MyTextWatcher(View view) {
+            this.view = view;
+        }
+
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void afterTextChanged(Editable editable) {
+            switch (view.getId()) {
+                case R.id.inputNamaKategori:
+                    validateNamaKatgori();
+                    break;
+            }
+        }
+    }
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
+            getActivity().getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
+    private boolean validateNamaKatgori() {
+        if (inputNamaKategori.getText().toString().trim().isEmpty()) {
+            inputLayoutNamaKategori.setError("Masukkan Nama Kategori");
+            requestFocus( inputNamaKategori );
+            return false;
+        } else {
+            inputLayoutNamaKategori.setErrorEnabled(false);
+        }
+        return true;
+    }
+    /*INPUT*/
 }

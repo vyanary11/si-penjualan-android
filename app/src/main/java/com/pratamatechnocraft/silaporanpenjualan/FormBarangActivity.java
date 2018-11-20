@@ -182,7 +182,7 @@ public class FormBarangActivity extends AppCompatActivity {
                         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         progress.setIndeterminate(false);
                         progress.setCanceledOnTouchOutside(false);
-                        prosesTambahBarang(
+                        prosesEditBarang(
                                 inputBarang.getText().toString().trim(),
                                 inputHargaJual.getText().toString().trim(),
                                 inputHargaBeli.getText().toString().trim(),

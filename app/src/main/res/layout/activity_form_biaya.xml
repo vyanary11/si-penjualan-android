@@ -50,6 +50,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
+                    android:layout_marginLeft="4dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -67,6 +68,7 @@
                             android:layout_weight="1"
                             android:text="Tanggal Biaya"
                             android:textSize="15dp"
+                            android:textColor="@color/ColorPrimaryText"
                             android:textStyle="bold" />
 
                         <TextView
