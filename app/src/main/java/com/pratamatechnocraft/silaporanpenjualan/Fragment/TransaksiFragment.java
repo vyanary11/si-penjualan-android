@@ -22,12 +22,23 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataTransaksi;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.DBDataSourceKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import com.pratamatechnocraft.silaporanpenjualan.TransaksiBaruActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,6 +59,7 @@ public class TransaksiFragment extends Fragment{
     FloatingActionButton fabTransaksiBaru;
     SessionManager sessionManager;
     NavigationView navigationView;
+    private DBDataSourceKeranjang dbDataSourceKeranjang;
 
     private List<ListItemTransaksi> listItemTransaksis;
 
@@ -87,6 +99,9 @@ public class TransaksiFragment extends Fragment{
         fabTransaksiBaru.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dbDataSourceKeranjang = new DBDataSourceKeranjang( getContext() );
+                dbDataSourceKeranjang.open();
+                dbDataSourceKeranjang.deleteAll();
                 Intent i = new Intent(getContext(), TransaksiBaruActivity.class );
                 if (jenisTransaksi==0) {
                     i.putExtra( "type", "0" );
@@ -196,28 +211,7 @@ public class TransaksiFragment extends Fragment{
             API_URL = "api/transaksi?api=utang";
         }
 
-
-        ListItemTransaksi listItemDataTransaksi = new ListItemTransaksi(
-                "#123",
-                "Rp. 15.000",
-                "22 Oktober 2018"
-        );
-
-        listItemTransaksis.add( listItemDataTransaksi );
-
-        ListItemTransaksi listItemDataTransaksi1 = new ListItemTransaksi(
-                "#2928",
-                "Rp. 900.000",
-                "22 Oktober 2018"
-        );
-
-        listItemTransaksis.add( listItemDataTransaksi1 );
-
-        refreshDataTransaksi.setRefreshing( false );
-        progressBarDataTransaksi.setVisibility( View.GONE );
-        koneksiDataTransaksi.setVisibility( View.GONE);
-
-        /*StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -268,9 +262,7 @@ public class TransaksiFragment extends Fragment{
         );
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
-        requestQueue.add( stringRequest );*/
-
-        setUpRecycleView();
+        requestQueue.add( stringRequest );
     }
 
     private void setUpRecycleView(){

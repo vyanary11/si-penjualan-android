@@ -144,7 +144,6 @@ public class FormBarangActivity extends AppCompatActivity {
         if (i.getStringExtra( "type" ).equals("tambah")){
             buttonSimpanTambahBarang.setText("Tambah");
             refreshFormBarang.setEnabled( false );
-
         }else if(i.getStringExtra( "type" ).equals("edit")){
             buttonSimpanTambahBarang.setText("Simpan");
         }
@@ -167,13 +166,6 @@ public class FormBarangActivity extends AppCompatActivity {
         buttonSimpanTambahBarang.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int selectedId = rbglevelUser .getCheckedRadioButtonId();
-                String indexRadioButtonLevelUser;
-                if (selectedId == R.id.rbOwner){
-                    indexRadioButtonLevelUser="0";
-                }else{
-                    indexRadioButtonLevelUser="1";
-                }
                 if (i.getStringExtra( "type" ).equals( "tambah" )){
                     if (!validateNamaBarang() || !validateHargaJual() || !validateHargaBeli() || !validateStok() ) {
                         return;
@@ -182,12 +174,12 @@ public class FormBarangActivity extends AppCompatActivity {
                         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                         progress.setIndeterminate(false);
                         progress.setCanceledOnTouchOutside(false);
-                        prosesEditBarang(
+                        prosesTambahBarang(
                                 inputBarang.getText().toString().trim(),
                                 inputHargaJual.getText().toString().trim(),
                                 inputHargaBeli.getText().toString().trim(),
                                 inputStok.getText().toString().trim(),
-                                indexRadioButtonLevelUser,
+                                "0",
                                 txtFotoTambahBarang.getText().toString().trim()
                         );
                     }
@@ -204,7 +196,7 @@ public class FormBarangActivity extends AppCompatActivity {
                                 inputHargaJual.getText().toString().trim(),
                                 inputHargaBeli.getText().toString().trim(),
                                 inputStok.getText().toString().trim(),
-                                indexRadioButtonLevelUser,
+                                "0",
                                 txtFotoTambahBarang.getText().toString().trim()
                         );
                     }

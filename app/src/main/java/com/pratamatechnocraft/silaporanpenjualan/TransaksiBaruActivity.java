@@ -44,7 +44,6 @@ public class TransaksiBaruActivity extends AppCompatActivity {
     private ImageView[] dots;
     private Button btnLanjut,btnKembali;
     private AlertDialog alertDialog;
-    private DBDataSourceKeranjang dbDataSourceKeranjang;
     private Intent intent;
 
     @Override
@@ -147,9 +146,6 @@ public class TransaksiBaruActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                dbDataSourceKeranjang = new DBDataSourceKeranjang( getBaseContext() );
-                                dbDataSourceKeranjang.open();
-                                dbDataSourceKeranjang.deleteAll();
                                 onBackPressed();
                             }
                         });
@@ -182,9 +178,6 @@ public class TransaksiBaruActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        dbDataSourceKeranjang = new DBDataSourceKeranjang( getBaseContext() );
-        dbDataSourceKeranjang.open();
-        dbDataSourceKeranjang.deleteAll();
         super.onBackPressed();
     }
 }

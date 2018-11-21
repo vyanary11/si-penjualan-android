@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,13 +56,14 @@ public class AdapterRecycleViewDataKategoriBarang extends RecyclerView.Adapter<A
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ListItemDataKategoriBarang listItemDataKategoriBarang = listItemDataKategorisBarangs.get(position);
 
         holder.txtNamaKategoriBarang.setText( listItemDataKategoriBarang.getNamaKategori());
         holder.imgBtnDeleteKategoriBarang.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d( "TAG", "onClick: "+listItemDataKategoriBarang.getKdKategori() );
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
                 alertDialogBuilder.setMessage("Yakin Ingin Menghapus Data Ini ??");
                 alertDialogBuilder.setPositiveButton("Iya",
@@ -69,6 +71,7 @@ public class AdapterRecycleViewDataKategoriBarang extends RecyclerView.Adapter<A
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
                                 deleteKategori(listItemDataKategoriBarang.getKdKategori());
+                                notifyItemRemoved( position );
                             }
                         });
 
@@ -78,10 +81,12 @@ public class AdapterRecycleViewDataKategoriBarang extends RecyclerView.Adapter<A
                         alertDialog.dismiss();
                     }
                 });
+
                 alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
             }
         } );
+
     }
 
     @Override

@@ -49,13 +49,14 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:gravity="center_vertical|center_horizontal"
         android:orientation="vertical"
         android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageView11"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_weight="1"
             android:src="@drawable/ic_sync_problem_black_24dp" />
 
@@ -81,17 +82,18 @@
 
     <LinearLayout
         android:id="@+id/noDataTransaksi"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:gravity="center_vertical|center_horizontal"
         android:orientation="vertical"
         android:visibility="gone">
 
         <ImageView
             android:id="@+id/imageView10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:src="@drawable/ic_sentiment_dissatisfied_black_24dp" />
 
         <TextView
@@ -99,7 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:gravity="center"
-            android:text="Surat Masuk Kosong"
+            android:text="Data Kosong"
             android:textColor="@color/ColorPrimaryText"
             android:textSize="24sp"
             android:textStyle="bold" />

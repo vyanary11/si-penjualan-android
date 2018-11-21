@@ -61,7 +61,7 @@ public class DataKategoriBarangFragment extends Fragment {
     ProgressBar progressBarDataKategoriBarang;
     Button cobaLagiDataKategoriBarang;
     SessionManager sessionManager;
-    private Boolean statusFragment = false;
+    private Boolean statusFragment = false,statusBtn = false;
     private ProgressDialog progress;
     private TextInputLayout inputLayoutNamaKategori;
     private EditText inputNamaKategori;
@@ -117,6 +117,7 @@ public class DataKategoriBarangFragment extends Fragment {
                 if (!validateNamaKatgori() ) {
                     return;
                 }else {
+                    statusBtn=true;
                     progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
                     progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     progress.setIndeterminate(false);
@@ -241,6 +242,8 @@ public class DataKategoriBarangFragment extends Fragment {
                     String kode = jsonObject.getString("kode");
                     if (kode.equals("1")) {
                         Toast.makeText(getContext(), "Berhasil Menambahkan Kategori Barang", Toast.LENGTH_SHORT).show();
+                        inputNamaKategori.setText( "" );
+                        statusBtn=false;
                         loadKategoriBarang();
                     }else{
                         Toast.makeText(getContext(), "Gagal Menambahkan Kategori Barang", Toast.LENGTH_SHORT).show();
@@ -314,7 +317,7 @@ public class DataKategoriBarangFragment extends Fragment {
         }
     }
     private boolean validateNamaKatgori() {
-        if (inputNamaKategori.getText().toString().trim().isEmpty()) {
+        if (inputNamaKategori.getText().toString().trim().isEmpty() && statusBtn == false) {
             inputLayoutNamaKategori.setError("Masukkan Nama Kategori");
             requestFocus( inputNamaKategori );
             return false;

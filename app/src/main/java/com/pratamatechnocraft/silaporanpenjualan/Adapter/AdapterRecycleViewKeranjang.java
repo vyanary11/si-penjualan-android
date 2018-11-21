@@ -33,30 +33,18 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     private Context context;
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private int totalHarga;
-    private int jmlItem;
     private int subTotal;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
+    private TextView jmlItem,totalHarga;
+    private int vtotalHarga;
+    private int vjmlItem;
+    Boolean statusdelete = false;
 
-    public int getTotalHarga() {
-        return totalHarga;
-    }
-
-    public void setTotalHarga(int totalHarga) {
-        this.totalHarga = totalHarga;
-    }
-
-    public int getJmlItem() {
-        return jmlItem;
-    }
-
-    public void setJmlItem(int jmlItem) {
-        this.jmlItem = jmlItem;
-    }
-
-    public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context) {
+    public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context, TextView jmlItem, TextView totalHarga) {
         this.modelKeranjangs = modelKeranjangs;
         this.context = context;
+        this.jmlItem = jmlItem;
+        this.totalHarga =totalHarga;
     }
 
     @Override
@@ -70,11 +58,12 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ModelKeranjang modelKeranjang = modelKeranjangs.get(position);
 
-        subTotal=modelKeranjang.getHargaBarang() * modelKeranjang.getQty()  ;
-        setTotalHarga(getTotalHarga()+subTotal);
-        setJmlItem(getJmlItem()+modelKeranjang.getQty());
+        subTotal=modelKeranjang.getHargaBarang() * modelKeranjang.getQty();
+        vjmlItem=vjmlItem+ modelKeranjang.getQty();
+        vtotalHarga=vtotalHarga+subTotal;
 
-        Log.d( "TAG", "onBindViewHolder: "+String.valueOf( totalHarga )+" "+String.valueOf( jmlItem ) );
+        jmlItem.setText( String.valueOf( vjmlItem ) );
+        totalHarga.setText( String.valueOf( vtotalHarga ) );
 
         holder.txtNamaBarangdiKeranjang.setText(modelKeranjang.getNamaBrang());
         holder.txtHargaBarangdiKeranjang.setText(String.valueOf( modelKeranjang.getHargaBarang()));
@@ -95,7 +84,13 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
                 dbDataSourceKeranjang.open();
                 dbDataSourceKeranjang.deleteBarang( modelKeranjang.getKdKeranjang() );
                 modelKeranjangs.remove( position );
+                vjmlItem=vjmlItem-modelKeranjang.getQty();
+                vtotalHarga=vtotalHarga-subTotal;
+                jmlItem.setText( String.valueOf( vjmlItem ) );
+                totalHarga.setText( String.valueOf( vtotalHarga ) );
                 notifyDataSetChanged();
+                Log.d( "TAG", "onClick jml item: "+vjmlItem );
+                Log.d( "TAG", "onClick total harga: "+vtotalHarga );
             }
         } );
 
