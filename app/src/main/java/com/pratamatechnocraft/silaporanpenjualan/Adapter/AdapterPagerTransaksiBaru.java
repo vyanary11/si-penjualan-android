@@ -72,18 +72,6 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
             recyclerViewKeranjang.setAdapter( adapterRecycleViewKeranjang );
             adapterRecycleViewKeranjang.notifyDataSetChanged();
 
-            /*subTotal=0;
-            jmlItem=0;
-            totalHarga=0;
-            for(int i=0;i<modelKeranjangs.size();i++){
-                modelKeranjang = modelKeranjangs.get( i );
-                subTotal=modelKeranjang.getHargaBarang() * modelKeranjang.getQty();
-                totalHarga=totalHarga+subTotal;
-                jmlItem=jmlItem+modelKeranjang.getQty();
-            }
-
-            txtJmlItemKeranjang.setText(String.valueOf(jmlItem));
-            txtHargaTotalKeranjang.setText( "Rp. "+String.valueOf(totalHarga));*/
             if (adapterRecycleViewKeranjang.getItemCount()==0){
                 noDataKeranjang.setVisibility( View.VISIBLE );
                 recyclerViewKeranjang.setVisibility( View.GONE );
