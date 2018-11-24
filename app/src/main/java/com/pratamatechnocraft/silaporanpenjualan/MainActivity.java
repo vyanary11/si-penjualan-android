@@ -27,6 +27,7 @@ import com.pratamatechnocraft.silaporanpenjualan.Fragment.DashboardFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataBarangFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataKategoriBarangFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataUserFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.LaporanLabaRugiFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.ProfileFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.TabLayoutFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_laporan_tahunan) {
 
         }else if (id == R.id.nav_laporan_labarugi) {
-
+            fragment = new LaporanLabaRugiFragment();
         }else if (id == R.id.nav_barang) {
             fragment = new DataBarangFragment();
         }else if (id == R.id.nav_kategori_barang) {

@@ -1,7 +1,7 @@
 package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,21 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.pratamatechnocraft.silaporanpenjualan.DetailUserActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
-import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -33,36 +29,32 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     private Context context;
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private int totalHarga;
-    private int jmlItem;
     private int subTotal;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
+    private TextView jmlItem,totalHarga;
+    private int vtotalHarga;
+    private int vjmlItem;
+    private int qtyTemp;
+    AlertDialog dialog;
+    LayoutInflater inflater;
+    View dialogView;
+    private ImageButton imageButtonPlusQty,imageButtonMinusQty;
+    private EditText qtyDialog;
+    private Button buttonBatalDialogQty,buttonSimpanDialogQty;
 
-    public int getTotalHarga() {
-        return totalHarga;
-    }
-
-    public void setTotalHarga(int totalHarga) {
-        this.totalHarga = totalHarga;
-    }
-
-    public int getJmlItem() {
-        return jmlItem;
-    }
-
-    public void setJmlItem(int jmlItem) {
-        this.jmlItem = jmlItem;
-    }
-
-    public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context) {
+    public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context, TextView jmlItem, TextView totalHarga) {
         this.modelKeranjangs = modelKeranjangs;
         this.context = context;
+        this.jmlItem = jmlItem;
+        this.totalHarga =totalHarga;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate( R.layout.list_item_data_barang_dikeranjang,parent,false);
+        jmlItem.setText( String.valueOf( vjmlItem ) );
+        totalHarga.setText( String.valueOf( vtotalHarga ) );
         return new ViewHolder(v);
     }
 
@@ -70,21 +62,77 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ModelKeranjang modelKeranjang = modelKeranjangs.get(position);
 
-        subTotal=modelKeranjang.getHargaBarang() * modelKeranjang.getQty()  ;
-        setTotalHarga(getTotalHarga()+subTotal);
-        setJmlItem(getJmlItem()+modelKeranjang.getQty());
-
-        Log.d( "TAG", "onBindViewHolder: "+String.valueOf( totalHarga )+" "+String.valueOf( jmlItem ) );
+        subTotal=0;
+        subTotal=modelKeranjang.getHargaBarang() * modelKeranjang.getQty();
 
         holder.txtNamaBarangdiKeranjang.setText(modelKeranjang.getNamaBrang());
         holder.txtHargaBarangdiKeranjang.setText(String.valueOf( modelKeranjang.getHargaBarang()));
         holder.txtQTYBarangdiKeranjang.setText(String.valueOf( modelKeranjang.getQty()));
         holder.txtSubTotalBarangdiKeranjang.setText( String.valueOf( subTotal ));
 
+
         holder.cardViewDataBarangdiKeranjang.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                qtyTemp=modelKeranjang.getQty();
+                dialog = new AlertDialog.Builder(context).create();
+                inflater = dialog.getLayoutInflater();
+                dialogView = inflater.inflate(R.layout.dialog_keranjang_qty, null);
+                dialog.setView(dialogView);
+                dialog.setCancelable(true);
+                dialog.setTitle("Kuantitas");
 
+                imageButtonMinusQty = dialogView.findViewById( R.id.imageButtonMinusQty );
+                imageButtonPlusQty = dialogView.findViewById( R.id.imageButtonPlusQty );
+
+                buttonBatalDialogQty = dialogView.findViewById( R.id.buttonBatalDialogQty );
+                buttonSimpanDialogQty = dialogView.findViewById( R.id.buttonSimpanDialogQty );
+
+                qtyDialog = dialogView.findViewById( R.id.qtyDialog );
+
+                qtyDialog.setText( String.valueOf(modelKeranjang.getQty()) );
+
+                imageButtonMinusQty.setOnClickListener( new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (qtyTemp>1) {
+                            qtyTemp = qtyTemp - 1;
+                            qtyDialog.setText( String.valueOf( qtyTemp ) );
+                        }
+                    }
+                } );
+
+                imageButtonPlusQty.setOnClickListener( new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        qtyTemp=qtyTemp+1;
+                        qtyDialog.setText( String.valueOf(qtyTemp) );
+                    }
+                } );
+
+                buttonBatalDialogQty.setOnClickListener( new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                } );
+
+                buttonSimpanDialogQty.setOnClickListener( new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
+                        dbDataSourceKeranjang.open();
+                        dbDataSourceKeranjang.updateBarangTypeDua(modelKeranjang.getKdBarang(),qtyTemp);
+                        vjmlItem=0;
+                        vtotalHarga=0;
+                        modelKeranjang.setQty( qtyTemp );
+                        notifyItemChanged( position );
+                        notifyDataSetChanged();
+                        dialog.dismiss();
+                    }
+                } );
+
+                dialog.show();
             }
         });
 
@@ -94,10 +142,27 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
                 dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
                 dbDataSourceKeranjang.open();
                 dbDataSourceKeranjang.deleteBarang( modelKeranjang.getKdKeranjang() );
+                vjmlItem=0;
+                vtotalHarga=0;
                 modelKeranjangs.remove( position );
+                notifyItemRemoved( position );
                 notifyDataSetChanged();
+                if(modelKeranjangs.size()==0){
+                    vjmlItem=0;
+                    vtotalHarga=0;
+                    totalHarga.setText( "Rp. "+String.valueOf( vtotalHarga ) );
+                    jmlItem.setText( String.valueOf( vjmlItem ) );
+                }
             }
         } );
+
+        Log.d( "TAG", "onBindViewHolder: "+modelKeranjangs.size() );
+        if(modelKeranjangs.size()!=0){
+            vjmlItem=vjmlItem+modelKeranjang.getQty();
+            vtotalHarga=vtotalHarga+subTotal;
+            totalHarga.setText( "Rp. "+String.valueOf( vtotalHarga ) );
+            jmlItem.setText( String.valueOf( vjmlItem ) );
+        }
 
         if (!modelKeranjang.getUrlGambarBarang().equals("")){
             holder.adaGambar.setVisibility( View.VISIBLE );
@@ -200,5 +265,9 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
             tidakAdaGambar = (RelativeLayout) itemView.findViewById( R.id.tidakAdaGambar );
             btnHapusKeranjang = (ImageButton) itemView.findViewById( R.id.btnHapusKeranjang );
         }
+    }
+
+    public void showDialog(final String kdBarang, final int qty) {
+
     }
 }

@@ -89,12 +89,10 @@ public class DBDataSourceKeranjang {
         return modelKeranjangs;
     }
 
-    //ambil satu barang sesuai id
-    public ModelKeranjang getKeranjang(long id)
-    {
-        ModelKeranjang modelKeranjang = new ModelKeranjang(); //inisialisasi barang
-        //select query
-        Cursor cursor = database.query(DBHelperSqlLiteKeranjang.TABLE_NAME, allColumns, "_kd_keranjang ="+id, null, null, null, null);
+    public ModelKeranjang getKeranjang(String id){
+        ModelKeranjang modelKeranjang = new ModelKeranjang();
+
+        Cursor cursor = database.query(DBHelperSqlLiteKeranjang.TABLE_NAME, allColumns, "kd_barang ="+id, null, null, null, null);
         //ambil data yang pertama
         cursor.moveToFirst();
         //masukkan data cursor ke objek barang

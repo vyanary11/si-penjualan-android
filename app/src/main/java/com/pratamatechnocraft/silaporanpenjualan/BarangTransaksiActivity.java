@@ -111,6 +111,12 @@ public class BarangTransaksiActivity extends AppCompatActivity {
                 finish();
                 Intent i = new Intent(BarangTransaksiActivity.this, FormBarangActivity.class);
                 i.putExtra( "type","tambah" );
+                i.putExtra( "typedua","keranjang" );
+                if (intent.getStringExtra( "type" ).equals( "0" )){
+                    i.putExtra( "typetiga","penjualan" );
+                }else{
+                    i.putExtra( "typetiga","pembelian" );
+                }
                 startActivity(i);
             }
         } );
@@ -133,7 +139,7 @@ public class BarangTransaksiActivity extends AppCompatActivity {
                             for (int i = 0; i<data.length(); i++){
                                 JSONObject barangobject = data.getJSONObject( i );
 
-                                if(intent.getStringExtra( "type" ).equals( "1" )){
+                                if(intent.getStringExtra( "type" ).equals( "0" )){
                                     ListItemDataBarang itemDataBarang = new ListItemDataBarang(
                                             barangobject.getString( "kd_barang"),
                                             barangobject.getString( "nama_barang" ),

@@ -124,6 +124,20 @@ public class DashboardFragment extends Fragment {
             }
         } );
 
+        kliklaplabarugi.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigationView.setCheckedItem( R.id.nav_laporan_labarugi );
+                LaporanLabaRugiFragment laporanLabaRugiFragment = new LaporanLabaRugiFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, laporanLabaRugiFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        } );
+
         return view;
     }
 

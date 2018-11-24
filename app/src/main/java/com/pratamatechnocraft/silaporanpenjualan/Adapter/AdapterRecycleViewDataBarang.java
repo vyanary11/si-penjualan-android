@@ -74,7 +74,8 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
                                 "1" );
                         ((BarangTransaksiActivity)context).finish();
                     }else{
-                        dbDataSourceKeranjang.updateBarang( listItemDataBarang.getKdBarang(), modelKeranjang.getQty() );
+                        ModelKeranjang modelKeranjang1 = dbDataSourceKeranjang.getKeranjang(listItemDataBarang.getKdBarang());
+                        dbDataSourceKeranjang.updateBarang( listItemDataBarang.getKdBarang(), modelKeranjang1.getQty() );
                         ((BarangTransaksiActivity)context).finish();
                     }
                 }

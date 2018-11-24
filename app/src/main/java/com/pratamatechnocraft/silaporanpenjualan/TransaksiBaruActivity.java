@@ -1,6 +1,7 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
@@ -43,13 +44,13 @@ public class TransaksiBaruActivity extends AppCompatActivity {
     private ImageView[] dots;
     private Button btnLanjut,btnKembali;
     private AlertDialog alertDialog;
-    private DBDataSourceKeranjang dbDataSourceKeranjang;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_transaksi_baru );
-
+        intent = getIntent();
 
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_transaksi_baru);
         setSupportActionBar(ToolBarAtas2);
@@ -60,7 +61,12 @@ public class TransaksiBaruActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mViewPager = findViewById( R.id.viewPager );
-        adapterPagerTransaksiBaru = new AdapterPagerTransaksiBaru( layouts,this );
+        if (intent.getStringExtra( "type" ).equals( "0" )){
+            adapterPagerTransaksiBaru = new AdapterPagerTransaksiBaru( layouts,this,0 );
+        }else{
+            adapterPagerTransaksiBaru = new AdapterPagerTransaksiBaru( layouts,this,1 );
+        }
+
         mViewPager.setAdapter( adapterPagerTransaksiBaru );
 
         dots_layout = findViewById( R.id.dotsLayouts );
@@ -140,9 +146,6 @@ public class TransaksiBaruActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
-                                dbDataSourceKeranjang = new DBDataSourceKeranjang( getBaseContext() );
-                                dbDataSourceKeranjang.open();
-                                dbDataSourceKeranjang.deleteAll();
                                 onBackPressed();
                             }
                         });
@@ -175,9 +178,6 @@ public class TransaksiBaruActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        dbDataSourceKeranjang = new DBDataSourceKeranjang( getBaseContext() );
-        dbDataSourceKeranjang.open();
-        dbDataSourceKeranjang.deleteAll();
         super.onBackPressed();
     }
 }

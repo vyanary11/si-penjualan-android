@@ -80,7 +80,7 @@ public class FormBiayaActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         /*DATE PICKER*/
-        dateFormatter = new SimpleDateFormat("yyyy-MMMM-dd", Locale.US);
+        dateFormatter = new SimpleDateFormat("dd MMMM yyyy HH:mm", Locale.US);
 
         tvDateResult = (TextView) findViewById(R.id.tv_dateresult);
         imgButton = (ImageButton) findViewById(R.id.imagebutton);
@@ -109,8 +109,6 @@ public class FormBiayaActivity extends AppCompatActivity {
         }else if(i.getStringExtra( "type" ).equals( "edit" )){
             loadTampilEdit(i.getStringExtra( "kdBiaya" ));
             buttonSimpanTambahBiaya.setText("Simpan");
-            inputLayoutNamaBiaya.setVisibility( View.GONE );
-            inputLayoutJumlahBiaya.setVisibility( View.GONE );
         }
 
         /*VALIDASI DATA*/
@@ -149,8 +147,6 @@ public class FormBiayaActivity extends AppCompatActivity {
                                 inputNamaBiaya.getText().toString().trim(),
                                 inputJumlahBiaya.getText().toString().trim(),
                                 tvDateResult.getText().toString().trim()
-
-
                         );
                     }
                 }else if(i.getStringExtra( "type" ).equals( "edit" )){
@@ -212,6 +208,7 @@ public class FormBiayaActivity extends AppCompatActivity {
                 params.put("nama_biaya", namaBiaya);
                 params.put("jumlah_biaya", jumlahBiaya);
                 params.put("tgl_biaya", tanggalBiaya);
+                params.put( "api", "edit" );
                 return params;
             }
         };
@@ -230,10 +227,10 @@ public class FormBiayaActivity extends AppCompatActivity {
                     String kode = jsonObject.getString("kode");
                     if (kode.equals("1")) {
                         finish();
-                        Toast.makeText(FormBiayaActivity.this, "Berhasil Edit Biaya", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FormBiayaActivity.this, "Berhasil Tambah Biaya", Toast.LENGTH_SHORT).show();
 
                     }else{
-                        Toast.makeText(FormBiayaActivity.this, "Gagal Edit Biaya", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(FormBiayaActivity.this, "Gagal Tambah Biaya", Toast.LENGTH_SHORT).show();
                     }
                     progress.dismiss();
                 } catch (JSONException e) {
@@ -254,10 +251,10 @@ public class FormBiayaActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("kd_biaya", i.getStringExtra( "kdBiaya" ));
                 params.put("nama_biaya", namaBiaya);
                 params.put("jumlah_biaya", jumlahBiaya);
                 params.put("tgl_biaya", tanggalBiaya);
+                params.put( "api", "tambah" );
                 return params;
             }
         };
@@ -274,9 +271,10 @@ public class FormBiayaActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            final JSONObject userdetail = new JSONObject(response);
-                            inputNamaBiaya.setText( userdetail.getString( "nama_biaya" ) );
-                            inputJumlahBiaya.setText( userdetail.getString( "jumlah_biaya" ) );
+                            final JSONObject biayadetail = new JSONObject(response);
+                            inputNamaBiaya.setText( biayadetail.getString( "nama_biaya" ) );
+                            tvDateResult.setText( biayadetail.getString( "tgl_biaya" ) );
+                            inputJumlahBiaya.setText( biayadetail.getString( "jumlah_biaya" ) );
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(FormBiayaActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
