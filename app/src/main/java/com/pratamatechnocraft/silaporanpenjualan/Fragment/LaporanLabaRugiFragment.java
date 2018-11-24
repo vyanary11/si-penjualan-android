@@ -17,9 +17,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
+import com.whiteelephant.monthpicker.MonthPickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,15 +62,20 @@ public class LaporanLabaRugiFragment extends Fragment {
 
     private void showDateDialog() {
         Calendar newCalendar = Calendar.getInstance();
-        datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+        MonthPickerDialog.Builder builder = new MonthPickerDialog.Builder(getContext(), new MonthPickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            public void onDateSet(int selectedMonth, int selectedYear) {
                 Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
+                newDate.set(selectedYear, selectedMonth, Calendar.DAY_OF_MONTH);
                 buttontgl.setText(dateFormatter.format(newDate.getTime()));
             }
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
-        datePickerDialog.show();
+        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH));
+
+        builder.setMinYear(1990)
+                .setMaxYear(2030)
+                .setTitle("Pilih Bulan : ")
+                .build()
+                .show();
     }
 
     public class SavedTabsListAdapter extends BaseExpandableListAdapter {
