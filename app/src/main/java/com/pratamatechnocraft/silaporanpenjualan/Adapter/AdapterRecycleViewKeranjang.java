@@ -2,6 +2,7 @@ package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,6 +42,7 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     private ImageButton imageButtonPlusQty,imageButtonMinusQty;
     private EditText qtyDialog;
     private Button buttonBatalDialogQty,buttonSimpanDialogQty;
+    private android.support.v7.app.AlertDialog alertDialog1;
 
     public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context, TextView jmlItem, TextView totalHarga) {
         this.modelKeranjangs = modelKeranjangs;
@@ -139,20 +141,38 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
         holder.btnHapusKeranjang.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
-                dbDataSourceKeranjang.open();
-                dbDataSourceKeranjang.deleteBarang( modelKeranjang.getKdKeranjang() );
-                vjmlItem=0;
-                vtotalHarga=0;
-                modelKeranjangs.remove( position );
-                notifyItemRemoved( position );
-                notifyDataSetChanged();
-                if(modelKeranjangs.size()==0){
-                    vjmlItem=0;
-                    vtotalHarga=0;
-                    totalHarga.setText( "Rp. "+String.valueOf( vtotalHarga ) );
-                    jmlItem.setText( String.valueOf( vjmlItem ) );
-                }
+                android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(context);
+                alertDialogBuilder.setMessage("Yakin Ingin Menghapus Data Ini ??");
+                alertDialogBuilder.setPositiveButton("Iya",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
+                                dbDataSourceKeranjang.open();
+                                dbDataSourceKeranjang.deleteBarang( modelKeranjang.getKdKeranjang() );
+                                vjmlItem=0;
+                                vtotalHarga=0;
+                                modelKeranjangs.remove( position );
+                                notifyItemRemoved( position );
+                                notifyDataSetChanged();
+                                if(modelKeranjangs.size()==0){
+                                    vjmlItem=0;
+                                    vtotalHarga=0;
+                                    totalHarga.setText( "Rp. "+String.valueOf( vtotalHarga ) );
+                                    jmlItem.setText( String.valueOf( vjmlItem ) );
+                                }
+                            }
+                        });
+
+                alertDialogBuilder.setNegativeButton("Tidak",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialog1.dismiss();
+                    }
+                });
+
+                alertDialog1 = alertDialogBuilder.create();
+                alertDialog1.show();
             }
         } );
 
@@ -265,9 +285,5 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
             tidakAdaGambar = (RelativeLayout) itemView.findViewById( R.id.tidakAdaGambar );
             btnHapusKeranjang = (ImageButton) itemView.findViewById( R.id.btnHapusKeranjang );
         }
-    }
-
-    public void showDialog(final String kdBarang, final int qty) {
-
     }
 }
