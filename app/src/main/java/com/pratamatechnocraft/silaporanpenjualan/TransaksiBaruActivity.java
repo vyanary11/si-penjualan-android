@@ -141,7 +141,7 @@ public class TransaksiBaruActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                alertDialogBuilder.setMessage("Yakin Ingin Menghapus Data Ini ??");
+                alertDialogBuilder.setMessage("Yakin Ingin Keluar ??");
                 alertDialogBuilder.setPositiveButton("Iya",
                         new DialogInterface.OnClickListener() {
                             @Override
