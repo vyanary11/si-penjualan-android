@@ -142,7 +142,7 @@
                         android:background="?android:attr/listDivider" />
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
@@ -166,12 +166,13 @@
                     </LinearLayout>
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
                         android:text="Rp. 2.000"
                         android:textSize="18sp"
+                        android:layout_margin="5dp"
                         android:textStyle="bold" />
 
                     <View
@@ -200,7 +201,7 @@
                         android:background="?android:attr/listDivider" />
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
@@ -225,12 +226,13 @@
                     </LinearLayout>
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
                         android:text="Rp. 10.000"
                         android:textSize="18sp"
+                        android:layout_margin="5dp"
                         android:textStyle="bold" />
 
                     <View

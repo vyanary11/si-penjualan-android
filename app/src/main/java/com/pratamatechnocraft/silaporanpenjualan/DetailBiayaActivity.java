@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,11 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Locale;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class DetailBiayaActivity extends AppCompatActivity {
 
@@ -59,7 +53,7 @@ public class DetailBiayaActivity extends AppCompatActivity {
         txtTanggalBiaya = findViewById( R.id.txtDetailTanggalBiaya);
         txtDetailNamaBiaya = findViewById( R.id.txtDetailNamaBiaya);
 
-        Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_detailbiaya);
+        Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_detailbiaya );
         setSupportActionBar(ToolBarAtas2);
         this.setTitle("Data Biaya");
         ToolBarAtas2.setSubtitle( "Detail Biaya" );
