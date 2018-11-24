@@ -7,21 +7,21 @@
     android:layout_height="match_parent"
     tools:context="Fragment.LaporanLabaRugiFragment">
 
-<LinearLayout
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:orientation="vertical">
-
-    <Button
-        android:id="@+id/buttonbulan"
-        android:textSize="20dp"
-        android:text="October 2018"
+    <LinearLayout
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:orientation="vertical">
 
-</LinearLayout>
+        <Button
+            android:id="@+id/buttonbulan"
+            android:textSize="20dp"
+            android:text="October 2018"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_height="match_parent"
@@ -31,7 +31,7 @@
         <ExpandableListView
             android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             />
 
     </LinearLayout>
