@@ -138,6 +138,48 @@ public class DashboardFragment extends Fragment {
             }
         } );
 
+        kliklapharian.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigationView.setCheckedItem( R.id.nav_laporan_harian);
+                LaporanHarianFragment laporanHarianFragment = new LaporanHarianFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, laporanHarianFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        } );
+
+        kliklapbulanan.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigationView.setCheckedItem( R.id.nav_laporan_bulanan);
+                LaporanBulananFragment laporanBulananFragment = new LaporanBulananFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, laporanBulananFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        } );
+
+        kliklaptahunan.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                navigationView.setCheckedItem( R.id.nav_laporan_tahunan);
+                LaporanTahunanFragment laporanTahunanFragment = new LaporanTahunanFragment();
+
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.screen_area, laporanTahunanFragment )
+                        .addToBackStack(null)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .commit();
+            }
+        } );
+
         return view;
     }
 

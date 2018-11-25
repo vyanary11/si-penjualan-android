@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="Fragment.LaporanLabaRugiFragment">
+    tools:context=".Fragment.LaporanTahunanFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,29 +15,15 @@
         android:orientation="vertical">
 
         <Button
-            android:id="@+id/buttonbulan"
+            android:id="@+id/buttonThn"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="November 2018"
+            android:text="2018"
             android:textSize="20dp"
             android:textAllCaps="false" />
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_height="match_parent"
-        android:layout_width="wrap_content"
-        android:orientation="vertical">
-
-        <ExpandableListView
-            android:id="@+id/list"
-            style="@android:style/Widget.ExpandableListView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
 </LinearLayout>
-
