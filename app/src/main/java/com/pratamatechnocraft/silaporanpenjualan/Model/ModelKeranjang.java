@@ -4,9 +4,18 @@ public class ModelKeranjang {
     long kdKeranjang;
     String kdBarang;
     String namaBrang;
+    int stok;
     int qty;
     int HargaBarang;
     String urlGambarBarang;
+
+    public int getStok() {
+        return stok;
+    }
+
+    public void setStok(int stok) {
+        this.stok = stok;
+    }
 
     public long getKdKeranjang() {
         return kdKeranjang;

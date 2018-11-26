@@ -85,6 +85,7 @@
         <activity android:name=".DetailBarangActivity" />
         <activity android:name=".DetailBiayaActivity" />
         <activity android:name=".FormBarangActivity" />
+        <activity android:name=".FormEditTransaksiActivity"></activity>
     </application>
 
 </manifest>

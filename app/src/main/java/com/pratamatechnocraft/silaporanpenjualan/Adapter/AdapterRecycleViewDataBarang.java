@@ -1,6 +1,7 @@
 package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pratamatechnocraft.silaporanpenjualan.BarangTransaksiActivity;
+import com.pratamatechnocraft.silaporanpenjualan.DetailBarangActivity;
+import com.pratamatechnocraft.silaporanpenjualan.DetailBiayaActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
@@ -60,9 +63,10 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
             @Override
             public void onClick(View view) {
                 if (type==0){
-                    Log.d( "KLIK","BARANG" );
+                    Intent i = new Intent(context, DetailBarangActivity.class);
+                    i.putExtra("kdBarang", listItemDataBarang.getKdBarang());
+                    context.startActivity(i);
                 }else{
-                    Log.d( "KLIK", "TRANSAKSI");
                     dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
                     dbDataSourceKeranjang.open();
                     if(dbDataSourceKeranjang.cekKeranjang( listItemDataBarang.getKdBarang())==false){
@@ -71,7 +75,9 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
                                 listItemDataBarang.getNamaBarang(),
                                 listItemDataBarang.getHargaBarang(),
                                 listItemDataBarang.getGambarBarang(),
-                                "1" );
+                                "1",
+                                listItemDataBarang.getStokBarang()
+                        );
                         ((BarangTransaksiActivity)context).finish();
                     }else{
                         ModelKeranjang modelKeranjang1 = dbDataSourceKeranjang.getKeranjang(listItemDataBarang.getKdBarang());
@@ -79,9 +85,6 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
                         ((BarangTransaksiActivity)context).finish();
                     }
                 }
-                /*Intent i = new Intent(context, DetailSuratMasukActivity.class);
-                i.putExtra("idSuratMasuk", listItemDataBarang.getIdSuratMasuk());
-                context.startActivity(i);*/
             }
         });
 

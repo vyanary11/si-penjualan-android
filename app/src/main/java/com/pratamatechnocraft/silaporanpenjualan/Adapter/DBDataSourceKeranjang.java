@@ -9,6 +9,9 @@ import android.util.Log;
 
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class DBDataSourceKeranjang {
@@ -20,7 +23,8 @@ public class DBDataSourceKeranjang {
             dbHelperSqlLiteKeranjang.NAMA_BARANG,
             dbHelperSqlLiteKeranjang.HARGA_BARANG,
             dbHelperSqlLiteKeranjang.URL_GAMBAR_BARANG,
-            dbHelperSqlLiteKeranjang.QTY
+            dbHelperSqlLiteKeranjang.QTY,
+            dbHelperSqlLiteKeranjang.STOK
     };
 
     public DBDataSourceKeranjang(Context context){ dbHelperSqlLiteKeranjang = new DBHelperSqlLiteKeranjang(context); }
@@ -31,7 +35,7 @@ public class DBDataSourceKeranjang {
         dbHelperSqlLiteKeranjang.close();
     }
 
-    public ModelKeranjang createModelKeranjang(String kd_barang,String nama_barang,String harga_barang,String url_gambar_barang, String qty) {
+    public ModelKeranjang createModelKeranjang(String kd_barang,String nama_barang,String harga_barang,String url_gambar_barang, String qty, String stok) {
 
         ContentValues values = new ContentValues();
         values.put(dbHelperSqlLiteKeranjang.KD_BARANG, kd_barang);
@@ -39,6 +43,7 @@ public class DBDataSourceKeranjang {
         values.put(dbHelperSqlLiteKeranjang.HARGA_BARANG, harga_barang);
         values.put(dbHelperSqlLiteKeranjang.URL_GAMBAR_BARANG, url_gambar_barang);
         values.put(dbHelperSqlLiteKeranjang.QTY, qty);
+        values.put(dbHelperSqlLiteKeranjang.STOK, stok);
 
         long insertId = database.insert(dbHelperSqlLiteKeranjang.TABLE_NAME, null,
                 values);
@@ -69,6 +74,7 @@ public class DBDataSourceKeranjang {
         modelKeranjang.setHargaBarang(cursor.getInt(3));
         modelKeranjang.setUrlGambarBarang(cursor.getString(4));
         modelKeranjang.setQty(cursor.getInt(5));
+        modelKeranjang.setStok(cursor.getInt(6));
 
         return modelKeranjang;
     }
@@ -105,7 +111,6 @@ public class DBDataSourceKeranjang {
 
     public Boolean cekKeranjang(String kdBarang)
     {
-        ModelKeranjang modelKeranjang = new ModelKeranjang();
         //select query
         Cursor cursor = database.rawQuery("select count(*) from data_keranjang where kd_barang='" + kdBarang + "'", null);
         //ambil data yang pertama
@@ -118,6 +123,18 @@ public class DBDataSourceKeranjang {
         }else{
             return false;
         }
+    }
+
+    public int totalKeranjang()
+    {
+        //select query
+        Cursor cursor = database.rawQuery("select * from data_keranjang", null);
+        //ambil data yang pertama
+        cursor.moveToFirst();
+        int count= cursor.getInt(0);
+        //tutup sambungan
+        cursor.close();
+        return count;
     }
 
     public void updateBarang(String kdBarang, int qty)
@@ -154,5 +171,41 @@ public class DBDataSourceKeranjang {
     public void deleteAll()
     {
         database.delete(DBHelperSqlLiteKeranjang.TABLE_NAME, null, null);
+    }
+
+    public JSONArray getArrayKdBarangKeranjang() {
+        String[] kd_barangKeranjang = {dbHelperSqlLiteKeranjang.KD_BARANG};
+        Cursor cursor = database.query(DBHelperSqlLiteKeranjang.TABLE_NAME, kd_barangKeranjang, null, null, null, null, null);
+        JSONArray resultSet = new JSONArray(  );
+        cursor.moveToFirst();
+        while (cursor.isAfterLast() == false) {
+            int totalColumn = cursor.getColumnCount();
+            for (int i = 0; i < totalColumn; i++) {
+                resultSet.put( cursor.getString(i) );
+                cursor.moveToNext();
+            }
+        }
+
+        cursor.close();
+        Log.d("TAG_NAME", resultSet.toString());
+        return resultSet;
+    }
+
+    public JSONArray getArrayQtyKeranjang() {
+        String[] qtyKeranjang = {dbHelperSqlLiteKeranjang.QTY};
+        Cursor cursor = database.query(DBHelperSqlLiteKeranjang.TABLE_NAME, qtyKeranjang, null, null, null, null, null);
+        JSONArray resultSet = new JSONArray(  );
+        cursor.moveToFirst();
+        while (cursor.isAfterLast() == false) {
+            int totalColumn = cursor.getColumnCount();
+            for (int i = 0; i < totalColumn; i++) {
+                resultSet.put( cursor.getString(i) );
+                cursor.moveToNext();
+            }
+        }
+
+        cursor.close();
+        Log.d("TAG_NAME", resultSet.toString());
+        return resultSet;
     }
 }

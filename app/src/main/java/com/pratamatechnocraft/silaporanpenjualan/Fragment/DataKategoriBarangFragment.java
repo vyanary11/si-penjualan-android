@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -25,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -65,12 +67,14 @@ public class DataKategoriBarangFragment extends Fragment {
     private ProgressDialog progress;
     private TextInputLayout inputLayoutNamaKategori;
     private EditText inputNamaKategori;
+    AlertDialog dialog;
 
     private List<ListItemDataKategoriBarang> listItemDataKategorisBarangs;
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private static final String API_URL = "api/kategori?api=kategoriall";
+    TextView textView;
 
 
     @Nullable
@@ -283,7 +287,7 @@ public class DataKategoriBarangFragment extends Fragment {
     private void setUpRecycleView(){
         recyclerViewDataKategoriBarang.setHasFixedSize(true);
         recyclerViewDataKategoriBarang.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapterDataKategoriBarang = new AdapterRecycleViewDataKategoriBarang( listItemDataKategorisBarangs, getContext());
+        adapterDataKategoriBarang = new AdapterRecycleViewDataKategoriBarang( listItemDataKategorisBarangs, getContext(), "biasa", null, null, null);
         recyclerViewDataKategoriBarang.setAdapter( adapterDataKategoriBarang );
         adapterDataKategoriBarang.notifyDataSetChanged();
     }
@@ -293,7 +297,7 @@ public class DataKategoriBarangFragment extends Fragment {
 
         private View view;
 
-        private MyTextWatcher(View view) {
+        public MyTextWatcher(View view) {
             this.view = view;
         }
 

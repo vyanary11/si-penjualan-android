@@ -1,5 +1,6 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,18 +14,23 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,16 +43,22 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataKategoriBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.DBDataSourceKeranjang;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataKategoriBarangFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataKategoriBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -54,10 +66,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class FormBarangActivity extends AppCompatActivity {
 
     private Button btnPilihFotoTambahBarang,buttonSimpanTambahBarang,buttonBatalTambahBarang;
+    private ImageButton imageButtonPilihKategori;
     private RelativeLayout adaGambar, tidakAdaGambar;
-    private RadioGroup rbglevelUser;
     private TextInputLayout inputLayoutNamaBarang,inputLayoutHargaJual,inputLayoutHargaBeli,inputLayoutStok;
     private EditText inputBarang,inputHargaJual,inputHargaBeli,inputStok;
+    private TextView txtKdKategoriBarangForm,txtNamaKategoriBarangForm;
     private BottomSheetDialog bottomSheetDialog;
     private Bitmap bitmap;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -73,6 +86,22 @@ public class FormBarangActivity extends AppCompatActivity {
     Intent i;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
     private ModelKeranjang modelKeranjang;
+    AlertDialog dialog;
+    LayoutInflater inflater;
+    View dialogView;
+
+    private RecyclerView recyclerViewDataKategoriBarang;
+    private AdapterRecycleViewDataKategoriBarang adapterDataKategoriBarang;
+    LinearLayout noDataKategoriBarang, koneksiDataKategoriBarang;
+    SwipeRefreshLayout refreshDataKategoriBarang;
+    ImageButton imageButtonTambahKategoriBarang;
+    ProgressBar progressBarDataKategoriBarang;
+    Button cobaLagiDataKategoriBarang;
+    private Boolean statusBtn = false;
+    private TextInputLayout inputLayoutNamaKategori;
+    private EditText inputNamaKategori;
+
+    private List<ListItemDataKategoriBarang> listItemDataKategorisBarangs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,13 +125,19 @@ public class FormBarangActivity extends AppCompatActivity {
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        /*RADIOBUTTON*/
-        rbglevelUser =  (RadioGroup) findViewById(R.id.rbglevelUser);
+
+
+        /*TEXTVIEW*/
+        txtKdKategoriBarangForm =  (TextView) findViewById(R.id.txtKdKategoriBarangForm);
+        txtNamaKategoriBarangForm =  (TextView) findViewById(R.id.txtNamaKategoriBarangForm);
 
         /*BUTTON*/
         btnPilihFotoTambahBarang = findViewById( R.id.buttonPilihFotoTambahBarang );
         buttonSimpanTambahBarang = findViewById( R.id.buttonSimpanTambahBarang );
         buttonBatalTambahBarang = findViewById( R.id.buttonBatalTambahBarang);
+
+        /*IMAGEBUTTON*/
+        imageButtonPilihKategori = findViewById( R.id.imageButtonPilihKategori);
 
         /*LAYOUT INPUT*/
         inputLayoutNamaBarang = (TextInputLayout) findViewById(R.id.inputLayoutNamaBarang);
@@ -120,9 +155,6 @@ public class FormBarangActivity extends AppCompatActivity {
         }else if(i.getStringExtra( "type" ).equals( "edit" )){
             loadTampilEdit(i.getStringExtra( "kdBarang" ));
             buttonSimpanTambahBarang.setText("Simpan");
-            inputLayoutNamaBarang.setVisibility( View.GONE );
-            inputLayoutHargaJual.setVisibility( View.GONE );
-            inputLayoutHargaBeli.setVisibility( View.GONE );
             inputLayoutStok.setVisibility( View.GONE );
         }
 
@@ -179,12 +211,12 @@ public class FormBarangActivity extends AppCompatActivity {
                                 inputHargaJual.getText().toString().trim(),
                                 inputHargaBeli.getText().toString().trim(),
                                 inputStok.getText().toString().trim(),
-                                "0",
+                                txtKdKategoriBarangForm.getText().toString().trim(),
                                 txtFotoTambahBarang.getText().toString().trim()
                         );
                     }
                 }else if(i.getStringExtra( "type" ).equals( "edit" )){
-                    if (!validateNamaBarang() || !validateHargaJual() || !validateHargaBeli() || !validateStok() ) {
+                    if (!validateNamaBarang() || !validateHargaJual() || !validateHargaBeli() ) {
                         return;
                     }else {
                         progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
@@ -196,11 +228,27 @@ public class FormBarangActivity extends AppCompatActivity {
                                 inputHargaJual.getText().toString().trim(),
                                 inputHargaBeli.getText().toString().trim(),
                                 inputStok.getText().toString().trim(),
-                                "0",
+                                txtKdKategoriBarangForm.getText().toString().trim(),
                                 txtFotoTambahBarang.getText().toString().trim()
                         );
                     }
                 }
+            }
+        } );
+
+        imageButtonPilihKategori.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog = new AlertDialog.Builder(FormBarangActivity.this).create();
+                inflater = dialog.getLayoutInflater();
+                dialogView = inflater.inflate(R.layout.fragment_data_kategori_barang, null);
+                dialog.setView(dialogView);
+                dialog.setCancelable(true);
+                dialog.setTitle("Pilih Kategori : ");
+
+                inisialisasiFragmentKategori();
+
+                dialog.show();
             }
         } );
 
@@ -218,7 +266,6 @@ public class FormBarangActivity extends AppCompatActivity {
                     if (kode.equals("1")) {
                         finish();
                         Toast.makeText(FormBarangActivity.this, "Berhasil Edit Barang", Toast.LENGTH_SHORT).show();
-
                     }else{
                         Toast.makeText(FormBarangActivity.this, "Gagal Edit Barang", Toast.LENGTH_SHORT).show();
                     }
@@ -246,7 +293,7 @@ public class FormBarangActivity extends AppCompatActivity {
                 params.put("harga_jual", hargaJual);
                 params.put("harga_beli", hargaBeli);
                 params.put("stok", stokBarang);
-                params.put("level_user", kategori);
+                params.put("kd_kategori", kategori);
                 params.put("gambar_barang", fotoBarang);
                 params.put("api", "edit");
                 return params;
@@ -274,14 +321,18 @@ public class FormBarangActivity extends AppCompatActivity {
                                         namaBarang,
                                         hargaJual,
                                         fotoBarang,
-                                        "1" );
+                                        "1",
+                                        stokBarang
+                                );
                             }else{
                                 modelKeranjang = dbDataSourceKeranjang.createModelKeranjang(
                                         "",
                                         namaBarang,
                                         hargaBeli,
                                         fotoBarang,
-                                        "1" );
+                                        "1",
+                                        stokBarang
+                                );
                             }
                         }
                         finish();
@@ -337,13 +388,6 @@ public class FormBarangActivity extends AppCompatActivity {
                             inputHargaJual.setText( barangdetail.getString( "harga_jual" ) );
                             inputHargaBeli.setText( barangdetail.getString( "harga_beli" ) );
                             inputStok.setText( barangdetail.getString( "stok" ) );
-                            if(Integer.parseInt( barangdetail.getString( "level_user" ) )==0){
-                                RadioButton rbOwner = findViewById( R.id.rbOwner );
-                                rbOwner.setChecked( true );
-                            }else if(Integer.parseInt( barangdetail.getString( "level_user" ) )==1){
-                                RadioButton rbKasir = findViewById( R.id.rbKasir );
-                                rbKasir.setChecked( true );
-                            }
                             if (barangdetail.getString( "foto" ).equals( "" )){
                                 adaGambar.setVisibility( View.GONE );
                                 tidakAdaGambar.setVisibility( View.VISIBLE );
@@ -358,6 +402,8 @@ public class FormBarangActivity extends AppCompatActivity {
                                         .into(fotoTambahBarang);
                                 txtFotoTambahBarang.setText( "ada" );
                             }
+                            txtKdKategoriBarangForm.setText( barangdetail.getString( "kd_kategori" ) );
+                            txtNamaKategoriBarangForm.setText( barangdetail.getString( "nama_kategori" ) );
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(FormBarangActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
@@ -481,6 +527,30 @@ public class FormBarangActivity extends AppCompatActivity {
             }
         }
     }
+
+    private class MyTextWatcher1 implements TextWatcher {
+
+        private View view;
+
+        public MyTextWatcher1(View view) {
+            this.view = view;
+        }
+
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void afterTextChanged(Editable editable) {
+            switch (view.getId()) {
+                case R.id.inputNamaKategori:
+                    validateNamaKatgori();
+                    break;
+            }
+        }
+    }
+
     private void requestFocus(View view) {
         if (view.requestFocus()) {
             getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -523,6 +593,17 @@ public class FormBarangActivity extends AppCompatActivity {
             return false;
         } else {
             inputLayoutStok.setErrorEnabled(false);
+        }
+        return true;
+    }
+
+    private boolean validateNamaKatgori() {
+        if (inputNamaKategori.getText().toString().trim().isEmpty() && statusBtn == false) {
+            inputLayoutNamaKategori.setError("Masukkan Nama Kategori");
+            requestFocus( inputNamaKategori );
+            return false;
+        } else {
+            inputLayoutNamaKategori.setErrorEnabled(false);
         }
         return true;
     }
@@ -599,5 +680,171 @@ public class FormBarangActivity extends AppCompatActivity {
         }
 
         fotoTambahBarang1.setImageResource(color);
+    }
+
+    private void inisialisasiFragmentKategori (){
+        progress = new ProgressDialog(this);
+        noDataKategoriBarang = dialogView.findViewById( R.id.noDataKategoriBarang );
+        refreshDataKategoriBarang = (SwipeRefreshLayout) dialogView.findViewById(R.id.refreshDataKategoriBarang);
+        imageButtonTambahKategoriBarang = dialogView.findViewById( R.id.imageButtonTambahKategoriBarang );
+        cobaLagiDataKategoriBarang = dialogView.findViewById( R.id.cobaLagiKategoriBarang );
+        koneksiDataKategoriBarang = dialogView.findViewById( R.id.koneksiDataKategoriBarang );
+        progressBarDataKategoriBarang = dialogView.findViewById( R.id.progressBarDataKategoriBarang );
+        recyclerViewDataKategoriBarang = (RecyclerView) dialogView.findViewById(R.id.recycleViewDataKategoriBarang);
+
+        inputLayoutNamaKategori = (TextInputLayout) dialogView.findViewById(R.id.inputLayoutNamaKategori);
+        inputNamaKategori = (EditText) dialogView.findViewById(R.id.inputNamaKategori);
+
+        inputNamaKategori.addTextChangedListener( new FormBarangActivity.MyTextWatcher1( inputNamaKategori ) );
+
+        recyclerViewDataKategoriBarang.setHasFixedSize(true);
+        recyclerViewDataKategoriBarang.setLayoutManager(new LinearLayoutManager(this));
+
+        listItemDataKategorisBarangs = new ArrayList<>();
+        adapterDataKategoriBarang = new AdapterRecycleViewDataKategoriBarang( listItemDataKategorisBarangs, this, "dialog", dialog, txtKdKategoriBarangForm, txtNamaKategoriBarangForm);
+
+        loadKategoriBarang();
+
+        refreshDataKategoriBarang.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                listItemDataKategorisBarangs.clear();
+                adapterDataKategoriBarang.notifyDataSetChanged();
+                loadKategoriBarang();
+            }
+        } );
+
+        cobaLagiDataKategoriBarang.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                koneksiDataKategoriBarang.setVisibility( View.GONE );
+                progressBarDataKategoriBarang.setVisibility( View.VISIBLE );
+                loadKategoriBarang();
+            }
+        } );
+
+        imageButtonTambahKategoriBarang.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!validateNamaKatgori() ) {
+                    return;
+                }else {
+                    statusBtn=true;
+                    progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
+                    progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progress.setIndeterminate(false);
+                    progress.setCanceledOnTouchOutside(false);
+                    prosesTambahKategori(
+                            inputNamaKategori.getText().toString().trim()
+                    );
+                }
+            }
+        } );
+
+        recyclerViewDataKategoriBarang.setAdapter( adapterDataKategoriBarang );
+    }
+
+    private void loadKategoriBarang(){
+        listItemDataKategorisBarangs.clear();
+        adapterDataKategoriBarang.notifyDataSetChanged();
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+"api/kategori?api=kategoriall",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            if (jsonObject.getInt( "jml_data" )==0){
+                                noDataKategoriBarang.setVisibility( View.VISIBLE );
+                            }else{
+                                noDataKategoriBarang.setVisibility( View.GONE );
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                for (int i = 0; i<data.length(); i++){
+                                    JSONObject kategoriobject = data.getJSONObject( i );
+
+                                    ListItemDataKategoriBarang listItemDataKategoriBarang = new ListItemDataKategoriBarang(
+                                            kategoriobject.getString( "kd_kategori"),
+                                            kategoriobject.getString( "nama_kategori" )
+                                    );
+
+                                    listItemDataKategorisBarangs.add( listItemDataKategoriBarang );
+                                    adapterDataKategoriBarang.notifyDataSetChanged();
+                                }
+                            }
+                            refreshDataKategoriBarang.setRefreshing( false );
+                            progressBarDataKategoriBarang.setVisibility( View.GONE );
+                            koneksiDataKategoriBarang.setVisibility( View.GONE);
+                        }catch (JSONException e){
+                            e.printStackTrace();
+                            refreshDataKategoriBarang.setRefreshing( false );
+                            progressBarDataKategoriBarang.setVisibility( View.GONE );
+                            noDataKategoriBarang.setVisibility( View.GONE );
+                            listItemDataKategorisBarangs.clear();
+                            koneksiDataKategoriBarang.setVisibility( View.VISIBLE );
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        refreshDataKategoriBarang.setRefreshing( false );
+                        progressBarDataKategoriBarang.setVisibility( View.GONE );
+                        noDataKategoriBarang.setVisibility( View.GONE );
+                        listItemDataKategorisBarangs.clear();
+                        koneksiDataKategoriBarang.setVisibility( View.VISIBLE );
+                    }
+                }
+        );
+
+        RequestQueue requestQueue = Volley.newRequestQueue( FormBarangActivity.this );
+        requestQueue.add( stringRequest );
+
+    }
+
+    private void prosesTambahKategori(final String nama_kategori) {
+        progress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, baseUrl+"api/kategori", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String kode = jsonObject.getString("kode");
+                    if (kode.equals("1")) {
+                        Toast.makeText(FormBarangActivity.this, "Berhasil Menambahkan Kategori Barang", Toast.LENGTH_SHORT).show();
+                        inputNamaKategori.setText( "" );
+                        statusBtn=false;
+                        loadKategoriBarang();
+                    }else{
+                        Toast.makeText(FormBarangActivity.this, "Gagal Menambahkan Kategori Barang", Toast.LENGTH_SHORT).show();
+                    }
+                    progress.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d( "TAG", e.toString() );
+                    Toast.makeText(FormBarangActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                    progress.dismiss();
+                }
+            }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.d( "TAG", error.toString() );
+                /*Log.d(TAG, error.printStackTrace() );*/
+                Toast.makeText(FormBarangActivity.this, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
+                progress.dismiss();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("nama_kategori", nama_kategori);
+                params.put("api", "tambah");
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(FormBarangActivity.this);
+        requestQueue.add(stringRequest);
     }
 }

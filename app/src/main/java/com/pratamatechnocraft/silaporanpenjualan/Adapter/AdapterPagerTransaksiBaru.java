@@ -1,6 +1,7 @@
 package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +20,32 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.BarangTransaksiActivity;
+import com.pratamatechnocraft.silaporanpenjualan.DetailBiayaActivity;
+import com.pratamatechnocraft.silaporanpenjualan.FormBiayaActivity;
+import com.pratamatechnocraft.silaporanpenjualan.InvoiceActivity;
+import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
+import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import com.pratamatechnocraft.silaporanpenjualan.TransaksiBaruActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AdapterPagerTransaksiBaru extends PagerAdapter {
 
@@ -40,6 +61,14 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
     private TextInputLayout inputLayoutCatatanTransaksi;
     private EditText inputCatatanTransaksi;
     private int type;
+    private ProgressDialog progress;
+    SessionManager sessionManager;
+    HashMap<String, String> user=null;
+    private BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
+    private String baseUrl=baseUrlApiModel.getBaseURL();
+    private static final String API_URL = "api/transaksi";
+    private int jmlItem;
+    private int totalHarga;
 
     public AdapterPagerTransaksiBaru(int[] layouts, Context context, int type) {
         this.layouts = layouts;
@@ -63,6 +92,9 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = layoutInflater.inflate( layouts[position],container,false );
         container.addView( view );
+        sessionManager = new SessionManager( context );
+        user = sessionManager.getUserDetail();
+        progress = new ProgressDialog(context);
         dbDataSourceKeranjang = new DBDataSourceKeranjang(context);
         dbDataSourceKeranjang.open();
         modelKeranjangs = dbDataSourceKeranjang.getAllKeranjang();
@@ -102,19 +134,39 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
                 }
             } );
         }else if(position==1){
-            inputCatatanTransaksi.addTextChangedListener( new AdapterPagerTransaksiBaru.MyTextWatcher(inputCatatanTransaksi));
             if (adapterRecycleViewKeranjang.getItemCount()==0){
                 notifyDataSetChanged();
             }
-
-
             buttonSimpanTransaksi.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!validateCatatanTransaksi() ) {
-                        return;
-                    }else {
-
+                    progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
+                    progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progress.setIndeterminate(false);
+                    progress.setCanceledOnTouchOutside(false);
+                    dbDataSourceKeranjang.close();
+                    dbDataSourceKeranjang.open();
+                    ModelKeranjang modelKeranjang;
+                    modelKeranjangs = dbDataSourceKeranjang.getAllKeranjang();
+                    for (int i=0;i<modelKeranjangs.size();i++){
+                        modelKeranjang = modelKeranjangs.get( i );
+                        int subTotal = modelKeranjang.getHargaBarang() * modelKeranjang.getQty();
+                        jmlItem=jmlItem+modelKeranjang.getQty();
+                        totalHarga=totalHarga+subTotal;
+                    }
+                    try {
+                        prosesKeDB(
+                                user.get( SessionManager.KD_USER),
+                                String.valueOf( jmlItem ),
+                                String.valueOf(totalHarga),
+                                "1",
+                                inputCatatanTransaksi.getText().toString().trim(),
+                                String.valueOf( type ),
+                                convertObjectArrayToString(dbDataSourceKeranjang.getArrayKdBarangKeranjang(),","),
+                                convertObjectArrayToString(dbDataSourceKeranjang.getArrayQtyKeranjang(),",")
+                        );
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             } );
@@ -122,10 +174,33 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
             buttonBayarTransaksi.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!validateCatatanTransaksi() ) {
-                        return;
-                    }else {
-
+                    progress.setMessage("Mohon Ditunggu, Sedang diProses.....");
+                    progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progress.setIndeterminate(false);
+                    progress.setCanceledOnTouchOutside(false);
+                    dbDataSourceKeranjang.close();
+                    dbDataSourceKeranjang.open();
+                    ModelKeranjang modelKeranjang;
+                    modelKeranjangs = dbDataSourceKeranjang.getAllKeranjang();
+                    for (int i=0;i<modelKeranjangs.size();i++){
+                        modelKeranjang = modelKeranjangs.get( i );
+                        int subTotal = modelKeranjang.getHargaBarang() * modelKeranjang.getQty();
+                        jmlItem=jmlItem+modelKeranjang.getQty();
+                        totalHarga=totalHarga+subTotal;
+                    }
+                    try {
+                        prosesKeDB(
+                                user.get( SessionManager.KD_USER),
+                                String.valueOf( jmlItem ),
+                                String.valueOf(totalHarga),
+                                "0",
+                                inputCatatanTransaksi.getText().toString().trim(),
+                                String.valueOf( type ),
+                                convertObjectArrayToString(dbDataSourceKeranjang.getArrayKdBarangKeranjang(),","),
+                                convertObjectArrayToString(dbDataSourceKeranjang.getArrayQtyKeranjang(),",")
+                        );
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             } );
@@ -144,47 +219,65 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
         return POSITION_NONE;
     }
 
-    private class MyTextWatcher implements TextWatcher {
-
-        private View view;
-
-        private MyTextWatcher(View view) {
-            this.view = view;
-        }
-
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        public void afterTextChanged(Editable editable) {
-            switch (view.getId()) {
-                case R.id.inputCatatanTransaksi:
-                    validateCatatanTransaksi();
-                    break;
+    private void prosesKeDB(final String kdUser, final String jmlItem, final String hargaTotal, final String status, final String catatan, final String jenisTransaksi, final String kdBarangKeranjang, final String qtyKeranjang) {
+        progress.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, baseUrl+API_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    String kode = jsonObject.getString("kode");
+                    if (kode.equals("1")) {
+                        Toast.makeText(context, "Transaksi Berhasil", Toast.LENGTH_SHORT).show();
+                        ((TransaksiBaruActivity)context).finish();
+                        Intent i = new Intent(context, InvoiceActivity.class);
+                        i.putExtra("kdTransaksi", jsonObject.getString( "kd_transaksi" ));
+                        context.startActivity(i);
+                    }else{
+                        Toast.makeText(context, "Transaksi Gagal", Toast.LENGTH_SHORT).show();
+                    }
+                    progress.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d( "TAG", e.toString() );
+                    Toast.makeText(context, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                    progress.dismiss();
+                }
             }
-        }
+        },new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Toast.makeText(context, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
+                progress.dismiss();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("kd_user", kdUser);
+                params.put("jml_item", jmlItem);
+                params.put("harga_total", hargaTotal);
+                params.put("status", status);
+                params.put("catatan", catatan);
+                params.put("jenis_transaksi", jenisTransaksi);
+                params.put("kd_barang_keranjang", kdBarangKeranjang);
+                params.put("qty_keranjang", qtyKeranjang);
+                params.put( "api", "tambah" );
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(stringRequest);
     }
 
-    private void requestFocus(View view) {
-        if (view.requestFocus()) {
-            getWindow().setSoftInputMode( WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    private static String convertObjectArrayToString(JSONArray arr, String delimiter) throws JSONException {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0;i<arr.length();i++){
+            sb.append(arr.getString( i )).append(delimiter);
         }
-    }
+        return sb.substring(0, sb.length() - 1);
 
-    private Window getWindow() {
-        return getWindow();
-    }
-
-    private boolean validateCatatanTransaksi() {
-        if (inputCatatanTransaksi.getText().toString().trim().isEmpty()) {
-            inputLayoutCatatanTransaksi.setError("Masukkan Catatan");
-            requestFocus(inputCatatanTransaksi);
-            return false;
-        } else {
-            inputLayoutCatatanTransaksi.setErrorEnabled(false);
-        }
-        return true;
     }
 }

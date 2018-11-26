@@ -107,8 +107,10 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
                 imageButtonPlusQty.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        qtyTemp=qtyTemp+1;
-                        qtyDialog.setText( String.valueOf(qtyTemp) );
+                        if (qtyTemp<modelKeranjang.getStok()){
+                            qtyTemp=qtyTemp+1;
+                            qtyDialog.setText( String.valueOf(qtyTemp) );
+                        }
                     }
                 } );
 

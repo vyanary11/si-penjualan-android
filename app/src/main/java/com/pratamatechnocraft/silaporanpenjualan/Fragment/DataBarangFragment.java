@@ -20,6 +20,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.FormBarangActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
@@ -27,6 +33,10 @@ import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 //import com.pratamatechnocraft.silaporanpenjualan.TambahSuratMasukActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +58,7 @@ public class DataBarangFragment extends Fragment {
 
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private static final String API_URL = "api/surat_masuk?api=suratmasukall";
+    private static final String API_URL = "api/barang?api=barangall";
 
 
     @Nullable
@@ -71,7 +81,6 @@ public class DataBarangFragment extends Fragment {
             @Override
             public void onRefresh() {
                 listItemDataBarangs.clear();
-                adapterDataBarang.notifyDataSetChanged();
                 loadDataBarang();
             }
         } );
@@ -91,6 +100,8 @@ public class DataBarangFragment extends Fragment {
             public void onClick(View view) {
                 Intent i = new Intent(getContext(), FormBarangActivity.class);
                 i.putExtra( "type","tambah" );
+                i.putExtra( "typedua","" );
+                i.putExtra( "typetiga","" );
                 getContext().startActivity(i);
             }
         } );
@@ -146,22 +157,8 @@ public class DataBarangFragment extends Fragment {
     private void loadDataBarang(){
         refreshDataBarang.setEnabled( true );
         listItemDataBarangs = new ArrayList<>();
-        for (int i=0;i<10;i++){
-            ListItemDataBarang listItemDataBarang = new ListItemDataBarang(
-                    "",
-                    "Barang "+i,
-                    ""+i,
-                    ""+1000*i,
-                    ""
-            );
-            listItemDataBarangs.add( listItemDataBarang );
-        }
 
-        refreshDataBarang.setRefreshing( false );
-        progressBarDataBarang.setVisibility( View.GONE );
-        koneksiDataBarang.setVisibility( View.GONE);
-
-        /*StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
             new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -178,18 +175,18 @@ public class DataBarangFragment extends Fragment {
                                 ListItemDataBarang listItemDataBarang = new ListItemDataBarang(
                                         barangobject.getString( "kd_barang"),
                                         barangobject.getString( "nama_barang" ),
-                                        barangobject.getString( "stok_barang" ),
+                                        barangobject.getString( "stok" ),
                                         barangobject.getString( "harga_jual"),
-                                        barangobject.getString( "gamabar_barang")
+                                        barangobject.getString( "gambar_barang")
                                 );
 
                                 listItemDataBarangs.add( listItemDataBarang );
-                                adapterDataBarang.notifyDataSetChanged();
                             }
                         }
                         refreshDataBarang.setRefreshing( false );
                         progressBarDataBarang.setVisibility( View.GONE );
                         koneksiDataBarang.setVisibility( View.GONE);
+                        setUpRecycleView();
                     }catch (JSONException e){
                         e.printStackTrace();
                         refreshDataBarang.setRefreshing( false );
@@ -214,9 +211,7 @@ public class DataBarangFragment extends Fragment {
         );
 
         RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
-        requestQueue.add( stringRequest );*/
-
-        setUpRecycleView();
+        requestQueue.add( stringRequest );
     }
 
     private void setUpRecycleView() {

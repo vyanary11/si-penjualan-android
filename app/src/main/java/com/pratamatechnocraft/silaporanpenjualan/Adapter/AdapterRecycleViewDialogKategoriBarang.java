@@ -2,7 +2,6 @@ package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +21,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.pratamatechnocraft.silaporanpenjualan.DetailBiayaActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataKategoriBarang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
@@ -33,26 +31,18 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdapterRecycleViewDataKategoriBarang extends RecyclerView.Adapter<AdapterRecycleViewDataKategoriBarang.ViewHolder> implements Filterable {
+public class AdapterRecycleViewDialogKategoriBarang extends RecyclerView.Adapter<AdapterRecycleViewDialogKategoriBarang.ViewHolder>{
 
     private List<ListItemDataKategoriBarang> listItemDataKategorisBarangs;
-    private List<ListItemDataKategoriBarang> listItemDataKategoriBarangFull;
     private Context context;
     private AlertDialog alertDialog;
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private String type;
-    private AlertDialog dialog;
-    TextView txtKdKateoriBarangForm, txtNamaKateoriBarangForm;
 
-    public AdapterRecycleViewDataKategoriBarang(List<ListItemDataKategoriBarang> listItemDataKategorisBarangs, Context context,String type, AlertDialog dialog, TextView txtKdKateoriBarangForm , TextView txtNamaKateoriBarangForm) {
+    public AdapterRecycleViewDialogKategoriBarang(List<ListItemDataKategoriBarang> listItemDataKategorisBarangs, Context context, String type) {
         this.listItemDataKategorisBarangs = listItemDataKategorisBarangs;
         this.context = context;
-        listItemDataKategoriBarangFull = new ArrayList<>( listItemDataKategorisBarangs );
-        this.type=type;
-        this.dialog=dialog;
-        this.txtKdKateoriBarangForm=txtKdKateoriBarangForm;
-        this.txtNamaKateoriBarangForm =txtNamaKateoriBarangForm;
     }
 
     @Override
@@ -78,7 +68,6 @@ public class AdapterRecycleViewDataKategoriBarang extends RecyclerView.Adapter<A
                             @Override
                             public void onClick(DialogInterface arg0, int arg1) {
                                 deleteKategori(listItemDataKategoriBarang.getKdKategori());
-                                listItemDataKategorisBarangs.remove(position);
                                 notifyItemRemoved( position );
                             }
                         });
@@ -95,61 +84,12 @@ public class AdapterRecycleViewDataKategoriBarang extends RecyclerView.Adapter<A
             }
         } );
 
-        if (type.equals( "dialog" )){
-            holder.cardViewDataKategoriBarang.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    txtKdKateoriBarangForm.setText( listItemDataKategoriBarang.getKdKategori() );
-                    txtNamaKateoriBarangForm.setText( listItemDataKategoriBarang.getNamaKategori() );
-                    Log.d( "TEXT VIEW", "onClick: "+txtNamaKateoriBarangForm.getText() );
-                    Log.d( "NO TEXT VIEW", "onClick: "+listItemDataKategoriBarang.getNamaKategori()  );
-                    dialog.dismiss();
-                }
-            } );
-        }
-
     }
 
     @Override
     public int getItemCount() {
         return listItemDataKategorisBarangs.size();
     }
-
-    @Override
-    public Filter getFilter() {
-        return listItemFilter;
-    }
-
-    private Filter listItemFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            List<ListItemDataKategoriBarang> filteredList = new ArrayList<>(  );
-
-            if (charSequence == null || charSequence.length()==0){
-                filteredList.addAll( listItemDataKategoriBarangFull );
-            }else{
-                String filterPattern = charSequence.toString().toLowerCase().trim();
-
-                for (ListItemDataKategoriBarang itemDataKategoriBarang : listItemDataKategoriBarangFull){
-                    if (itemDataKategoriBarang.getNamaKategori().toLowerCase().contains( filterPattern )){
-                        filteredList.add( itemDataKategoriBarang );
-                    }
-                }
-            }
-
-            FilterResults results = new FilterResults();
-            results.values=filteredList;
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            listItemDataKategorisBarangs.clear();
-            listItemDataKategorisBarangs.addAll((List) filterResults.values );
-            notifyDataSetChanged();
-        }
-    };
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 

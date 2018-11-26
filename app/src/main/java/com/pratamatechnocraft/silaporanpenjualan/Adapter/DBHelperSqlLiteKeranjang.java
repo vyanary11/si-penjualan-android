@@ -13,6 +13,7 @@ public class DBHelperSqlLiteKeranjang extends SQLiteOpenHelper {
     public static final String HARGA_BARANG = "harga_barang";
     public static final String URL_GAMBAR_BARANG = "url_gambar_barang";
     public static final String QTY = "qty";
+    public static final String STOK = "stok";
     private static final String db_name ="penjualan.db";
     private static final int db_version=1;
 
@@ -24,7 +25,8 @@ public class DBHelperSqlLiteKeranjang extends SQLiteOpenHelper {
             + NAMA_BARANG+ " varchar(50) not null, "
             + HARGA_BARANG+ " varchar(100) not null, "
             + URL_GAMBAR_BARANG+ " varchar(255) not null, "
-            + QTY+ " varchar(100) not null);";
+            + QTY+ " varchar(100) not null, "
+            + STOK+ " varchar(100) not null);";
 
     public DBHelperSqlLiteKeranjang(Context context) {
         super(context, db_name, null, db_version);

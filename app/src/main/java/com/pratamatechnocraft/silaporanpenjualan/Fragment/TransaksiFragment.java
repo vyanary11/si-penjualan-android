@@ -50,14 +50,12 @@ public class TransaksiFragment extends Fragment{
 
     Integer menuTab,jenisTransaksi;
     private RecyclerView recyclerViewDataTransaksi;
-    private RecyclerView.Adapter recycleViewAdapter;
     private AdapterRecycleViewDataTransaksi adapterDataTransaksi;
     LinearLayout noDataTransaksi, koneksiDataTransaksi;
     SwipeRefreshLayout refreshDataTransaksi;
     ProgressBar progressBarDataTransaksi;
     Button cobaLagiDataTransaksi;
     FloatingActionButton fabTransaksiBaru;
-    SessionManager sessionManager;
     NavigationView navigationView;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
 
@@ -66,6 +64,7 @@ public class TransaksiFragment extends Fragment{
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private static String API_URL ="";
+    private Boolean statusFragment = false;
 
     public TransaksiFragment(Integer menuTab, Integer jenisTransaksi) {
         this.menuTab = menuTab;
@@ -85,8 +84,6 @@ public class TransaksiFragment extends Fragment{
         fabTransaksiBaru = view.findViewById( R.id.fabTransaksiBaru );
         progressBarDataTransaksi = view.findViewById( R.id.progressBarDataTransaksi );
 
-        sessionManager = new SessionManager( getContext() );
-        HashMap<String, String> user = sessionManager.getUserDetail();
 
         recyclerViewDataTransaksi = (RecyclerView) view.findViewById(R.id.recycleViewDataTransaksi);
 
@@ -224,10 +221,15 @@ public class TransaksiFragment extends Fragment{
                             JSONArray data = jsonObject.getJSONArray("data");
                             for (int i = 0; i<data.length(); i++){
                                 JSONObject transaksiobject = data.getJSONObject( i );
-
+                                String jenis;
+                                if(transaksiobject.getString( "jenis_transaksi" ).equals( "0" )){
+                                    jenis="PL";
+                                }else{
+                                    jenis="PB";
+                                }
                                 ListItemTransaksi listItemTransaksi = new ListItemTransaksi(
-                                        transaksiobject.getString( "kd_transaksi"),
-                                        transaksiobject.getString( "total_harga" ),
+                                        "#"+jenis+transaksiobject.getString( "kd_transaksi"),
+                                        "Rp. "+transaksiobject.getString( "harga_total" ),
                                         transaksiobject.getString( "tgl_transaksi" )
                                 );
 
@@ -268,8 +270,41 @@ public class TransaksiFragment extends Fragment{
     private void setUpRecycleView(){
         recyclerViewDataTransaksi.setHasFixedSize(true);
         recyclerViewDataTransaksi.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapterDataTransaksi = new AdapterRecycleViewDataTransaksi( listItemTransaksis, getContext());
+        adapterDataTransaksi = new AdapterRecycleViewDataTransaksi( listItemTransaksis, getContext(), jenisTransaksi);
         recyclerViewDataTransaksi.setAdapter( adapterDataTransaksi );
         adapterDataTransaksi.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        statusFragment=true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (jenisTransaksi==0) {
+            if (menuTab==0){
+                if (statusFragment){
+                    loadDataTransaksi("penjualan");
+                }
+            }else {
+                if (statusFragment){
+                    loadDataTransaksi("piutang");
+                }
+            }
+        }else {
+            if (menuTab==0){
+                if (statusFragment){
+                    loadDataTransaksi("pembelian");
+                }
+            }else {
+                if (statusFragment){
+                    loadDataTransaksi("utang");
+                }
+            }
+        }
+
     }
 }

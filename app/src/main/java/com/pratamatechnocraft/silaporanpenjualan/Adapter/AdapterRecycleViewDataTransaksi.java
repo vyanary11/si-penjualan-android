@@ -1,6 +1,7 @@
 package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.pratamatechnocraft.silaporanpenjualan.InvoiceActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
@@ -21,11 +23,14 @@ public class AdapterRecycleViewDataTransaksi extends RecyclerView.Adapter<Adapte
     private List<ListItemTransaksi> listItemTransaksis;
     private List<ListItemTransaksi> listItemTransaksiFull;
     private Context context;
+    private int type;
 
-    public AdapterRecycleViewDataTransaksi(List<ListItemTransaksi> listItemTransaksis, Context context) {
+
+    public AdapterRecycleViewDataTransaksi(List<ListItemTransaksi> listItemTransaksis, Context context, int type) {
         this.listItemTransaksis = listItemTransaksis;
         listItemTransaksiFull = new ArrayList<>( listItemTransaksis );
         this.context = context;
+        this.type=type;
     }
 
     @Override
@@ -46,9 +51,15 @@ public class AdapterRecycleViewDataTransaksi extends RecyclerView.Adapter<Adapte
         holder.cardViewDataTransaksi.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent i = new Intent(context, DetailSuratMasukActivity.class);
-                i.putExtra("idSuratMasuk", listItemDataTransaksi.getIdSuratMasuk());
-                context.startActivity(i);*/
+                String replace;
+                if (type==0){
+                    replace ="#PL";
+                }else{
+                    replace ="#PB";
+                }
+                Intent i = new Intent(context, InvoiceActivity.class);
+                i.putExtra("kdTransaksi", listItemTransaksi.getNoInvoice().replace( replace,"" ));
+                context.startActivity(i);
             }
         });
     }
