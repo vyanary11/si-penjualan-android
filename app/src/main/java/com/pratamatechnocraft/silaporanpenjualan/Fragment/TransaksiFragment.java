@@ -192,7 +192,7 @@ public class TransaksiFragment extends Fragment{
                 return false;
             }
         } );
-        searchView.setQueryHint("Cari: No Invoice, Tanggal");
+        searchView.setQueryHint("Cari: No Invoice, Tanggal, Catatan");
 
     }
 
@@ -230,7 +230,8 @@ public class TransaksiFragment extends Fragment{
                                 ListItemTransaksi listItemTransaksi = new ListItemTransaksi(
                                         "#"+jenis+transaksiobject.getString( "kd_transaksi"),
                                         "Rp. "+transaksiobject.getString( "harga_total" ),
-                                        transaksiobject.getString( "tgl_transaksi" )
+                                        transaksiobject.getString( "tgl_transaksi" ),
+                                        transaksiobject.getString("catatan")
                                 );
 
                                 listItemTransaksis.add( listItemTransaksi );
@@ -245,7 +246,9 @@ public class TransaksiFragment extends Fragment{
                         refreshDataTransaksi.setRefreshing( false );
                         progressBarDataTransaksi.setVisibility( View.GONE );
                         noDataTransaksi.setVisibility( View.GONE );
+                        setUpRecycleView();
                         listItemTransaksis.clear();
+                        adapterDataTransaksi.notifyDataSetChanged();
                         koneksiDataTransaksi.setVisibility( View.VISIBLE );
                     }
                 }
@@ -257,7 +260,9 @@ public class TransaksiFragment extends Fragment{
                     refreshDataTransaksi.setRefreshing( false );
                     progressBarDataTransaksi.setVisibility( View.GONE );
                     noDataTransaksi.setVisibility( View.GONE );
+                    setUpRecycleView();
                     listItemTransaksis.clear();
+                    adapterDataTransaksi.notifyDataSetChanged();
                     koneksiDataTransaksi.setVisibility( View.VISIBLE );
                 }
             }

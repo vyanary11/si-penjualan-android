@@ -98,7 +98,7 @@ public class AdapterRecycleViewDataTransaksi extends RecyclerView.Adapter<Adapte
                 String filterPattern = charSequence.toString().toLowerCase().trim();
 
                 for (ListItemTransaksi itemTransaksi : listItemTransaksiFull) {
-                    if (itemTransaksi.getNoInvoice().toLowerCase().contains( filterPattern )) {
+                    if (itemTransaksi.getNoInvoice().toLowerCase().contains( filterPattern ) || itemTransaksi.getCatatan().toLowerCase().contains( filterPattern ) || itemTransaksi.getCatatan().toLowerCase().contains( filterPattern )) {
                         filteredList.add( itemTransaksi );
                     }
                 }

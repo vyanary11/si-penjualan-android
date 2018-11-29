@@ -2,13 +2,15 @@ package com.pratamatechnocraft.silaporanpenjualan.Model;
 
 public class ListItemTransaksi {
     private String noInvoice;
-    private String jotalHarga;
+    private String totalHarga;
     private String tanggalTransaksi;
+    private String catatan;
 
-    public ListItemTransaksi(String noInvoice, String jotalHarga, String tanggalTransaksi) {
+    public ListItemTransaksi(String noInvoice, String totalHarga, String tanggalTransaksi, String catatan) {
         this.noInvoice = noInvoice;
-        this.jotalHarga = jotalHarga;
+        this.totalHarga = totalHarga;
         this.tanggalTransaksi = tanggalTransaksi;
+        this.catatan = catatan;
     }
 
     public String getNoInvoice() {
@@ -16,11 +18,15 @@ public class ListItemTransaksi {
     }
 
     public String getTotalHarga() {
-        return jotalHarga;
+        return totalHarga;
     }
 
     public String getTanggalTransaksi() {
         return tanggalTransaksi;
+    }
+
+    public String getCatatan() {
+        return catatan;
     }
 
 }

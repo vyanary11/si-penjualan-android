@@ -51,7 +51,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import com.pratamatechnocraft.silaporanpenjualan.TambahSuratMasukActivity;
 
 public class DataKategoriBarangFragment extends Fragment {
 
@@ -213,7 +212,9 @@ public class DataKategoriBarangFragment extends Fragment {
                             refreshDataKategoriBarang.setRefreshing( false );
                             progressBarDataKategoriBarang.setVisibility( View.GONE );
                             noDataKategoriBarang.setVisibility( View.GONE );
+                            setUpRecycleView();
                             listItemDataKategorisBarangs.clear();
+                            adapterDataKategoriBarang.notifyDataSetChanged();
                             koneksiDataKategoriBarang.setVisibility( View.VISIBLE );
                         }
                     }
@@ -225,7 +226,9 @@ public class DataKategoriBarangFragment extends Fragment {
                         refreshDataKategoriBarang.setRefreshing( false );
                         progressBarDataKategoriBarang.setVisibility( View.GONE );
                         noDataKategoriBarang.setVisibility( View.GONE );
+                        setUpRecycleView();
                         listItemDataKategorisBarangs.clear();
+                        adapterDataKategoriBarang.notifyDataSetChanged();
                         koneksiDataKategoriBarang.setVisibility( View.VISIBLE );
                     }
                 }

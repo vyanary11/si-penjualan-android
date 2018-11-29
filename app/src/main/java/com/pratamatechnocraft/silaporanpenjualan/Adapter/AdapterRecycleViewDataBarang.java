@@ -14,9 +14,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.pratamatechnocraft.silaporanpenjualan.BarangTransaksiActivity;
 import com.pratamatechnocraft.silaporanpenjualan.DetailBarangActivity;
 import com.pratamatechnocraft.silaporanpenjualan.DetailBiayaActivity;
+import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataBarang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
@@ -36,6 +38,8 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
     private RecyclerView.Adapter adapter;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
     ModelKeranjang modelKeranjang=null;
+    BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
+    private String baseUrl=baseUrlApiModel.getBaseURL();
 
     public AdapterRecycleViewDataBarang(List<ListItemDataBarang> listItemDataBarangs, Context context, Integer type) {
         this.listItemDataBarangs = listItemDataBarangs;
@@ -91,6 +95,11 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
         if (!listItemDataBarang.getGambarBarang().equals("")){
             holder.adaGambar.setVisibility( View.VISIBLE );
             holder.tidakAdaGambar.setVisibility( View.GONE );
+            Glide.with(context)
+                    // LOAD URL DARI INTERNET
+                    .load(baseUrl+listItemDataBarang.getGambarBarang())
+                    // LOAD GAMBAR AWAL SEBELUM GAMBAR UTAMA MUNCUL, BISA DARI LOKAL DAN INTERNET
+                    .into(holder.fotoDataBarang1);
         }else {
             holder.adaGambar.setVisibility( View.GONE );
             holder.tidakAdaGambar.setVisibility( View.VISIBLE );
