@@ -149,10 +149,8 @@ public class LaporanLabaRugiFragment extends Fragment {
                             JSONObject dataObject = jsonObject.getJSONObject("data");
                             DecimalFormat formatter = new DecimalFormat("#,###,###");
 
-                            int expense=dataObject.getInt("totalbiaya")+dataObject.getInt("expense");
-
                             txtIncome.setText("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("income"))));
-                            txtExpense.setText(String.valueOf("Rp. "+formatter.format(Double.parseDouble(String.valueOf(expense)))));
+                            txtExpense.setText(String.valueOf("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("totalbiaya")))));
                             txtJumlahPengeluaranLainnya.setText("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("expense"))));
                             txtPendapatan.setText("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("income"))));
                             txtLabaKotor.setText("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("income"))));

@@ -24,6 +24,7 @@ import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDataUser;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,10 +59,11 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final ListItemDataBarang listItemDataBarang = listItemDataBarangs.get(position);
+        DecimalFormat formatter = new DecimalFormat("#,###,###");
 
         holder.txtNamaBarang.setText(listItemDataBarang.getNamaBarang());
         holder.txtStokBarang.setText("Stok : "+listItemDataBarang.getStokBarang());
-        holder.txtHargaBarang.setText("Rp. "+listItemDataBarang.getHargaBarang());
+        holder.txtHargaBarang.setText("Rp. "+formatter.format(Double.parseDouble(listItemDataBarang.getHargaBarang())));
 
         holder.cardViewDataBarang.setOnClickListener( new View.OnClickListener() {
             @Override

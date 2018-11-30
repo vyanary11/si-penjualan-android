@@ -213,8 +213,28 @@ public class InvoiceActivity extends AppCompatActivity {
                                 txtCatatanDetailTransaksi.setText( invoicedetail.getString( "catatan" ) );
                             }
 
+                            JSONArray detailinvoice = invoicedetail.getJSONArray("detailinvoice");
+                            for (int i = 0; i<detailinvoice.length(); i++){
+                                JSONObject detailInvoiceObject = detailinvoice.getJSONObject( i );
+                                String harga;
+                                if (invoicedetail.getString( "jenis_transaksi" ).equals( "0" )){
+                                    harga=detailInvoiceObject.getString( "harga_jual" );
+                                }else{
+                                    harga=detailInvoiceObject.getString( "harga_beli" );
+                                }
+                                ListItemDetailTransaksi listItemDetailTransaksi = new ListItemDetailTransaksi(
+                                        detailInvoiceObject.getString( "nama_barang" ),
+                                        detailInvoiceObject.getString( "qty" ),
+                                        harga
+                                );
+
+                                Log.d( "TAG", "nama_barang: "+detailInvoiceObject.getString( "nama_barang" ) );
+
+                                listItemDetailTransaksis.add( listItemDetailTransaksi );
+                                adapterRecycleViewDetailTransaksi.notifyDataSetChanged();
+                            }
+
                             txtNamaKasirDetailTransaksi.setText( invoicedetail.getString( "nama_user" ) );
-                            loadDataTransaksi(invoicedetail.getString( "kd_transaksi" ),invoicedetail.getString( "jenis_transaksi" ));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Toast.makeText(InvoiceActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
@@ -261,54 +281,6 @@ public class InvoiceActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(InvoiceActivity.this, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
                         refreshInvoice.setRefreshing( false );
-                    }
-                }
-        );
-
-        RequestQueue requestQueue = Volley.newRequestQueue( InvoiceActivity.this );
-        requestQueue.add( stringRequest );
-    }
-
-    private void loadDataTransaksi(String kdTransaksi, final String jenisTtransaksi){
-        final StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+"api/transaksi?api=detailinvoice&kd_transaksi="+kdTransaksi,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            JSONArray data = jsonObject.getJSONArray("data");
-                            for (int i = 0; i<data.length(); i++){
-                                JSONObject detailInvoiceObject = data.getJSONObject( i );
-                                String harga;
-                                if (jenisTtransaksi.equals( "0" )){
-                                    harga=detailInvoiceObject.getString( "harga_jual" );
-                                }else{
-                                    harga=detailInvoiceObject.getString( "harga_beli" );
-                                }
-                                ListItemDetailTransaksi listItemDetailTransaksi = new ListItemDetailTransaksi(
-                                        detailInvoiceObject.getString( "nama_barang" ),
-                                        detailInvoiceObject.getString( "qty" ),
-                                        harga
-                                );
-
-                                Log.d( "TAG", "nama_barang: "+detailInvoiceObject.getString( "nama_barang" ) );
-
-                                listItemDetailTransaksis.add( listItemDetailTransaksi );
-                                adapterRecycleViewDetailTransaksi.notifyDataSetChanged();
-                            }
-                        }catch (JSONException e){
-                            e.printStackTrace();
-                            Log.e( "JSONException", e.toString() );
-                            Toast.makeText(InvoiceActivity.this, "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        Log.e( "onErrorResponse", error.toString() );
-                        Toast.makeText(InvoiceActivity.this, "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
                     }
                 }
         );

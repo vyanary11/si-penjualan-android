@@ -15,6 +15,7 @@ import com.pratamatechnocraft.silaporanpenjualan.InvoiceActivity;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDetailTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,14 +39,15 @@ public class AdapterRecycleViewDetailTransaksi extends RecyclerView.Adapter<Adap
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        DecimalFormat formatter = new DecimalFormat("#,###,###");
         final ListItemDetailTransaksi listItemDetailTransaksi = listItemDetailTransaksis.get(position);
 
         int subTotal = Integer.parseInt(listItemDetailTransaksi.getQty()) * Integer.parseInt(listItemDetailTransaksi.getHarga());
 
         holder.txtNamaBarangDetailTransaksi.setText(listItemDetailTransaksi.getNamaBarang());
         holder.txtQtyDetailTransaksi.setText(listItemDetailTransaksi.getQty());
-        holder.txtHargaDetailTransaksi.setText(listItemDetailTransaksi.getHarga());
-        holder.txtSubTotalDetailTransaksi.setText("Rp. "+String.valueOf( subTotal ));
+        holder.txtHargaDetailTransaksi.setText(formatter.format(Double.parseDouble(listItemDetailTransaksi.getHarga())));
+        holder.txtSubTotalDetailTransaksi.setText("Rp. "+formatter.format(Double.parseDouble( String.valueOf(subTotal))));
 
     }
 
