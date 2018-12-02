@@ -170,7 +170,9 @@ public class BarangTransaksiActivity extends AppCompatActivity {
                         refreshBarangTransaksi.setRefreshing( false );
                         progressBarBarangTransaksi.setVisibility( View.GONE );
                         noBarangTransaksi.setVisibility( View.GONE );
+                        setUpRecycleView();
                         listItemDataBarangs.clear();
+                        adapterRecycleViewBarangTransaksi.notifyDataSetChanged();
                         koneksiBarangTransaksi.setVisibility( View.VISIBLE );
                     }
                 }
@@ -182,7 +184,9 @@ public class BarangTransaksiActivity extends AppCompatActivity {
                     refreshBarangTransaksi.setRefreshing( false );
                     progressBarBarangTransaksi.setVisibility( View.GONE );
                     noBarangTransaksi.setVisibility( View.GONE );
+                    setUpRecycleView();
                     listItemDataBarangs.clear();
+                    adapterRecycleViewBarangTransaksi.notifyDataSetChanged();
                     koneksiBarangTransaksi.setVisibility( View.VISIBLE );
                 }
             }

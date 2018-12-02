@@ -80,7 +80,6 @@ public class DataBarangFragment extends Fragment {
         refreshDataBarang.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                listItemDataBarangs.clear();
                 loadDataBarang();
             }
         } );
@@ -192,7 +191,9 @@ public class DataBarangFragment extends Fragment {
                         refreshDataBarang.setRefreshing( false );
                         progressBarDataBarang.setVisibility( View.GONE );
                         noDataBarang.setVisibility( View.GONE );
+                        setUpRecycleView();
                         listItemDataBarangs.clear();
+                        adapterDataBarang.notifyDataSetChanged();
                         koneksiDataBarang.setVisibility( View.VISIBLE );
                     }
                 }
@@ -204,7 +205,9 @@ public class DataBarangFragment extends Fragment {
                     refreshDataBarang.setRefreshing( false );
                     progressBarDataBarang.setVisibility( View.GONE );
                     noDataBarang.setVisibility( View.GONE );
+                    setUpRecycleView();
                     listItemDataBarangs.clear();
+                    adapterDataBarang.notifyDataSetChanged();
                     koneksiDataBarang.setVisibility( View.VISIBLE );
                 }
             }

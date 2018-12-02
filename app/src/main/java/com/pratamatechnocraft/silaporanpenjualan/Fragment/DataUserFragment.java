@@ -198,7 +198,9 @@ public class DataUserFragment extends Fragment {
                         refreshDataUser.setRefreshing( false );
                         progressBarDataUser.setVisibility( View.GONE );
                         noDataUser.setVisibility( View.GONE );
+                        setUpRecycleView();
                         listItemDataUsers.clear();
+                        adapterDataUser.notifyDataSetChanged();
                         koneksiDataUser.setVisibility( View.VISIBLE );
                     }
                 }
@@ -211,7 +213,9 @@ public class DataUserFragment extends Fragment {
                     refreshDataUser.setRefreshing( false );
                     progressBarDataUser.setVisibility( View.GONE );
                     noDataUser.setVisibility( View.GONE );
+                    setUpRecycleView();
                     listItemDataUsers.clear();
+                    adapterDataUser.notifyDataSetChanged();
                     koneksiDataUser.setVisibility( View.VISIBLE );
                 }
             }
