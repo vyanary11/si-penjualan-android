@@ -101,7 +101,7 @@
                             </RelativeLayout>
 
                             <TextView
-                                android:id="@+id/txtNamaBarang"
+                                android:id="@+id/txtNamaBarangDetail"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal|center_vertical"
@@ -113,7 +113,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/txtLevelNamaKategori"
+                                android:id="@+id/txtNamaKategoriDetailBarang"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal|center_vertical"

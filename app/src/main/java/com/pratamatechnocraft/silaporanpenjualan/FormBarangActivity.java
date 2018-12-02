@@ -388,7 +388,7 @@ public class FormBarangActivity extends AppCompatActivity {
                             inputHargaJual.setText( barangdetail.getString( "harga_jual" ) );
                             inputHargaBeli.setText( barangdetail.getString( "harga_beli" ) );
                             inputStok.setText( barangdetail.getString( "stok" ) );
-                            if (barangdetail.getString( "foto" ).equals( "" )){
+                            if (barangdetail.getString( "gambar_barang" ).equals( "" )){
                                 adaGambar.setVisibility( View.GONE );
                                 tidakAdaGambar.setVisibility( View.VISIBLE );
                                 setTidakAdaGambar(barangdetail.getString( "nama_barang" ));
@@ -397,7 +397,7 @@ public class FormBarangActivity extends AppCompatActivity {
                                 tidakAdaGambar.setVisibility( View.GONE );
                                 Glide.with(FormBarangActivity.this)
                                         // LOAD URL DARI INTERNET
-                                        .load(baseUrl+String.valueOf( barangdetail.getString( "foto" )  ))
+                                        .load(baseUrl+String.valueOf( barangdetail.getString( "gambar_barang" )  ))
                                         // LOAD GAMBAR AWAL SEBELUM GAMBAR UTAMA MUNCUL, BISA DARI LOKAL DAN INTERNET
                                         .into(fotoTambahBarang);
                                 txtFotoTambahBarang.setText( "ada" );

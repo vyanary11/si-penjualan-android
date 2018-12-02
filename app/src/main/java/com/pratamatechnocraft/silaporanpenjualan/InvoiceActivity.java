@@ -1,10 +1,16 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,18 +61,46 @@ public class InvoiceActivity extends AppCompatActivity {
     private ProgressDialog progress;
     private AlertDialog alertDialog,alertDialog1;
     private AdapterRecycleViewDetailTransaksi adapterRecycleViewDetailTransaksi;
-    private Button buttonBayarDetailTransaksi;
+    private Button buttonBayarDetailTransaksi,buttonPrintDetailTransaksi;
     private RecyclerView recyclerViewDetailTransaksi;
     private SwipeRefreshLayout refreshInvoice;
     private TextView txtNoInvoiceDetailTransaksi, txtTanggalTransaksiDetail, txtNamaKasirDetailTransaksi,txtStatusTransaksiDetailTransaksi,txtHargaTotalDetailInvoice,txtCatatanDetailTransaksi;
     private static final String API_URL = "api/transaksi?api=transaksidetail&kd_transaksi=";
     Intent intent;
     private List<ListItemDetailTransaksi> listItemDetailTransaksis;
+    private WebView myWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_invoice );
+
+        buttonPrintDetailTransaksi = findViewById( R.id.buttonPrintDetailTransaksi );
+
+        WebView webView = new WebView(this);
+        webView.setWebViewClient(new WebViewClient() {
+
+            public boolean shouldOverrideUrlLoading(WebView view,
+                                                    String url)
+            {
+                return false;
+            }
+
+        });
+
+
+        webView.loadUrl("https://si-penjualan.pratamatechnocraft.com/print_invoice");
+
+        myWebView = webView;
+
+        buttonPrintDetailTransaksi.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                createWebPrintJob(myWebView);
+            }
+        });
+
         intent = getIntent();
         progress = new ProgressDialog(this);
 
@@ -114,6 +150,22 @@ public class InvoiceActivity extends AppCompatActivity {
         } );
 
         recyclerViewDetailTransaksi.setAdapter( adapterRecycleViewDetailTransaksi );
+    }
+
+    /*PRINT*/
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void createWebPrintJob(WebView webView) {
+
+        PrintManager printManager = (PrintManager) this
+                .getSystemService(Context.PRINT_SERVICE);
+
+        PrintDocumentAdapter printAdapter =
+                webView.createPrintDocumentAdapter("MyDocument");
+
+        String jobName = getString(R.string.app_name) + " Print Invoice";
+
+        printManager.print(jobName, printAdapter,
+                new PrintAttributes.Builder().build());
     }
 
     private void showBayarDialog(){

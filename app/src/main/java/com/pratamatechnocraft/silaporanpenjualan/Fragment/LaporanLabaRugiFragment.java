@@ -104,6 +104,8 @@ public class LaporanLabaRugiFragment extends Fragment {
             }
         } );
 
+        buttontgl.setText(dateFormatter.format(newCalendar.getTime()));
+
         return view;
     }
 
@@ -111,8 +113,10 @@ public class LaporanLabaRugiFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //you can set the title for your toolbar here for different fragments different titles
+            selectedMonthV=newCalendar.get(Calendar.MONTH);
+            selectedYearV=newCalendar.get(Calendar.YEAR);
         getActivity().setTitle("Laporan Laba Rugi");
-        loadLabaRugi(newCalendar.get(Calendar.MONTH),newCalendar.get(Calendar.YEAR));
+        loadLabaRugi(selectedMonthV,selectedYearV);
     }
 
     private void showDateDialog() {
@@ -126,7 +130,7 @@ public class LaporanLabaRugiFragment extends Fragment {
                 selectedYearV=selectedYear;
                 loadLabaRugi(selectedMonth, selectedYear);
             }
-        }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH));
+        }, selectedYearV, selectedMonthV);
 
         builder.setMinYear(1990)
                 .setMaxYear(2030)

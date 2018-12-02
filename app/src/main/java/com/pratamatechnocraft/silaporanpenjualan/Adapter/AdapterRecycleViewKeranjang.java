@@ -20,6 +20,7 @@ import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ModelKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -63,14 +64,15 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ModelKeranjang modelKeranjang = modelKeranjangs.get(position);
+        final DecimalFormat formatter = new DecimalFormat("#,###,###");
 
         subTotal=0;
         subTotal=modelKeranjang.getHargaBarang() * modelKeranjang.getQty();
 
         holder.txtNamaBarangdiKeranjang.setText(modelKeranjang.getNamaBrang());
-        holder.txtHargaBarangdiKeranjang.setText(String.valueOf( modelKeranjang.getHargaBarang()));
+        holder.txtHargaBarangdiKeranjang.setText(formatter.format(Double.parseDouble(String.valueOf( modelKeranjang.getHargaBarang()))));
         holder.txtQTYBarangdiKeranjang.setText(String.valueOf( modelKeranjang.getQty()));
-        holder.txtSubTotalBarangdiKeranjang.setText( String.valueOf( subTotal ));
+        holder.txtSubTotalBarangdiKeranjang.setText( formatter.format(Double.parseDouble(String.valueOf( subTotal ))));
 
 
         holder.cardViewDataBarangdiKeranjang.setOnClickListener( new View.OnClickListener() {
@@ -160,7 +162,7 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
                                 if(modelKeranjangs.size()==0){
                                     vjmlItem=0;
                                     vtotalHarga=0;
-                                    totalHarga.setText( "Rp. "+String.valueOf( vtotalHarga ) );
+                                    totalHarga.setText( "Rp. "+formatter.format(Double.parseDouble(String.valueOf( vtotalHarga ) )));
                                     jmlItem.setText( String.valueOf( vjmlItem ) );
                                 }
                             }
@@ -182,7 +184,7 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
         if(modelKeranjangs.size()!=0){
             vjmlItem=vjmlItem+modelKeranjang.getQty();
             vtotalHarga=vtotalHarga+subTotal;
-            totalHarga.setText( "Rp. "+String.valueOf( vtotalHarga ) );
+            totalHarga.setText( "Rp. "+formatter.format(Double.parseDouble(String.valueOf( vtotalHarga ) )));
             jmlItem.setText( String.valueOf( vjmlItem ) );
         }
 
