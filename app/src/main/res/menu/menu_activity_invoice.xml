@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/icon_edit1"
+        android:title="Edit"
+        app:showAsAction="withText"/>
+    <item
+        android:id="@+id/icon_hapus1"
+        android:title="Hapus"
+        app:showAsAction="withText"/>
+    <item
+        android:id="@+id/icon_bagikan_invoice"
+        android:icon="@drawable/ic_share_white_24dp"
+        android:title="Bagikan"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/icon_print_invoice"
+        android:icon="@drawable/ic_print_white_24dp"
+        android:title="Print"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/icon_download_invoice"
+        android:icon="@drawable/ic_file_download_white_24dp"
+        android:title="Download"
+        app:showAsAction="always"/>
+
+
+</menu>

@@ -270,13 +270,12 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
         android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(context);
         alertDialogBuilder.setTitle(title);
         alertDialogBuilder.setMessage(message);
-        alertDialogBuilder.setPositiveButton("OK",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        alertDialog1.dismiss();
-                    }
-                });
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                alertDialog1.dismiss();
+            }
+        });
 
         alertDialog1 = alertDialogBuilder.create();
         alertDialog1.show();

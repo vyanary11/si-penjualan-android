@@ -8,7 +8,17 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/ic_print"
-        android:icon="@drawable/ic_print_white_24dp"
+        android:icon="@drawable/ic_print_black_24dp"
         android:title="Print"
-        app:showAsAction="always" />
+        app:showAsAction="withText"/>
+    <item
+        android:id="@+id/ic_bagikan_laporan"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:title="Bagikan"
+        app:showAsAction="withText"/>
+    <item
+        android:id="@+id/ic_dwonload_laporan"
+        android:icon="@drawable/ic_file_download_black_24dp"
+        android:title="Download"
+        app:showAsAction="withText"/>
 </menu>

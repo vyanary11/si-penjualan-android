@@ -215,7 +215,7 @@ public class InvoiceActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_activity_detail,menu);
+        menuInflater.inflate(R.menu.menu_activity_invoice,menu);
         return true;
     }
 
@@ -225,12 +225,12 @@ public class InvoiceActivity extends AppCompatActivity {
             case android.R.id.home:
                 super.onBackPressed();
                 return true;
-            case R.id.icon_edit:
+            case R.id.icon_edit1:
                 Intent i = new Intent(InvoiceActivity.this, FormEditTransaksiActivity.class );
                 i.putExtra( "kdTransaksi",intent.getStringExtra( "kdTransaksi" ) );
                 startActivity(i);
                 return true;
-            case R.id.icon_hapus:
+            case R.id.icon_hapus1:
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setMessage("Yakin Ingin Menghapus Data Ini ??");
                 alertDialogBuilder.setPositiveButton("Iya",
@@ -250,6 +250,17 @@ public class InvoiceActivity extends AppCompatActivity {
 
                 alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
+                return true;
+            case R.id.icon_bagikan_invoice:
+
+                return true;
+            case R.id.icon_download_invoice:
+
+                return true;
+            case R.id.icon_print_invoice:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    createWebPrintJob(myWebView);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

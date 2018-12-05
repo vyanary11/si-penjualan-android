@@ -39,8 +39,7 @@ public class DateRangePickerFragment extends DialogFragment implements View.OnCl
         return dateRangePickerFragment;
     }
 
-    public void initialize(OnDateRangeSelectedListener callback,
-                           boolean is24HourMode) {
+    public void initialize(OnDateRangeSelectedListener callback, boolean is24HourMode) {
         onDateRangeSelectedListener = callback;
         this.is24HourMode = is24HourMode;
     }

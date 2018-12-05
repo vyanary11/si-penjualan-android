@@ -2,9 +2,15 @@ package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,6 +23,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -68,6 +76,7 @@ public class LaporanLabaRugiFragment extends Fragment {
     Calendar newCalendar = Calendar.getInstance();
     int selectedMonthV;
     int selectedYearV;
+    private WebView myWebView;
 
 
     @Nullable
@@ -137,6 +146,10 @@ public class LaporanLabaRugiFragment extends Fragment {
     }
 
     private void loadLabaRugi(int bulan, int tahun){
+        WebView webView = new WebView(getContext());
+        webView.setWebViewClient(new WebViewClient() {public boolean shouldOverrideUrlLoading(WebView view, String url){return false;}});
+        webView.loadUrl("https://si-penjualan.pratamatechnocraft.com/print_laba_rugi?bulan="+(bulan+1)+"&tahun="+tahun);
+        myWebView = webView;
         Log.d("BULAN", "loadLabaRugi: "+bulan);
         refreshLabaRugi.setRefreshing( true );
         listItemBiayas = new ArrayList<>();
@@ -218,7 +231,9 @@ public class LaporanLabaRugiFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ic_print:
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    createWebPrintJob(myWebView);
+                }
                 return true;
             case R.id.ic_datepicker:
                 showDateDialog();
@@ -226,6 +241,24 @@ public class LaporanLabaRugiFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void createWebPrintJob(WebView webView) {
+
+        PrintAttributes printAttributes = new PrintAttributes.Builder()
+                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build();
+
+        PrintManager printManager = (PrintManager) getActivity()
+                .getSystemService(Context.PRINT_SERVICE);
+
+        PrintDocumentAdapter printAdapter =
+                webView.createPrintDocumentAdapter("MyDocument");
+
+        String jobName = getString(R.string.app_name) + "Print Laba Rugi";
+
+        printManager.print(jobName, printAdapter, printAttributes);
     }
 }
 

@@ -39,9 +39,13 @@ import com.pratamatechnocraft.silaporanpenjualan.Service.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DateRangePickerFragment.OnDateRangeSelectedListener {
 
     public static String urlGambar = "";
     public static TextView namaUser,levelUser;
@@ -198,5 +202,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         RequestQueue requestQueue = Volley.newRequestQueue( MainActivity.this );
         requestQueue.add( stringRequest );
+    }
+
+    @Override
+    public void onDateRangeSelected(int startDay, int startMonth, int startYear, int endDay, int endMonth, int endYear) {
+
     }
 }

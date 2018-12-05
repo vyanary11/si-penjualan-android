@@ -1,29 +1,19 @@
 package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.pratamatechnocraft.silaporanpenjualan.DetailBarangActivity;
-import com.pratamatechnocraft.silaporanpenjualan.FormBarangActivity;
-import com.pratamatechnocraft.silaporanpenjualan.MainActivity;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.whiteelephant.monthpicker.MonthPickerDialog;
 
@@ -32,13 +22,12 @@ import java.util.Calendar;
 import java.util.Locale;
 
 @SuppressLint("ValidFragment")
-public class LaporanFragment extends Fragment implements DateRangePickerFragment.OnDateRangeSelectedListener{
-    private TextView txtTanggalHarian, txtBulan, txtTahun;
+public class LaporanFragment extends Fragment{
+    private   TextView txtTanggalHarian;
+    private TextView txtBulan, txtTahun;
     private LinearLayout LinearLayoutLapHarian,LinearLayoutLapBulanan,LinearLayoutLapTahunan;
     private SimpleDateFormat dateFormatter;
-    private DatePickerDialog datePickerDialog;
     private Integer jenisLaporan;
-    Context thiscontext;
     Calendar newCalendar = Calendar.getInstance();
     int selectedDayV;
     int selectedMonthV;
@@ -49,8 +38,6 @@ public class LaporanFragment extends Fragment implements DateRangePickerFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        thiscontext = container.getContext();
-        dateRangePickerFragment= DateRangePickerFragment.newInstance(,false);
         View view = inflater.inflate(R.layout.fragment_laporan_penjualan, container, false);
         selectedDayV=newCalendar.get(Calendar.DAY_OF_MONTH);
         selectedMonthV=newCalendar.get(Calendar.MONTH);
@@ -71,16 +58,20 @@ public class LaporanFragment extends Fragment implements DateRangePickerFragment
             LinearLayoutLapTahunan.setVisibility(View.GONE);
             LinearLayoutLapHarian.setVisibility(View.VISIBLE);
             dateFormatter = new SimpleDateFormat("dd MMMM yyyy ", Locale.US);
+            txtTanggalHarian.setText(dateFormatter.format(newCalendar.getTime())+" - "+dateFormatter.format(newCalendar.getTime()));
         }else if(jenisLaporan==1){
             LinearLayoutLapBulanan.setVisibility(View.VISIBLE);
             LinearLayoutLapTahunan.setVisibility(View.GONE);
             LinearLayoutLapHarian.setVisibility(View.GONE);
             dateFormatter = new SimpleDateFormat("MMMM yyyy ", Locale.US);
+            txtBulan.setText(dateFormatter.format(newCalendar.getTime()));
         }else{
             LinearLayoutLapBulanan.setVisibility(View.GONE);
             LinearLayoutLapTahunan.setVisibility(View.VISIBLE);
             LinearLayoutLapHarian.setVisibility(View.GONE);
             dateFormatter = new SimpleDateFormat("yyyy ", Locale.US);
+            txtTahun.setText(dateFormatter.format(newCalendar.getTime())
+            );
         }
 
         return view;
@@ -102,6 +93,17 @@ public class LaporanFragment extends Fragment implements DateRangePickerFragment
 
     private void showDateDialog(){
         if(jenisLaporan==0){
+            dateRangePickerFragment= DateRangePickerFragment.newInstance((DateRangePickerFragment.OnDateRangeSelectedListener) getContext(),false);
+            dateRangePickerFragment.setOnDateRangeSelectedListener(new DateRangePickerFragment.OnDateRangeSelectedListener() {
+                @Override
+                public void onDateRangeSelected(int startDay, int startMonth, int startYear, int endDay, int endMonth, int endYear) {
+                    Calendar start = Calendar.getInstance();
+                    start.set(startYear, startMonth, startDay);
+                    Calendar ends = Calendar.getInstance();
+                    ends.set(endYear, endMonth, endDay);
+                    txtTanggalHarian.setText(dateFormatter.format(start.getTime())+" - "+dateFormatter.format(ends.getTime()));
+                }
+            });
             dateRangePickerFragment.show(getActivity().getSupportFragmentManager(),"datePicker");
         }else if(jenisLaporan==1){
             MonthPickerDialog.Builder builder = new MonthPickerDialog.Builder(getContext(), new MonthPickerDialog.OnDateSetListener() {
@@ -157,10 +159,5 @@ public class LaporanFragment extends Fragment implements DateRangePickerFragment
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onDateRangeSelected(int startDay, int startMonth, int startYear, int endDay, int endMonth, int endYear) {
-
     }
 }
