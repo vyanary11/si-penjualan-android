@@ -12,6 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -48,7 +51,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class LaporanLabaRugiFragment extends Fragment {
-    private Button buttontgl;
     private SimpleDateFormat dateFormatter;
     private RecyclerView recycleViewBiayaPengeluaran;
     private AdapterRecycleViewBiayaPengeluaran adapterRecycleViewBiayaPengeluaran;
@@ -56,7 +58,7 @@ public class LaporanLabaRugiFragment extends Fragment {
     private SessionManager sessionManager;
     private ProgressDialog progress;
     private AlertDialog dialog;
-    private TextView txtIncome, txtExpense, txtNetIncome, txtPendapatan, txtLabaKotor, txtJumlahPengeluaranLainnya, txtTotalBiaya, txtLabaBersih;
+    private TextView txtBulanLabaRugi, txtIncome, txtExpense, txtNetIncome, txtPendapatan, txtLabaKotor, txtJumlahPengeluaranLainnya, txtTotalBiaya, txtLabaBersih;
 
     private List<ListItemBiaya> listItemBiayas;
 
@@ -86,16 +88,10 @@ public class LaporanLabaRugiFragment extends Fragment {
         txtJumlahPengeluaranLainnya = (TextView) view.findViewById(R.id.txtJumlahPengeluaranLainnya);
         txtTotalBiaya = (TextView) view.findViewById(R.id.txtTotalBiaya);
         txtLabaBersih = (TextView) view.findViewById(R.id.txtLabaBersih);
+        txtBulanLabaRugi = (TextView) view.findViewById(R.id.txtBulanLabaRugi);
 
         /*DATE PICKER*/
         dateFormatter = new SimpleDateFormat("MMMM yyyy", Locale.US);
-        buttontgl = (Button) view.findViewById(R.id.buttonbulan);
-        buttontgl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDateDialog();
-            }
-        });
 
         refreshLabaRugi.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -104,7 +100,7 @@ public class LaporanLabaRugiFragment extends Fragment {
             }
         } );
 
-        buttontgl.setText(dateFormatter.format(newCalendar.getTime()));
+        txtBulanLabaRugi.setText(dateFormatter.format(newCalendar.getTime()));
 
         return view;
     }
@@ -116,6 +112,7 @@ public class LaporanLabaRugiFragment extends Fragment {
             selectedMonthV=newCalendar.get(Calendar.MONTH);
             selectedYearV=newCalendar.get(Calendar.YEAR);
         getActivity().setTitle("Laporan Laba Rugi");
+        setHasOptionsMenu(true);
         loadLabaRugi(selectedMonthV,selectedYearV);
     }
 
@@ -125,7 +122,7 @@ public class LaporanLabaRugiFragment extends Fragment {
             public void onDateSet(int selectedMonth, int selectedYear) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(selectedYear, selectedMonth, Calendar.DAY_OF_MONTH);
-                buttontgl.setText(dateFormatter.format(newDate.getTime()));
+                txtBulanLabaRugi.setText(dateFormatter.format(newDate.getTime()));
                 selectedMonthV=selectedMonth;
                 selectedYearV=selectedYear;
                 loadLabaRugi(selectedMonth, selectedYear);
@@ -210,6 +207,25 @@ public class LaporanLabaRugiFragment extends Fragment {
         adapterRecycleViewBiayaPengeluaran = new AdapterRecycleViewBiayaPengeluaran( listItemBiayas, getContext());
         recycleViewBiayaPengeluaran.setAdapter( adapterRecycleViewBiayaPengeluaran );
         adapterRecycleViewBiayaPengeluaran.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_laporan, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.ic_print:
+
+                return true;
+            case R.id.ic_datepicker:
+                showDateDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
 

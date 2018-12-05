@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Environment;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
@@ -48,6 +49,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,22 +76,21 @@ public class InvoiceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_invoice );
+        intent = getIntent();
 
         buttonPrintDetailTransaksi = findViewById( R.id.buttonPrintDetailTransaksi );
 
         WebView webView = new WebView(this);
         webView.setWebViewClient(new WebViewClient() {
 
-            public boolean shouldOverrideUrlLoading(WebView view,
-                                                    String url)
+            public boolean shouldOverrideUrlLoading(WebView view, String url)
             {
                 return false;
             }
 
         });
 
-
-        webView.loadUrl("https://si-penjualan.pratamatechnocraft.com/print_invoice");
+        webView.loadUrl("https://si-penjualan.pratamatechnocraft.com/print_invoice?no_invoice="+intent.getStringExtra( "kdTransaksi" ));
 
         myWebView = webView;
 
@@ -101,7 +102,6 @@ public class InvoiceActivity extends AppCompatActivity {
             }
         });
 
-        intent = getIntent();
         progress = new ProgressDialog(this);
 
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_invoice);
@@ -153,8 +153,27 @@ public class InvoiceActivity extends AppCompatActivity {
     }
 
     /*PRINT*/
+    /*private void createWebPrintJob(WebView webView) {
+        String jobName = getString(R.string.app_name) + " Document";
+        PrintAttributes attributes = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            attributes = new PrintAttributes.Builder()
+                    .setMediaSize(PrintAttributes.MediaSize.ISO_A8)
+                    .setResolution(new PrintAttributes.Resolution("pdf", "pdf", 600, 600))
+                    .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build();
+        }
+        *//*File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + "/PDFTest/");
+        PdfPrint pdfPrint = new PdfPrint(attributes);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            pdfPrint.print(webView.createPrintDocumentAdapter(jobName), path, "output_" + System.currentTimeMillis() + ".pdf");
+        }*//*
+    }*/
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void createWebPrintJob(WebView webView) {
+
+        PrintAttributes printAttributes = new PrintAttributes.Builder()
+                .setMediaSize(PrintAttributes.MediaSize.ISO_A5)
+                .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build();
 
         PrintManager printManager = (PrintManager) this
                 .getSystemService(Context.PRINT_SERVICE);
@@ -164,8 +183,7 @@ public class InvoiceActivity extends AppCompatActivity {
 
         String jobName = getString(R.string.app_name) + " Print Invoice";
 
-        printManager.print(jobName, printAdapter,
-                new PrintAttributes.Builder().build());
+        printManager.print(jobName, printAdapter, printAttributes);
     }
 
     private void showBayarDialog(){
@@ -270,9 +288,9 @@ public class InvoiceActivity extends AppCompatActivity {
                                 JSONObject detailInvoiceObject = detailinvoice.getJSONObject( i );
                                 String harga;
                                 if (invoicedetail.getString( "jenis_transaksi" ).equals( "0" )){
-                                    harga=detailInvoiceObject.getString( "harga_jual" );
+                                    harga=detailInvoiceObject.getString( "harga_jual_detail" );
                                 }else{
-                                    harga=detailInvoiceObject.getString( "harga_beli" );
+                                    harga=detailInvoiceObject.getString( "harga_beli_detail" );
                                 }
                                 ListItemDetailTransaksi listItemDetailTransaksi = new ListItemDetailTransaksi(
                                         detailInvoiceObject.getString( "nama_barang" ),

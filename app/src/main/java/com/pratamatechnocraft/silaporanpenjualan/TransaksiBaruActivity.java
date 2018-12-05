@@ -62,8 +62,10 @@ public class TransaksiBaruActivity extends AppCompatActivity {
 
         mViewPager = findViewById( R.id.viewPager );
         if (intent.getStringExtra( "type" ).equals( "0" )){
+            this.setTitle("Transaksi Penjualan Baru");
             adapterPagerTransaksiBaru = new AdapterPagerTransaksiBaru( layouts,this,0 );
         }else{
+            this.setTitle("Transaksi Pembelian Baru");
             adapterPagerTransaksiBaru = new AdapterPagerTransaksiBaru( layouts,this,1 );
         }
 

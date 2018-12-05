@@ -199,7 +199,7 @@ public class BarangTransaksiActivity extends AppCompatActivity {
     private void setUpRecycleView() {
         recyclerViewBarangTransaksi.setHasFixedSize(true);
         recyclerViewBarangTransaksi.setLayoutManager(new LinearLayoutManager(this));
-        adapterRecycleViewBarangTransaksi = new AdapterRecycleViewDataBarang( listItemDataBarangs, BarangTransaksiActivity.this,1);
+        adapterRecycleViewBarangTransaksi = new AdapterRecycleViewDataBarang( listItemDataBarangs, BarangTransaksiActivity.this,1, Integer.parseInt(intent.getStringExtra("type")));
         recyclerViewBarangTransaksi.setAdapter( adapterRecycleViewBarangTransaksi );
         adapterRecycleViewBarangTransaksi.notifyDataSetChanged();
     }
@@ -213,6 +213,11 @@ public class BarangTransaksiActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     @Override

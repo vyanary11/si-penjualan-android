@@ -1,6 +1,7 @@
 package com.pratamatechnocraft.silaporanpenjualan.Adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -35,18 +36,20 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
     private List<ListItemDataBarang> listItemDataBarangs;
     private List<ListItemDataBarang> listItemDataBarangFull;
     private Context context;
-    private Integer type;
+    private Integer type, jenis_transaksi;
     private RecyclerView.Adapter adapter;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
     ModelKeranjang modelKeranjang=null;
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
+    private android.support.v7.app.AlertDialog alertDialog1;
 
-    public AdapterRecycleViewDataBarang(List<ListItemDataBarang> listItemDataBarangs, Context context, Integer type) {
+    public AdapterRecycleViewDataBarang(List<ListItemDataBarang> listItemDataBarangs, Context context, Integer type, Integer jenis_transaksi) {
         this.listItemDataBarangs = listItemDataBarangs;
         listItemDataBarangFull = new ArrayList<>( listItemDataBarangs );
         this.context = context;
         this.type = type;
+        this.jenis_transaksi=jenis_transaksi;
     }
 
     @Override
@@ -73,22 +76,51 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
                     i.putExtra("kdBarang", listItemDataBarang.getKdBarang());
                     context.startActivity(i);
                 }else{
-                    dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
-                    dbDataSourceKeranjang.open();
-                    if(dbDataSourceKeranjang.cekKeranjang( listItemDataBarang.getKdBarang())==false){
-                        modelKeranjang = dbDataSourceKeranjang.createModelKeranjang(
-                                listItemDataBarang.getKdBarang(),
-                                listItemDataBarang.getNamaBarang(),
-                                listItemDataBarang.getHargaBarang(),
-                                listItemDataBarang.getGambarBarang(),
-                                "1",
-                                listItemDataBarang.getStokBarang()
-                        );
-                        ((BarangTransaksiActivity)context).finish();
+                    if (jenis_transaksi==0){
+                        if (listItemDataBarang.getStokBarang().equals("0")){
+                            alert("Peringatan !!", "Stok Kosong !!");
+                        }else{
+                            dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
+                            dbDataSourceKeranjang.open();
+                            if(dbDataSourceKeranjang.cekKeranjang( listItemDataBarang.getKdBarang())==false){
+                                modelKeranjang = dbDataSourceKeranjang.createModelKeranjang(
+                                        listItemDataBarang.getKdBarang(),
+                                        listItemDataBarang.getNamaBarang(),
+                                        listItemDataBarang.getHargaBarang(),
+                                        listItemDataBarang.getGambarBarang(),
+                                        "1",
+                                        listItemDataBarang.getStokBarang()
+                                );
+                                ((BarangTransaksiActivity)context).finish();
+                            }else{
+                                ModelKeranjang modelKeranjang1 = dbDataSourceKeranjang.getKeranjang(listItemDataBarang.getKdBarang());
+                                if (listItemDataBarang.getStokBarang().equals(String.valueOf(modelKeranjang1.getQty()))){
+                                    alert("Peringatan !!", "Kuantitas Melebihi Batas Stok");
+                                }else{
+                                    dbDataSourceKeranjang.updateBarang( listItemDataBarang.getKdBarang(), modelKeranjang1.getQty() );
+                                    ((BarangTransaksiActivity)context).finish();
+                                }
+
+                            }
+                        }
                     }else{
-                        ModelKeranjang modelKeranjang1 = dbDataSourceKeranjang.getKeranjang(listItemDataBarang.getKdBarang());
-                        dbDataSourceKeranjang.updateBarang( listItemDataBarang.getKdBarang(), modelKeranjang1.getQty() );
-                        ((BarangTransaksiActivity)context).finish();
+                        dbDataSourceKeranjang = new DBDataSourceKeranjang( context );
+                        dbDataSourceKeranjang.open();
+                        if(dbDataSourceKeranjang.cekKeranjang( listItemDataBarang.getKdBarang())==false){
+                            modelKeranjang = dbDataSourceKeranjang.createModelKeranjang(
+                                    listItemDataBarang.getKdBarang(),
+                                    listItemDataBarang.getNamaBarang(),
+                                    listItemDataBarang.getHargaBarang(),
+                                    listItemDataBarang.getGambarBarang(),
+                                    "1",
+                                    listItemDataBarang.getStokBarang()
+                            );
+                            ((BarangTransaksiActivity)context).finish();
+                        }else{
+                            ModelKeranjang modelKeranjang1 = dbDataSourceKeranjang.getKeranjang(listItemDataBarang.getKdBarang());
+                            dbDataSourceKeranjang.updateBarang( listItemDataBarang.getKdBarang(), modelKeranjang1.getQty() );
+                            ((BarangTransaksiActivity)context).finish();
+                        }
                     }
                 }
             }
@@ -233,5 +265,21 @@ public class AdapterRecycleViewDataBarang extends RecyclerView.Adapter<AdapterRe
             notifyDataSetChanged();
         }
     };
+
+    private void alert(String title, String message){
+        android.support.v7.app.AlertDialog.Builder alertDialogBuilder = new android.support.v7.app.AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle(title);
+        alertDialogBuilder.setMessage(message);
+        alertDialogBuilder.setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        alertDialog1.dismiss();
+                    }
+                });
+
+        alertDialog1 = alertDialogBuilder.create();
+        alertDialog1.show();
+    }
 
 }

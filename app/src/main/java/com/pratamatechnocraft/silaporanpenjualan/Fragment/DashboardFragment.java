@@ -142,10 +142,10 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 navigationView.setCheckedItem( R.id.nav_laporan_harian);
-                LaporanHarianFragment laporanHarianFragment = new LaporanHarianFragment();
+                LaporanFragment laporanFragment = new LaporanFragment(0);
 
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.screen_area, laporanHarianFragment )
+                        .replace(R.id.screen_area, laporanFragment)
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
@@ -156,10 +156,10 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 navigationView.setCheckedItem( R.id.nav_laporan_bulanan);
-                LaporanBulananFragment laporanBulananFragment = new LaporanBulananFragment();
+                LaporanFragment laporanFragment = new LaporanFragment(1);
 
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.screen_area, laporanBulananFragment )
+                        .replace(R.id.screen_area, laporanFragment)
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
@@ -170,10 +170,10 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 navigationView.setCheckedItem( R.id.nav_laporan_tahunan);
-                LaporanTahunanFragment laporanTahunanFragment = new LaporanTahunanFragment();
+                LaporanFragment laporanFragment = new LaporanFragment(2);
 
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.screen_area, laporanTahunanFragment )
+                        .replace(R.id.screen_area, laporanFragment)
                         .addToBackStack(null)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();

@@ -31,7 +31,7 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     private Context context;
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
-    private int subTotal;
+    private int subTotal, jenis_transaksi;
     private DBDataSourceKeranjang dbDataSourceKeranjang;
     private TextView jmlItem,totalHarga;
     private int vtotalHarga;
@@ -45,11 +45,12 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
     private Button buttonBatalDialogQty,buttonSimpanDialogQty;
     private android.support.v7.app.AlertDialog alertDialog1;
 
-    public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context, TextView jmlItem, TextView totalHarga) {
+    public AdapterRecycleViewKeranjang(ArrayList<ModelKeranjang> modelKeranjangs, Context context, TextView jmlItem, TextView totalHarga,Integer jenis_transaksi) {
         this.modelKeranjangs = modelKeranjangs;
         this.context = context;
         this.jmlItem = jmlItem;
         this.totalHarga =totalHarga;
+        this.jenis_transaksi=jenis_transaksi;
     }
 
     @Override
@@ -109,7 +110,12 @@ public class AdapterRecycleViewKeranjang extends RecyclerView.Adapter<AdapterRec
                 imageButtonPlusQty.setOnClickListener( new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (qtyTemp<modelKeranjang.getStok()){
+                        if(jenis_transaksi==0){
+                            if (qtyTemp<modelKeranjang.getStok()){
+                                qtyTemp=qtyTemp+1;
+                                qtyDialog.setText( String.valueOf(qtyTemp) );
+                            }
+                        }else{
                             qtyTemp=qtyTemp+1;
                             qtyDialog.setText( String.valueOf(qtyTemp) );
                         }

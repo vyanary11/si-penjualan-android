@@ -82,9 +82,27 @@
                 android:value=".MainActivity" />
         </activity>
         <activity android:name=".BarangTransaksiActivity" />
-        <activity android:name=".DetailBarangActivity" />
-        <activity android:name=".DetailBiayaActivity" />
-        <activity android:name=".FormBarangActivity" />
+        <activity android:name=".DetailBarangActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".DetailBiayaActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".FormBarangActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <activity android:name=".FormEditTransaksiActivity"></activity>
     </application>
 

@@ -220,7 +220,7 @@ public class DataBarangFragment extends Fragment {
     private void setUpRecycleView() {
         recyclerViewDataBarang.setHasFixedSize(true);
         recyclerViewDataBarang.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapterDataBarang = new AdapterRecycleViewDataBarang( listItemDataBarangs, getContext(),0);
+        adapterDataBarang = new AdapterRecycleViewDataBarang( listItemDataBarangs, getContext(),0,null);
         recyclerViewDataBarang.setAdapter( adapterDataBarang );
         adapterDataBarang.notifyDataSetChanged();
     }

@@ -112,7 +112,7 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
         if (position==0){
             recyclerViewKeranjang.setHasFixedSize(true);
             recyclerViewKeranjang.setLayoutManager(new LinearLayoutManager(context));
-            adapterRecycleViewKeranjang = new AdapterRecycleViewKeranjang( modelKeranjangs, context, txtJmlItemKeranjang, txtHargaTotalKeranjang);
+            adapterRecycleViewKeranjang = new AdapterRecycleViewKeranjang( modelKeranjangs, context, txtJmlItemKeranjang, txtHargaTotalKeranjang, type);
             recyclerViewKeranjang.setAdapter( adapterRecycleViewKeranjang );
             adapterRecycleViewKeranjang.notifyDataSetChanged();
 

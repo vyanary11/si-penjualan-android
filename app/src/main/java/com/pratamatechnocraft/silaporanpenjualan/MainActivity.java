@@ -27,10 +27,9 @@ import com.pratamatechnocraft.silaporanpenjualan.Fragment.DashboardFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataBarangFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataKategoriBarangFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.DataUserFragment;
-import com.pratamatechnocraft.silaporanpenjualan.Fragment.LaporanBulananFragment;
-import com.pratamatechnocraft.silaporanpenjualan.Fragment.LaporanHarianFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.DateRangePickerFragment;
+import com.pratamatechnocraft.silaporanpenjualan.Fragment.LaporanFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.LaporanLabaRugiFragment;
-import com.pratamatechnocraft.silaporanpenjualan.Fragment.LaporanTahunanFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.ProfileFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Fragment.TabLayoutFragment;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
@@ -137,11 +136,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_biaya) {
             fragment = new BiayaFragment();
         } else if (id == R.id.nav_laporan_harian) {
-            fragment = new LaporanHarianFragment();
+            fragment = new LaporanFragment(0);
         } else if (id == R.id.nav_laporan_bulanan) {
-            fragment = new LaporanBulananFragment();
+            fragment = new LaporanFragment(1);
         } else if (id == R.id.nav_laporan_tahunan) {
-            fragment = new LaporanTahunanFragment();
+            fragment = new LaporanFragment(2);
         }else if (id == R.id.nav_laporan_labarugi) {
             fragment = new LaporanLabaRugiFragment();
         }else if (id == R.id.nav_barang) {
@@ -200,7 +199,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         RequestQueue requestQueue = Volley.newRequestQueue( MainActivity.this );
         requestQueue.add( stringRequest );
     }
-
-
-
 }
