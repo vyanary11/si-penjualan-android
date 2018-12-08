@@ -58,6 +58,7 @@ public class AdapterRecycleViewDataTransaksi extends RecyclerView.Adapter<Adapte
                     replace ="#PB";
                 }
                 Intent i = new Intent(context, InvoiceActivity.class);
+                i.putExtra("done", false);
                 i.putExtra("kdTransaksi", listItemTransaksi.getNoInvoice().replace( replace,"" ));
                 context.startActivity(i);
             }

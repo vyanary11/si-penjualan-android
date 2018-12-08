@@ -1,19 +1,27 @@
 package com.pratamatechnocraft.silaporanpenjualan;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Picture;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,13 +30,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.ValueCallback;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,31 +51,33 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDataUser;
+
+import com.izettle.html2bitmap.Html2Bitmap;
+import com.izettle.html2bitmap.content.WebViewContent;
 import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDetailTransaksi;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.DBDataSourceKeranjang;
 import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
 import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDetailTransaksi;
-import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemTransaksi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.text.DecimalFormat;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class InvoiceActivity extends AppCompatActivity {
-
     BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
     private String baseUrl=baseUrlApiModel.getBaseURL();
     private ProgressDialog progress;
     private AlertDialog alertDialog,alertDialog1;
     private AdapterRecycleViewDetailTransaksi adapterRecycleViewDetailTransaksi;
-    private Button buttonBayarDetailTransaksi,buttonPrintDetailTransaksi;
+    private Button buttonBayarDetailTransaksi;
     private RecyclerView recyclerViewDetailTransaksi;
     private SwipeRefreshLayout refreshInvoice;
     private TextView txtNoInvoiceDetailTransaksi, txtTanggalTransaksiDetail, txtNamaKasirDetailTransaksi,txtStatusTransaksiDetailTransaksi,txtHargaTotalDetailInvoice,txtCatatanDetailTransaksi;
@@ -71,6 +85,10 @@ public class InvoiceActivity extends AppCompatActivity {
     Intent intent;
     private List<ListItemDetailTransaksi> listItemDetailTransaksis;
     private WebView myWebView;
+    android.app.AlertDialog dialog;
+    LayoutInflater inflater;
+    View dialogView;
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,30 +96,32 @@ public class InvoiceActivity extends AppCompatActivity {
         setContentView( R.layout.activity_invoice );
         intent = getIntent();
 
-        buttonPrintDetailTransaksi = findViewById( R.id.buttonPrintDetailTransaksi );
+        if (intent.getBooleanExtra("done",true)){
+            transaksiDone();
+        }
 
         WebView webView = new WebView(this);
         webView.setWebViewClient(new WebViewClient() {
-
-            public boolean shouldOverrideUrlLoading(WebView view, String url)
-            {
+            public boolean shouldOverrideUrlLoading(WebView view, String url){
                 return false;
             }
-
         });
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.evaluateJavascript(
+                    "(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();",
+                    new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String html) {
+                            Log.d("HTML", html);
+                            // code here
+                        }
+                    });
+        }
 
         webView.loadUrl("https://si-penjualan.pratamatechnocraft.com/print_invoice?no_invoice="+intent.getStringExtra( "kdTransaksi" ));
-
         myWebView = webView;
-
-        buttonPrintDetailTransaksi.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void onClick(View v) {
-                createWebPrintJob(myWebView);
-            }
-        });
-
         progress = new ProgressDialog(this);
 
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_invoice);
@@ -252,7 +272,7 @@ public class InvoiceActivity extends AppCompatActivity {
                 alertDialog.show();
                 return true;
             case R.id.icon_bagikan_invoice:
-
+                bagikan();
                 return true;
             case R.id.icon_download_invoice:
 
@@ -412,5 +432,95 @@ public class InvoiceActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
+    }
+
+    private void bagikan(){
+        Bitmap bitmap = new Html2Bitmap.Builder().setContext(this).setContent(WebViewContent.html(myWebView.getUrl())).build().getBitmap();
+        Uri bmpUri = getBitmapFromDrawable(bitmap);
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/jpg");
+        /*final File photoFile = new File(getFilesDir(), "foo.jpg");*/
+        shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+
+        startActivity(Intent.createChooser(shareIntent, "Share image using"));
+    }
+
+    // Method when launching drawable within Glide
+    public Uri getBitmapFromDrawable(Bitmap bmp){
+
+        // Store image to default external storage directory
+        Uri bmpUri = null;
+        try {
+            // Use methods on Context to access package-specific directories on external storage.
+            // This way, you don't need to request external read/write permission.
+            // See https://youtu.be/5xVh-7ywKpE?t=25m25s
+            File file =  new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_"+System.currentTimeMillis()+".jpg");
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.close();
+
+            // wrap File object into a content provider. NOTE: authority here should match authority in manifest declaration
+            //bmpUri = Uri.fromFile(file);
+            bmpUri = FileProvider.getUriForFile(InvoiceActivity.this, "com.codepath.fileprovider", file);  // use this version for API >= 24
+
+            // **Note:** For API < 24, you may use bmpUri = Uri.fromFile(file);
+
+        } catch (IOException e) {
+            Log.d("TAG", "getBitmapFromDrawable: "+e);
+            e.printStackTrace();
+        }
+        return bmpUri;
+    }
+
+    private void transaksiDone(){
+        Button buttonOkDialogSelesai;
+        ImageButton imageButtonShareDialog,imageButtonPrintDialog,imageButtonDownloadDialog;
+        dialog = new android.app.AlertDialog.Builder(this).create();
+        inflater = dialog.getLayoutInflater();
+        dialogView = inflater.inflate(R.layout.fragment_dialog_transaksi_selesai, null);
+        dialog.setView(dialogView);
+        dialog.setCancelable(true);
+
+        buttonOkDialogSelesai = dialogView.findViewById(R.id.buttonOkDialogSelesai);
+
+        imageButtonDownloadDialog = dialogView.findViewById(R.id.imageButtonDownloadDialog);
+        imageButtonPrintDialog = dialogView.findViewById(R.id.imageButtonPrintDialog);
+        imageButtonShareDialog = dialogView.findViewById(R.id.imageButtonShareDialog);
+
+        buttonOkDialogSelesai.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+            }
+        });
+
+        imageButtonDownloadDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        imageButtonPrintDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    createWebPrintJob(myWebView);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        imageButtonShareDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bagikan();
+                dialog.dismiss();
+            }
+        });
+
+
+        dialog.show();
     }
 }

@@ -5,27 +5,36 @@
 
     <item
         android:id="@+id/icon_edit1"
+        android:icon="@drawable/ic_edit_white_24dp"
         android:title="Edit"
-        app:showAsAction="withText"/>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/icon_hapus1"
+        android:icon="@drawable/ic_delete_forever_white_24dp"
         android:title="Hapus"
-        app:showAsAction="withText"/>
-    <item
-        android:id="@+id/icon_bagikan_invoice"
-        android:icon="@drawable/ic_share_white_24dp"
-        android:title="Bagikan"
         app:showAsAction="always"/>
     <item
-        android:id="@+id/icon_print_invoice"
-        android:icon="@drawable/ic_print_white_24dp"
-        android:title="Print"
-        app:showAsAction="always"/>
-    <item
-        android:id="@+id/icon_download_invoice"
-        android:icon="@drawable/ic_file_download_white_24dp"
-        android:title="Download"
-        app:showAsAction="always"/>
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        app:showAsAction="always"
+        android:title="More">
+        <menu>
+            <item
+                android:id="@+id/icon_bagikan_invoice"
+                android:icon="@drawable/ic_share_black_24dp"
+                android:title="Bagikan"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/icon_print_invoice"
+                android:icon="@drawable/ic_print_black_24dp"
+                android:title="Print"
+                app:showAsAction="never"/>
+            <item
+                android:id="@+id/icon_download_invoice"
+                android:icon="@drawable/ic_file_download_black_24dp"
+                android:title="Download"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
 
 
 </menu>

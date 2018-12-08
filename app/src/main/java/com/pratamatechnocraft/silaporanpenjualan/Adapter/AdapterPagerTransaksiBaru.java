@@ -134,9 +134,9 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
                 }
             } );
         }else if(position==1){
-            if (adapterRecycleViewKeranjang.getItemCount()==0){
+            /*if (adapterRecycleViewKeranjang.getItemCount()==0){
                 notifyDataSetChanged();
-            }
+            }*/
             buttonSimpanTransaksi.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -231,6 +231,7 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
                         Toast.makeText(context, "Transaksi Berhasil", Toast.LENGTH_SHORT).show();
                         ((TransaksiBaruActivity)context).finish();
                         Intent i = new Intent(context, InvoiceActivity.class);
+                        i.putExtra("done", true);
                         i.putExtra("kdTransaksi", jsonObject.getString( "kd_transaksi" ));
                         context.startActivity(i);
                     }else{
