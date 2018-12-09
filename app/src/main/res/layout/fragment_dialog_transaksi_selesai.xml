@@ -47,13 +47,6 @@
             android:layout_weight="1"
             android:src="@drawable/ic_print_black_24dp" />
 
-        <ImageButton
-            android:id="@+id/imageButtonDownloadDialog"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/ic_file_download_black_24dp" />
-
     </LinearLayout>
 
     <LinearLayout

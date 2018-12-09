@@ -49,6 +49,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpResponse;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -66,6 +67,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +91,7 @@ public class InvoiceActivity extends AppCompatActivity {
     android.app.AlertDialog dialog;
     LayoutInflater inflater;
     View dialogView;
-    Bitmap bitmap;
+    Bitmap b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,28 +103,9 @@ public class InvoiceActivity extends AppCompatActivity {
             transaksiDone();
         }
 
-        WebView webView = new WebView(this);
-        webView.setWebViewClient(new WebViewClient() {
-            public boolean shouldOverrideUrlLoading(WebView view, String url){
-                return false;
-            }
-        });
+        myWebView = findViewById(R.id.webviewCOBA);
 
-        webView.getSettings().setJavaScriptEnabled(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            webView.evaluateJavascript(
-                    "(function() { return ('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>'); })();",
-                    new ValueCallback<String>() {
-                        @Override
-                        public void onReceiveValue(String html) {
-                            Log.d("HTML", html);
-                            // code here
-                        }
-                    });
-        }
-
-        webView.loadUrl("https://si-penjualan.pratamatechnocraft.com/print_invoice?no_invoice="+intent.getStringExtra( "kdTransaksi" ));
-        myWebView = webView;
+        myWebView.loadUrl(baseUrl+"print_invoice?no_invoice="+intent.getStringExtra( "kdTransaksi" ));
         progress = new ProgressDialog(this);
 
         Toolbar ToolBarAtas2 = (Toolbar)findViewById(R.id.toolbar_invoice);
@@ -273,9 +257,6 @@ public class InvoiceActivity extends AppCompatActivity {
                 return true;
             case R.id.icon_bagikan_invoice:
                 bagikan();
-                return true;
-            case R.id.icon_download_invoice:
-
                 return true;
             case R.id.icon_print_invoice:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -435,8 +416,12 @@ public class InvoiceActivity extends AppCompatActivity {
     }
 
     private void bagikan(){
-        Bitmap bitmap = new Html2Bitmap.Builder().setContext(this).setContent(WebViewContent.html(myWebView.getUrl())).build().getBitmap();
-        Uri bmpUri = getBitmapFromDrawable(bitmap);
+        Picture picture = myWebView.capturePicture();
+        b = Bitmap.createBitmap(
+                picture.getWidth()-160, picture.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        picture.draw(c);
+        Uri bmpUri = getBitmapFromDrawable(b);
         final Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("image/jpg");
         /*final File photoFile = new File(getFilesDir(), "foo.jpg");*/
@@ -451,19 +436,12 @@ public class InvoiceActivity extends AppCompatActivity {
         // Store image to default external storage directory
         Uri bmpUri = null;
         try {
-            // Use methods on Context to access package-specific directories on external storage.
-            // This way, you don't need to request external read/write permission.
-            // See https://youtu.be/5xVh-7ywKpE?t=25m25s
-            File file =  new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "share_image_"+System.currentTimeMillis()+".jpg");
+            File file =  new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), "invoice_no_"+txtNoInvoiceDetailTransaksi.getText()+"_"+System.currentTimeMillis()+".jpg");
             FileOutputStream out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.close();
 
-            // wrap File object into a content provider. NOTE: authority here should match authority in manifest declaration
-            //bmpUri = Uri.fromFile(file);
-            bmpUri = FileProvider.getUriForFile(InvoiceActivity.this, "com.codepath.fileprovider", file);  // use this version for API >= 24
-
-            // **Note:** For API < 24, you may use bmpUri = Uri.fromFile(file);
+            bmpUri = FileProvider.getUriForFile(InvoiceActivity.this, "com.codepath.fileprovider", file);
 
         } catch (IOException e) {
             Log.d("TAG", "getBitmapFromDrawable: "+e);
@@ -483,7 +461,6 @@ public class InvoiceActivity extends AppCompatActivity {
 
         buttonOkDialogSelesai = dialogView.findViewById(R.id.buttonOkDialogSelesai);
 
-        imageButtonDownloadDialog = dialogView.findViewById(R.id.imageButtonDownloadDialog);
         imageButtonPrintDialog = dialogView.findViewById(R.id.imageButtonPrintDialog);
         imageButtonShareDialog = dialogView.findViewById(R.id.imageButtonShareDialog);
 
@@ -492,13 +469,6 @@ public class InvoiceActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog.dismiss();
 
-            }
-        });
-
-        imageButtonDownloadDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
             }
         });
 

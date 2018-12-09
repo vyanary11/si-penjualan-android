@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".InvoiceActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <WebView
+            android:id="@+id/webviewCOBA"
+            android:layout_width="58mm"
+            android:visibility="invisible"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+    </RelativeLayout>
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar_invoice"
         android:layout_width="match_parent"

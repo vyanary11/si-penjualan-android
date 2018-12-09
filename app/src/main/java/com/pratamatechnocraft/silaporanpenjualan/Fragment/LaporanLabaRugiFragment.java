@@ -3,8 +3,14 @@ package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Picture;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
@@ -13,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,6 +58,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,6 +97,8 @@ public class LaporanLabaRugiFragment extends Fragment {
         recycleViewBiayaPengeluaran = (RecyclerView) view.findViewById(R.id.recycleViewBiayaPengeluaran);
         selectedMonthV=newCalendar.get(Calendar.MONTH);
         selectedYearV=newCalendar.get(Calendar.YEAR);
+
+        myWebView = view.findViewById(R.id.webviewLaporanLaba);
 
         /*TEXT VIEW*/
         txtIncome = (TextView) view.findViewById(R.id.txtIncome);
@@ -146,10 +158,7 @@ public class LaporanLabaRugiFragment extends Fragment {
     }
 
     private void loadLabaRugi(int bulan, int tahun){
-        WebView webView = new WebView(getContext());
-        webView.setWebViewClient(new WebViewClient() {public boolean shouldOverrideUrlLoading(WebView view, String url){return false;}});
-        webView.loadUrl("https://si-penjualan.pratamatechnocraft.com/print_laba_rugi?bulan="+(bulan+1)+"&tahun="+tahun);
-        myWebView = webView;
+        myWebView.loadUrl(baseUrl+"print_laba_rugi?bulan="+(bulan+1)+"&tahun="+tahun);
         Log.d("BULAN", "loadLabaRugi: "+bulan);
         refreshLabaRugi.setRefreshing( true );
         listItemBiayas = new ArrayList<>();
@@ -235,6 +244,9 @@ public class LaporanLabaRugiFragment extends Fragment {
                     createWebPrintJob(myWebView);
                 }
                 return true;
+            case R.id.ic_bagikan_laporan:
+                bagikan();
+                return true;
             case R.id.ic_datepicker:
                 showDateDialog();
                 return true;
@@ -254,11 +266,47 @@ public class LaporanLabaRugiFragment extends Fragment {
                 .getSystemService(Context.PRINT_SERVICE);
 
         PrintDocumentAdapter printAdapter =
-                webView.createPrintDocumentAdapter("MyDocument");
+                webView.createPrintDocumentAdapter("Laporan_Laba_Rugi_Periode_"+txtBulanLabaRugi.getText());
 
         String jobName = getString(R.string.app_name) + "Print Laba Rugi";
 
         printManager.print(jobName, printAdapter, printAttributes);
+    }
+
+    private void bagikan(){
+        Picture picture = myWebView.capturePicture();
+        Bitmap b = Bitmap.createBitmap(
+                picture.getWidth()-900, picture.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        picture.draw(c);
+        Uri bmpUri = getBitmapFromDrawable(b);
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/jpg");
+        /*final File photoFile = new File(getFilesDir(), "foo.jpg");*/
+        shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+
+        startActivity(Intent.createChooser(shareIntent, "Share image using"));
+    }
+
+    // Method when launching drawable within Glide
+    public Uri getBitmapFromDrawable(Bitmap bmp){
+
+        // Store image to default external storage directory
+        Uri bmpUri = null;
+        File file;
+        try {
+            file =  new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Laporan_Laba_Rugi_Periode_"+txtBulanLabaRugi.getText()+"_"+System.currentTimeMillis()+".jpg");
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.close();
+
+            bmpUri = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", file);
+
+        } catch (IOException e) {
+            Log.d("TAG", "getBitmapFromDrawable: "+e);
+            e.printStackTrace();
+        }
+        return bmpUri;
     }
 }
 

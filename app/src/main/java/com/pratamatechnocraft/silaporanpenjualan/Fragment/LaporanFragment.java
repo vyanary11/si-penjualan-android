@@ -2,21 +2,40 @@ package com.pratamatechnocraft.silaporanpenjualan.Fragment;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Picture;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.pratamatechnocraft.silaporanpenjualan.InvoiceActivity;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.whiteelephant.monthpicker.MonthPickerDialog;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -33,6 +52,7 @@ public class LaporanFragment extends Fragment{
     int selectedMonthV;
     int selectedYearV;
     DateRangePickerFragment dateRangePickerFragment;
+    private WebView myWebView;
 
     public LaporanFragment(Integer jenisLaporan) {this.jenisLaporan = jenisLaporan;}
 
@@ -42,6 +62,8 @@ public class LaporanFragment extends Fragment{
         selectedDayV=newCalendar.get(Calendar.DAY_OF_MONTH);
         selectedMonthV=newCalendar.get(Calendar.MONTH);
         selectedYearV=newCalendar.get(Calendar.YEAR);
+
+        myWebView = view.findViewById(R.id.webviewLaporan);
 
         /*LINEAR LAYOUT*/
         LinearLayoutLapBulanan = view.findViewById(R.id.LinearLayoutLapBulanan);
@@ -151,7 +173,12 @@ public class LaporanFragment extends Fragment{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.ic_print:
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    createWebPrintJob(myWebView);
+                }
+                return true;
+            case R.id.ic_bagikan_laporan:
+                bagikan();
                 return true;
             case R.id.ic_datepicker:
                 showDateDialog();
@@ -159,5 +186,75 @@ public class LaporanFragment extends Fragment{
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void createWebPrintJob(WebView webView) {
+
+        PrintAttributes printAttributes = new PrintAttributes.Builder()
+                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                .setMinMargins(PrintAttributes.Margins.NO_MARGINS).build();
+
+        PrintManager printManager = (PrintManager) getActivity()
+                .getSystemService(Context.PRINT_SERVICE);
+
+        String namaDocumnent = null;
+
+        if (jenisLaporan==0){
+            namaDocumnent = "Laporan_Harian_Periode_"+txtTanggalHarian.getText();
+        }else if(jenisLaporan==1){
+            namaDocumnent ="Laporan_Bulanan_Periode_"+txtBulan.getText();
+        }else {
+            namaDocumnent ="Laporan_Tahunan_Periode_"+txtTahun.getText();
+        }
+
+        PrintDocumentAdapter printAdapter =
+                webView.createPrintDocumentAdapter(namaDocumnent);
+
+        String jobName = getString(R.string.app_name) + "Print Laba Rugi";
+
+        printManager.print(jobName, printAdapter, printAttributes);
+    }
+
+    private void bagikan(){
+        Picture picture = myWebView.capturePicture();
+        Bitmap b = Bitmap.createBitmap(
+                picture.getWidth(), picture.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        picture.draw(c);
+        Uri bmpUri = getBitmapFromDrawable(b);
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/jpg");
+        /*final File photoFile = new File(getFilesDir(), "foo.jpg");*/
+        shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
+
+        startActivity(Intent.createChooser(shareIntent, "Share image using"));
+    }
+
+    // Method when launching drawable within Glide
+    public Uri getBitmapFromDrawable(Bitmap bmp){
+
+        // Store image to default external storage directory
+        Uri bmpUri = null;
+        File file;
+        try {
+            if (jenisLaporan==0){
+                file =  new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Laporan_Harian_Periode_"+txtTanggalHarian.getText()+"_"+System.currentTimeMillis()+".jpg");
+            }else if(jenisLaporan==1){
+                file =  new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Laporan_Bulanan_Periode_"+txtBulan.getText()+"_"+System.currentTimeMillis()+".jpg");
+            }else {
+                file =  new File(getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "Laporan_Tahunan_Periode_"+txtTahun.getText()+"_"+System.currentTimeMillis()+".jpg");
+            }
+            FileOutputStream out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.close();
+
+            bmpUri = FileProvider.getUriForFile(getContext(), "com.codepath.fileprovider", file);
+
+        } catch (IOException e) {
+            Log.d("TAG", "getBitmapFromDrawable: "+e);
+            e.printStackTrace();
+        }
+        return bmpUri;
     }
 }

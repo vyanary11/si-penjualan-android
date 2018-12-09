@@ -28,11 +28,6 @@
                 android:icon="@drawable/ic_print_black_24dp"
                 android:title="Print"
                 app:showAsAction="never"/>
-            <item
-                android:id="@+id/icon_download_invoice"
-                android:icon="@drawable/ic_file_download_black_24dp"
-                android:title="Download"
-                app:showAsAction="never"/>
         </menu>
     </item>
 

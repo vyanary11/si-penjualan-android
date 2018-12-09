@@ -21,11 +21,6 @@
                 android:icon="@drawable/ic_print_black_24dp"
                 android:title="Print"
                 app:showAsAction="withText"/>
-            <item
-                android:id="@+id/ic_dwonload_laporan"
-                android:icon="@drawable/ic_file_download_black_24dp"
-                android:title="Download"
-                app:showAsAction="withText"/>
         </menu>
     </item>
 </menu>
