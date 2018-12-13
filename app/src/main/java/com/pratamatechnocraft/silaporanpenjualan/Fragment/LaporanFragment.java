@@ -301,7 +301,7 @@ public class LaporanFragment extends Fragment{
     private void bagikan(){
         Picture picture = myWebView.capturePicture();
         Bitmap b = Bitmap.createBitmap(
-                picture.getWidth(), picture.getHeight(), Bitmap.Config.ARGB_8888);
+                picture.getWidth()-900, picture.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         picture.draw(c);
         Uri bmpUri = getBitmapFromDrawable(b);
