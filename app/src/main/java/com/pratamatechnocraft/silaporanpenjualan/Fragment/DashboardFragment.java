@@ -40,6 +40,30 @@ public class DashboardFragment extends Fragment {
         sessionManager = new SessionManager( getContext() );
         HashMap<String, String> user = sessionManager.getUserDetail();
 
+        if (Integer.parseInt( user.get( sessionManager.LEVEL_USER ) )==0){
+            kliktransaksijual.setVisibility(View.VISIBLE);
+            kliktransaksibeli.setVisibility(View.VISIBLE);
+            klikbarang.setVisibility(View.VISIBLE);
+            klikkategori.setVisibility(View.VISIBLE);
+            klikuser.setVisibility(View.VISIBLE);
+            kliklapharian.setVisibility(View.VISIBLE);
+            kliklapbulanan.setVisibility(View.VISIBLE);
+            kliklaptahunan.setVisibility(View.VISIBLE);
+            kliklaplabarugi.setVisibility(View.VISIBLE);
+            klikbiaya.setVisibility(View.VISIBLE);
+        }else{
+            kliktransaksijual.setVisibility(View.VISIBLE);
+            kliktransaksibeli.setVisibility(View.GONE);
+            klikbarang.setVisibility(View.GONE);
+            klikkategori.setVisibility(View.GONE);
+            klikuser.setVisibility(View.GONE);
+            kliklapharian.setVisibility(View.VISIBLE);
+            kliklapbulanan.setVisibility(View.VISIBLE);
+            kliklaptahunan.setVisibility(View.VISIBLE);
+            kliklaplabarugi.setVisibility(View.GONE);
+            klikbiaya.setVisibility(View.GONE);
+        }
+
         kliktransaksijual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

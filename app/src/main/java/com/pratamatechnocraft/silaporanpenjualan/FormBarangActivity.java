@@ -471,6 +471,7 @@ public class FormBarangActivity extends AppCompatActivity {
                 bitmap = MediaStore.Images.Media.getBitmap( getContentResolver(),filePath );
                 fotoTambahBarang.setImageBitmap( bitmap );
                 txtFotoTambahBarang.setText( getStringImage( bitmap ) );
+                Log.d("COBA", "onActivityResult: "+txtFotoTambahBarang.getText());
                 adaGambar.setVisibility( View.VISIBLE );
                 tidakAdaGambar.setVisibility( View.GONE );
             } catch (IOException e) {
@@ -481,6 +482,7 @@ public class FormBarangActivity extends AppCompatActivity {
             mImageBitmap = (Bitmap) extras.get("data");
             fotoTambahBarang.setImageBitmap(mImageBitmap);
             txtFotoTambahBarang.setText( getStringImage( mImageBitmap ) );
+            Log.d("COBA", "onActivityResult: "+txtFotoTambahBarang.getText());
             adaGambar.setVisibility( View.VISIBLE );
             tidakAdaGambar.setVisibility( View.GONE );
         }

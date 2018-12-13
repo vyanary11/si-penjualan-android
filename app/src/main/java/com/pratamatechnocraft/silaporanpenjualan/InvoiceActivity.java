@@ -229,11 +229,11 @@ public class InvoiceActivity extends AppCompatActivity {
             case android.R.id.home:
                 super.onBackPressed();
                 return true;
-            case R.id.icon_edit1:
+           /* case R.id.icon_edit1:
                 Intent i = new Intent(InvoiceActivity.this, FormEditTransaksiActivity.class );
                 i.putExtra( "kdTransaksi",intent.getStringExtra( "kdTransaksi" ) );
                 startActivity(i);
-                return true;
+                return true;*/
             case R.id.icon_hapus1:
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                 alertDialogBuilder.setMessage("Yakin Ingin Menghapus Data Ini ??");
@@ -452,7 +452,7 @@ public class InvoiceActivity extends AppCompatActivity {
 
     private void transaksiDone(){
         Button buttonOkDialogSelesai;
-        ImageButton imageButtonShareDialog,imageButtonPrintDialog,imageButtonDownloadDialog;
+        ImageButton imageButtonShareDialog,imageButtonPrintDialog;
         dialog = new android.app.AlertDialog.Builder(this).create();
         inflater = dialog.getLayoutInflater();
         dialogView = inflater.inflate(R.layout.fragment_dialog_transaksi_selesai, null);
@@ -476,6 +476,7 @@ public class InvoiceActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    myWebView.loadUrl(baseUrl+"print_invoice?no_invoice="+intent.getStringExtra( "kdTransaksi" ));
                     createWebPrintJob(myWebView);
                 }
                 dialog.dismiss();

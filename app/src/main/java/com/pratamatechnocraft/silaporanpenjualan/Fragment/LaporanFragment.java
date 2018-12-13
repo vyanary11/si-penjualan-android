@@ -18,6 +18,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,22 +31,41 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewBarangTerjual;
+import com.pratamatechnocraft.silaporanpenjualan.Adapter.AdapterRecycleViewDetailTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.InvoiceActivity;
+import com.pratamatechnocraft.silaporanpenjualan.Model.BaseUrlApiModel;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemBarangTerjual;
+import com.pratamatechnocraft.silaporanpenjualan.Model.ListItemDetailTransaksi;
 import com.pratamatechnocraft.silaporanpenjualan.R;
 import com.whiteelephant.monthpicker.MonthPickerDialog;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 @SuppressLint("ValidFragment")
 public class LaporanFragment extends Fragment{
     private   TextView txtTanggalHarian;
-    private TextView txtBulan, txtTahun;
+    private TextView txtBulan, txtTahun, txtJmlTransaksi, txtPendapatanLaporanPenjualan, txtHargaTotalBarangTerjual,txtDataKosongLapPenjualan;
     private LinearLayout LinearLayoutLapHarian,LinearLayoutLapBulanan,LinearLayoutLapTahunan;
     private SimpleDateFormat dateFormatter;
     private Integer jenisLaporan;
@@ -53,6 +75,13 @@ public class LaporanFragment extends Fragment{
     int selectedYearV;
     DateRangePickerFragment dateRangePickerFragment;
     private WebView myWebView;
+    private SwipeRefreshLayout refreshLaporan;
+    private RecyclerView recycleViewBarangTerjual;
+    private AdapterRecycleViewBarangTerjual adapterRecycleViewBarangTerjual;
+    private List<ListItemBarangTerjual> listItemBarangTerjuals;
+    BaseUrlApiModel baseUrlApiModel = new BaseUrlApiModel();
+    private String baseUrl=baseUrlApiModel.getBaseURL();
+    private String tanggalDari, tanggalSampai;
 
     public LaporanFragment(Integer jenisLaporan) {this.jenisLaporan = jenisLaporan;}
 
@@ -74,27 +103,72 @@ public class LaporanFragment extends Fragment{
         txtTanggalHarian=view.findViewById(R.id.txtTanggalHarian);
         txtBulan=view.findViewById(R.id.txtBulan);
         txtTahun=view.findViewById(R.id.txtTahun);
+        txtJmlTransaksi=view.findViewById(R.id.txtJmlTransaksi);
+        txtPendapatanLaporanPenjualan=view.findViewById(R.id.txtPendapatanLaporanPenjualan);
+        txtHargaTotalBarangTerjual=view.findViewById(R.id.txtHargaTotalBarangTerjual);
+        txtDataKosongLapPenjualan=view.findViewById(R.id.txtDataKosongLapPenjualan);
+
+        recycleViewBarangTerjual = (RecyclerView) view.findViewById(R.id.recycleViewBarangTerjual);
+        recycleViewBarangTerjual.setHasFixedSize(true);
+        recycleViewBarangTerjual.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        refreshLaporan = view.findViewById( R.id.refreshLaporan );
+
+        listItemBarangTerjuals = new ArrayList<>();
+        adapterRecycleViewBarangTerjual = new AdapterRecycleViewBarangTerjual( listItemBarangTerjuals, getContext());
+
+
 
         if(jenisLaporan==0){
             LinearLayoutLapBulanan.setVisibility(View.GONE);
             LinearLayoutLapTahunan.setVisibility(View.GONE);
             LinearLayoutLapHarian.setVisibility(View.VISIBLE);
             dateFormatter = new SimpleDateFormat("dd MMMM yyyy ", Locale.US);
+            tanggalDari=dateFormatter.format(newCalendar.getTime());
+            tanggalSampai=dateFormatter.format(newCalendar.getTime());
             txtTanggalHarian.setText(dateFormatter.format(newCalendar.getTime())+" - "+dateFormatter.format(newCalendar.getTime()));
+
+            refreshLaporan.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    listItemBarangTerjuals.clear();
+                    adapterRecycleViewBarangTerjual.notifyDataSetChanged();
+                    loadLaporan(tanggalDari,tanggalSampai,null,null,0);
+                }
+            } );
         }else if(jenisLaporan==1){
             LinearLayoutLapBulanan.setVisibility(View.VISIBLE);
             LinearLayoutLapTahunan.setVisibility(View.GONE);
             LinearLayoutLapHarian.setVisibility(View.GONE);
             dateFormatter = new SimpleDateFormat("MMMM yyyy ", Locale.US);
             txtBulan.setText(dateFormatter.format(newCalendar.getTime()));
+
+            refreshLaporan.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    listItemBarangTerjuals.clear();
+                    adapterRecycleViewBarangTerjual.notifyDataSetChanged();
+                    loadLaporan(null,null,String.valueOf((selectedMonthV+1)),String.valueOf(selectedYearV),1);
+                }
+            } );
         }else{
             LinearLayoutLapBulanan.setVisibility(View.GONE);
             LinearLayoutLapTahunan.setVisibility(View.VISIBLE);
             LinearLayoutLapHarian.setVisibility(View.GONE);
             dateFormatter = new SimpleDateFormat("yyyy ", Locale.US);
-            txtTahun.setText(dateFormatter.format(newCalendar.getTime())
-            );
+            txtTahun.setText(dateFormatter.format(newCalendar.getTime()));
+
+            refreshLaporan.setOnRefreshListener( new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    listItemBarangTerjuals.clear();
+                    adapterRecycleViewBarangTerjual.notifyDataSetChanged();
+                    loadLaporan(null,null,null,String.valueOf(selectedYearV),2);
+                }
+            } );
         }
+
+        recycleViewBarangTerjual.setAdapter( adapterRecycleViewBarangTerjual );
 
         return view;
     }
@@ -106,10 +180,13 @@ public class LaporanFragment extends Fragment{
         setHasOptionsMenu(true);
         if(jenisLaporan==0){
             getActivity().setTitle("Laporan Harian");
+            loadLaporan(tanggalDari,tanggalSampai,null,null,0);
         }else if(jenisLaporan==1){
             getActivity().setTitle("Laporan Bulanan");
+            loadLaporan(null,null,String.valueOf((selectedMonthV+1)),String.valueOf(selectedYearV),1);
         }else{
             getActivity().setTitle("Laporan Tahunan");
+            loadLaporan(null,null,null,String.valueOf(selectedYearV),2);
         }
     }
 
@@ -123,7 +200,10 @@ public class LaporanFragment extends Fragment{
                     start.set(startYear, startMonth, startDay);
                     Calendar ends = Calendar.getInstance();
                     ends.set(endYear, endMonth, endDay);
+                    tanggalDari=dateFormatter.format(start.getTime());
+                    tanggalSampai=dateFormatter.format(ends.getTime());
                     txtTanggalHarian.setText(dateFormatter.format(start.getTime())+" - "+dateFormatter.format(ends.getTime()));
+                    loadLaporan(tanggalDari,tanggalSampai,null,null,0);
                 }
             });
             dateRangePickerFragment.show(getActivity().getSupportFragmentManager(),"datePicker");
@@ -136,6 +216,7 @@ public class LaporanFragment extends Fragment{
                     txtBulan.setText(dateFormatter.format(newDate.getTime()));
                     selectedMonthV=selectedMonth;
                     selectedYearV=selectedYear;
+                    loadLaporan(null,null,String.valueOf((selectedMonth+1)),String.valueOf(selectedYear),1);
                 }
             }, selectedYearV, selectedMonthV);
 
@@ -153,6 +234,7 @@ public class LaporanFragment extends Fragment{
                     txtTahun.setText(dateFormatter.format(newDate.getTime()));
                     selectedMonthV=selectedMonth;
                     selectedYearV=selectedYear;
+                    loadLaporan(null,null,null,String.valueOf(selectedYear),2);
                 }
             }, selectedYearV, selectedMonthV);
 
@@ -256,5 +338,76 @@ public class LaporanFragment extends Fragment{
             e.printStackTrace();
         }
         return bmpUri;
+    }
+
+
+    private void loadLaporan(String dari,String sampai,String bulan,String tahun, Integer jenisLaporan){
+        listItemBarangTerjuals.clear();
+        adapterRecycleViewBarangTerjual.notifyDataSetChanged();
+        Log.d("TAG", "loadLaporan: "+bulan);
+        refreshLaporan.setRefreshing(true);
+        String API_URL = null;
+        if (jenisLaporan==0){
+            API_URL="api/transaksi?api=laporan&lap=harian&dari="+dari+"&sampai="+sampai;
+            myWebView.loadUrl(baseUrl+"print_laporan?lap=harian&dari="+dari+"&sampai="+sampai);
+        }else if(jenisLaporan==1){
+            API_URL="api/transaksi?api=laporan&lap=bulanan&bulan="+bulan+"&tahun="+tahun;
+            myWebView.loadUrl(baseUrl+"print_laporan?lap=bulanan&bulan="+bulan+"&tahun="+tahun);
+            Log.d("TAG", "API: "+API_URL);
+        }else{
+            API_URL="api/transaksi?api=laporan&lap=tahunan&tahun="+tahun;
+            myWebView.loadUrl(baseUrl+"print_laporan?lap=tahunan&tahun="+tahun);
+        }
+        StringRequest stringRequest = new StringRequest( Request.Method.GET, baseUrl+API_URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            final JSONObject jsonObject = new JSONObject(response);
+                            DecimalFormat formatter = new DecimalFormat("#,###,###");
+                            JSONObject dataObject = jsonObject.getJSONObject("data");
+
+                            if (dataObject.getInt("jml_transaksi")!=0){
+                                txtDataKosongLapPenjualan.setVisibility(View.GONE);
+                            }else{
+                                txtDataKosongLapPenjualan.setVisibility(View.VISIBLE);
+                            }
+
+                            txtJmlTransaksi.setText(dataObject.getString("jml_transaksi"));
+                            txtPendapatanLaporanPenjualan.setText("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("pendapatan"))));
+                            txtHargaTotalBarangTerjual.setText("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("total_harga_semua"))));
+
+                            JSONArray barangTerjual = dataObject.getJSONArray("barangTerjual");
+                            for (int i = 0; i<barangTerjual.length(); i++){
+                                JSONObject barangTerjualJSONObject = barangTerjual.getJSONObject( i );
+                                ListItemBarangTerjual listItemBarangTerjual = new ListItemBarangTerjual(
+                                        barangTerjualJSONObject.getString( "nama_barang" ),
+                                        barangTerjualJSONObject.getString( "harga_jual_detail" ),
+                                        barangTerjualJSONObject.getString( "qty"),
+                                        String.valueOf(barangTerjualJSONObject.getInt("qty")*barangTerjualJSONObject.getInt("harga_jual_detail"))
+                                );
+
+                                listItemBarangTerjuals.add( listItemBarangTerjual );
+                                adapterRecycleViewBarangTerjual.notifyDataSetChanged();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Toast.makeText(getContext(), "Periksa koneksi & coba lagi", Toast.LENGTH_SHORT).show();
+                        }
+                        refreshLaporan.setRefreshing( false );
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Periksa koneksi & coba lagi1", Toast.LENGTH_SHORT).show();
+                        refreshLaporan.setRefreshing( false );
+                    }
+                }
+        );
+
+        RequestQueue requestQueue = Volley.newRequestQueue( getContext() );
+        requestQueue.add( stringRequest );
     }
 }
