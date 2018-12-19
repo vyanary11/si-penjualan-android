@@ -87,6 +87,7 @@ public class LaporanLabaRugiFragment extends Fragment {
     int selectedMonthV;
     int selectedYearV;
     private WebView myWebView;
+    private LinearLayout linearLayoutBackgroundLabaRugi;
 
 
     @Nullable
@@ -99,6 +100,7 @@ public class LaporanLabaRugiFragment extends Fragment {
         selectedYearV=newCalendar.get(Calendar.YEAR);
 
         myWebView = view.findViewById(R.id.webviewLaporanLaba);
+        linearLayoutBackgroundLabaRugi = view.findViewById(R.id.linearLayoutBackgroundLabaRugi);
 
         /*TEXT VIEW*/
         txtIncome = (TextView) view.findViewById(R.id.txtIncome);
@@ -171,6 +173,12 @@ public class LaporanLabaRugiFragment extends Fragment {
 
                             JSONObject dataObject = jsonObject.getJSONObject("data");
                             DecimalFormat formatter = new DecimalFormat("#,###,###");
+
+                            if(dataObject.getInt("net_income")<0){
+                                linearLayoutBackgroundLabaRugi.setBackgroundResource(R.color.red_500);
+                            }else{
+                                linearLayoutBackgroundLabaRugi.setBackgroundResource(R.color.light_blue_A100);
+                            }
 
                             txtIncome.setText("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("income"))));
                             txtExpense.setText(String.valueOf("Rp. "+formatter.format(Double.parseDouble(dataObject.getString("totalbiaya")))));

@@ -124,13 +124,13 @@ public class AdapterPagerTransaksiBaru extends PagerAdapter {
             tambahBarangKeKeranjang.setOnClickListener( new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent( context.getApplicationContext(), BarangTransaksiActivity.class);
+                    Intent intent = new Intent( context, BarangTransaksiActivity.class);
                     if (type==0){
                         intent.putExtra( "type", "0" );
                     }else{
                         intent.putExtra( "type", "1" );
                     }
-                    context.getApplicationContext().startActivity(intent);
+                    context.startActivity(intent);
                 }
             } );
         }else if(position==1){
